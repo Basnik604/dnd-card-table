@@ -1,0 +1,24 @@
+D&D Card Table v0.7 — Character Content Database
+
+Adds the data layer for the future guided Character Builder:
+- Classes
+- Species
+- Backgrounds
+- Feats
+
+The importer uses Open5e V2 and keeps only SRD 5.2 / srd-2024 records.
+All original API payloads are kept in raw_source and a separate normalized
+character_content table is generated for the builder.
+
+Install:
+1. Make sure Docker Desktop is running.
+2. docker compose up -d
+3. Stop web server with Ctrl + C.
+4. Copy this update into dnd-card-table with replacement.
+5. npm.cmd run db:migrate:007
+6. npm.cmd run import:charactercontent
+7. npm.cmd run web
+8. Open http://localhost:3000/builder-data
+
+v0.7 does not replace the manual Create Character form yet.
+The guided wizard is the next Character Builder stage.

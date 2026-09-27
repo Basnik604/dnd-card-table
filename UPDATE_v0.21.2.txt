@@ -1,0 +1,26 @@
+D&D Card Table v0.21.2 — RU Header Layout Hotfix
+
+No database migration and no content re-import are required.
+
+FIXED
+- Russian navigation labels no longer distort the wooden top bar.
+- Navigation buttons now share a consistent height and vertical alignment.
+- "Данные конструктора" gets an intentional two-line width instead of being
+  squeezed unpredictably.
+- Theme, language, and database status are grouped into a dedicated right-side
+  control area.
+- "Локальная база подключена" has a stable width and centered two-line layout.
+- English layout remains compact.
+- At narrower viewport widths the navigation moves to a clean second row rather
+  than compressing translated labels.
+
+INSTALL
+1. Stop the server: Ctrl + C
+2. Extract this archive over the current project with replacement.
+3. No migration.
+4. No Builder Data re-import.
+5. Run:
+   npm.cmd test
+   npm.cmd run web
+6. Refresh browser:
+   Ctrl + F5

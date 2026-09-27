@@ -1,0 +1,28 @@
+D&D Card Table v0.5 — Character Engine
+
+Added:
+- Characters section in the main navigation.
+- Character creation: name, class, species, level, HP, AC, six ability scores.
+- Automatic proficiency bonus from character level.
+- Character detail page with HP controls and ability-check dice rolls.
+- Card templates can create an instance directly for a chosen character.
+- Character inventory shows assigned Card Instances.
+- Weapon cards in a character inventory get first character-aware Attack / Damage rolls:
+  STR by default, DEX for ranged, best of STR/DEX for Finesse.
+  Proficiency Bonus and magic weapon bonus are included.
+- Card instances can be returned to World or deleted.
+- Deleting a character safely returns its assigned cards to World.
+
+Install:
+1. Stop server with Ctrl + C.
+2. Copy this update into the dnd-card-table root with replacement.
+3. Run:
+   npm.cmd run db:migrate:005
+4. Run:
+   npm.cmd run web
+5. Ctrl + F5 in browser.
+6. Open http://localhost:3000/characters
+
+Note:
+This is still a prototype. Spellcasting ability, proficiencies, equipment AC calculation,
+saving throw proficiency and class progression will be added in later Character Engine stages.

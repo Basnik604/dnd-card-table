@@ -1,0 +1,37 @@
+{
+  "date": "2026-09-25",
+  "baseVersion": "0.23.0",
+  "applicationVersion": "0.25.0",
+  "packStatus": "machine",
+  "catalog": {
+    "entities": 2008,
+    "total": 8125,
+    "ignored": 705,
+    "reviewed": 0,
+    "machine": 7276,
+    "terms": 849,
+    "pending": 0,
+    "complete": true
+  },
+  "validationFailures": 0,
+  "postEditedUniqueTexts": 86,
+  "uiAudit": {
+    "scope": "Extracted interface strings and built-in summaries; imported database coverage is a separate audit.",
+    "total": 1327,
+    "translated": 1327,
+    "pending": 0
+  },
+  "tests": {
+    "total": 144,
+    "passed": 144,
+    "failed": 0,
+    "skipped": 0
+  },
+  "sourceQualityIssues": 5,
+  "liveDatabaseChecked": false,
+  "fullBrowserAppWalkthrough": false,
+  "sha256": {
+    "ru.json": "344a9df2013309d59190b37c21ad142368c6c9a51e1e33212d80ac2730157ee2",
+    "manifest.json": "0db47b769e8d9432edd19495186b0189f14d7c82eeb968eb73de460c5a1c2df7"
+  }
+}

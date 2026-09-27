@@ -1,0 +1,47 @@
+D&D Card Table v0.16.1 — Compact Tavern Progression UI
+
+This is a visual/UX patch. No database migration is required.
+
+PROGRESSION REDESIGN
+- Progression now spans the full feature area instead of forcing Expertise to
+  stretch to the same height.
+- Large circular Level medallion with Proficiency Bonus.
+- Compact XP ledger:
+  current XP
+  percent progress
+  XP remaining
+  current / next threshold
+- More tabletop-like ornate XP bar with a moving marker.
+- Quick award buttons:
+  +100 XP
+  +500 XP
+  +1000 XP
+- Custom Add XP and Set Exact XP moved under "More".
+- Undo Level moved into "More" so it remains available but is no longer a
+  prominent everyday action.
+- Level Up is now its own seal/button:
+  locked while XP is insufficient
+  highlighted when ready
+  level-20 state when progression is complete.
+
+EXPERTISE REDESIGN
+- Expertise no longer expands to the height of Progression.
+- Compact skill chips show the important meaning directly:
+  Religion ×2
+  Stealth ×2
+- Removal remains available from the chip.
+- Adding a new Expertise selection is hidden behind a small Edit control.
+
+LAYOUT
+- Feature-engine cards now align to their own content height rather than
+  stretching across a grid row.
+- The existing guided Level Up flow from v0.16 is unchanged.
+
+INSTALL
+1. Stop server:
+   Ctrl + C
+2. Copy this update into dnd-card-table with replacement.
+3. No migration.
+4. Run:
+   npm.cmd run web
+5. Ctrl + F5.

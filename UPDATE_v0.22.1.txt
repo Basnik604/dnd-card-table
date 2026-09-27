@@ -1,0 +1,113 @@
+D&D Card Table v0.22.1 — DnD.su Reconciliation & Ruleset-Aware RU Names
+
+GOAL
+Make Russian content names reliable before translating long rules prose.
+DnD.su / next.dnd.su are used as a terminology/reference index, while the local
+English Open5e/SRD database remains canonical.
+
+IMPORTANT POLICY
+- We do NOT import every record from DnD.su.
+- Only names/terms that correspond to content already present in D&D Card Table
+  are useful to this localization layer.
+- Short established names and terminology can be reconciled against DnD.su.
+- Long translated descriptions from third-party pages are NOT bulk-copied.
+  Missing prose will be translated independently from our canonical English text.
+- Unknown names remain English rather than receiving a risky guessed translation.
+
+WHAT CHANGED
+1. RULESET-AWARE TERMINOLOGY
+   The same English label can now have different Russian display names depending
+   on ruleset and content kind.
+
+   Examples:
+   2024 Acolyte background -> Послушник
+   2014 Acolyte background -> Прислужник
+   2024 Noble background   -> Дворянин
+   2014 Noble background   -> Благородный
+   2024 Savage Attacker    -> Неистово атакующий
+   2014 Savage Attacker    -> Дикий атакующий
+   2024 Changeling         -> Ченжлинг
+   2014 Changeling         -> Чейнджлинг
+
+   This prevents the generic browser translator from applying a 2024 term to a
+   2014 record simply because the English name is identical.
+
+2. LEGACY 5E14 NAME PACK
+   Added established Russian display names for many legacy species/origins and
+   PHB feats already relevant to the expanded Open5e catalog, including:
+   Aarakocra, Autognome, Astral Elf, Bugbear, Genasi, Harengon, Kenku, Kobold,
+   Warforged, Lizardfolk, Half-Orc, Half-Elf, Tabaxi, Triton, Firbolg, Shadar-Kai,
+   Eladrin, Custom Lineage and others.
+
+   Added classic feat terminology including War Caster, Lucky, Observant,
+   Great Weapon Master, Polearm Master, Shield Master, Spell Sniper,
+   Sharpshooter, Ritual Caster, Sentinel, Mage Slayer, Crossbow Expert, etc.
+
+3. 2014 BACKGROUND OVERRIDES
+   Added ruleset-aware mappings for Acolyte, Noble, Folk Hero, Guild Artisan,
+   Outlander, Pirate, Urchin and the other PHB14 background names that differ
+   from or do not exist in the 2024 core list.
+
+4. GUIDED BUILDER
+   Dropdown labels are now generated with the ruleset-aware Russian name first,
+   while keeping the source label for non-core options.
+
+   Example:
+     Прислужник · SRD 5.1
+   instead of applying the 2024 term Послушник to the old record.
+
+5. BUILDER DATA
+   Cards and entity titles now use ruleset-aware Russian names in RU mode.
+   When a name is translated, the canonical English name is retained underneath
+   in a small muted line. English mode remains canonical English.
+
+6. RUSSIAN SEARCH
+   Content Library and Builder Data search now resolve Russian display names back
+   to canonical English database names.
+
+   Examples:
+     дру -> Druid
+     прислуж -> Acolyte (2014 scope)
+     полуэльф -> Half-Elf
+
+   Search still prefers name matches. Description fallback remains English until
+   the prose translation layer is added.
+
+7. INDEPENDENT FALLBACK TERMS
+   Common class-feature labels and a small set of expanded-catalog background
+   names are translated independently when DnD.su is not being used as a direct
+   short-name reference. These are tracked separately from reference-verified
+   translations so they can be reviewed later.
+
+8. LOCALIZATION AUDIT
+   npm.cmd run i18n:audit now reports:
+   - reference-verified translations;
+   - independently generated translations;
+   - pending untranslated names;
+   - ruleset-aware terminology conflicts/overrides.
+
+NO DATABASE MIGRATION
+No migration and no Open5e re-import are required.
+
+INSTALL
+1. Stop the server with Ctrl+C.
+2. Extract this archive over the existing project with replacement.
+3. Run:
+
+   npm.cmd install
+   npm.cmd test
+   npm.cmd run i18n:audit
+   npm.cmd run web
+
+4. In the browser press Ctrl+F5.
+
+WHAT TO CHECK
+- Builder -> choose legacy Acolyte/Noble and compare with their 2024 versions.
+- Builder Data -> switch 5e 2014 / 5e 2024 and inspect duplicated English names.
+- Search Builder Data in Russian: дру, прислуж, полуэльф, боевой заклинатель.
+- Search Content Library in Russian for already localized standalone terms.
+- Run i18n:audit and keep its pending list: it is the input for the next pass
+  (subclasses / spells / monsters / equipment / magic items and then long prose).
+
+TESTS
+77 tests passed, 0 failed.

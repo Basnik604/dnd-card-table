@@ -1,0 +1,82 @@
+D&D Card Table v0.18.1 — Spell Picker UX Polish
+
+No database migration is required.
+
+MAGICAL DISCOVERIES
+- Replaced the browser-native <select> that could fill most of the screen.
+- Added a custom tavern-styled searchable popover.
+- Search priority:
+  1. spell name contains the typed characters in the same order
+  2. only if no names match, search spell descriptions
+- Results are grouped into:
+  Cantrips
+  Level 1
+  Level 2
+  Level 3
+  ...as applicable to the character.
+- Level tabs let you restrict results before searching.
+- Each result shows:
+  name
+  school
+  source class-list metadata
+  Ritual / Concentration markers
+  short description
+- Already selected Magical Discoveries remain excluded by the server-side option query.
+- The Add button remains disabled until an actual result is selected.
+
+SELECTED DISCOVERIES
+- Selected discoveries are now compact parchment cards instead of plain rows.
+- Each card shows:
+  spell name
+  cantrip / spell level
+  Magical Discovery · Always Prepared
+  Open spell
+  Remove
+- The two choice slots are visually obvious.
+
+SPELLBOOK & MAGIC
+- Replaced the native class-spell selector with the same custom searchable picker.
+- This prevents large native dropdowns for classes with long spell lists.
+- Uses the same name-first / description-fallback search behavior.
+
+SPELL CARD SOURCE
+Always-prepared spells now show WHY they are always prepared.
+Examples:
+  Magical Discovery
+  Circle Spell
+  Life Domain
+  Oath Spell
+  Fiend Patron
+  Draconic Spell
+  Favored Enemy
+  Paladin Feature
+  Warlock Feature
+
+College of Lore discoveries receive a distinct source badge and accent, while
+Always Prepared remains visible as a secondary mechanical status.
+
+INSTALL
+1. Stop the server:
+   Ctrl + C
+2. Copy this update into dnd-card-table with replacement.
+3. No migration.
+4. Run:
+   npm.cmd run web
+5. Browser:
+   Ctrl + F5
+
+TEST
+1. Bard 6 / College of Lore -> Features.
+2. Click the Magical Discoveries search box.
+3. Type "chil":
+   Chill Touch should be offered by name.
+4. Type a phrase found only in a description:
+   the picker should switch to description matches.
+5. Select a result:
+   Add discovery becomes enabled.
+6. Open Spells:
+   the chosen spell should show:
+   Magical Discovery
+   Always Prepared
+7. Open the normal class-spell picker:
+   it should use the same compact searchable UI.

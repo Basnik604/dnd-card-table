@@ -1,0 +1,85 @@
+D&D Card Table v0.21.4 — Builder Class Editions + Progression Polish
+
+No database migration and no Builder Data re-import are required.
+
+WHY CLASSES LOOKED DUPLICATED
+The catalog contained separate imported records for the 2014 and 2024 rulesets.
+For example, Druid / Fighter / Cleric existed once for dnd5e-2014 and once for
+dnd5e-2024. These are valid edition variants, not duplicate database corruption.
+
+CLASS CATALOG
+- In the default "All imported" view, class records with the same name are now
+  grouped into a single card.
+- The preferred card is the 2024 SRD version when available.
+- The card shows which ruleset versions exist (5e 2024 / 5e 2014 / A5E).
+- The class counter shows unique class names in the all-sources view, while also
+  indicating how many imported class records exist.
+- Explicit Ruleset filters still show the selected edition normally.
+- Builder search suggestions no longer offer the same class name twice just
+  because both 2014 and 2024 records exist.
+
+CLASS DETAIL EDITION SWITCH
+- A Versions selector appears on a class page whenever multiple imported
+  editions exist.
+- It switches between the actual imported records rather than merging their
+  rules text together.
+- Subclass cards are now scoped to the current class ruleset to avoid mixing
+  2014 and 2024 subclass catalogs on the same page.
+
+CLASS PROGRESSION
+The progression table is no longer dependent only on sparse importer rows.
+For the 12 core classes, empty levels are supplemented with important class
+milestones appropriate to that ruleset.
+
+Examples:
+- 2014 Druid level 4: Wild Shape Improvement + Ability Score Improvement.
+- 2014 Druid level 8: Wild Shape Improvement + Ability Score Improvement.
+- 2014 Bard includes Song of Rest / Bardic Inspiration improvements and
+  Magical Secrets milestones.
+- Fighter includes Extra Attack, Action Surge and Indomitable improvements.
+- Rogue includes Sneak Attack progression data.
+- Spellcasters show spell slot / cantrip / prepared information where the
+  application has canonical table data.
+- Class-specific counters such as Rage, Wild Shape, Second Wind, Sorcery
+  Points, Pact Slots, Martial Arts and similar values populate Class Data.
+
+Imported structured progression still takes priority over fallback data.
+Third-party/reference-only classes do not receive invented core-class tables;
+they continue to use their imported source data.
+
+RULE TEXT / MARKDOWN
+- Builder Data now renders common Open5e Markdown instead of displaying raw
+  **bold** markers and * list markers.
+- Equipment and proficiency blocks support paragraphs, bullet/numbered lists,
+  emphasis, code fragments and Markdown tables.
+- Entity linking still respects whole-word matching and self-link prevention.
+
+TAVERN READABILITY
+- Dark chips / entity pills inside parchment summary boxes now force a light
+  readable text color instead of inheriting dark parchment ink.
+
+VERSION
+- UI / package version: 0.21.4
+
+VALIDATION
+- node --check: passed
+- npm test: 61 passed, 0 failed
+
+INSTALL
+1. Stop the server: Ctrl + C
+2. Extract this archive over the existing project with replacement.
+3. Do NOT run a database migration.
+4. Do NOT re-import Builder Data.
+5. Run:
+   npm.cmd test
+   npm.cmd run web
+6. In the browser: Ctrl + F5
+
+RECOMMENDED CHECK
+1. Builder Data -> Classes -> All imported
+   Core classes should appear once, with version badges.
+2. Open Druid and switch between 5e 2024 / 5e 2014.
+3. Open the 2014 Druid progression table and inspect levels 4 and 8.
+4. Open Bard 2014 and inspect levels 7-20: the table should no longer be mostly
+   empty.
+5. Inspect Equipment / Proficiencies: Markdown stars should no longer be raw.

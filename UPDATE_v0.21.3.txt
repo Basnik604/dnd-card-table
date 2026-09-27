@@ -1,0 +1,19 @@
+D&D Card Table v0.21.3 — Builder Data Class Page Overhaul
+
+No database migration or re-import is required.
+
+- Wider, lower desktop Tavern header; Russian labels use horizontal space instead of extra height.
+- Builder Data class detail pages now follow a reference-manual structure: overview, level progression, class features, subclasses, source data.
+- Level 1–20 progression table with PB, feature jump links and imported class data.
+- Class features grouped by acquisition level in compact accordions.
+- [Column data] and other table-only pseudo-features hidden from player-facing feature lists.
+- Parent class pages show imported subclasses directly.
+- Inline entity references are subtle text links rather than pill buttons.
+- Whole-word matching fixes Druid/Druidic.
+- Longest entity names win (e.g. Circle of the Land).
+- Current page never self-links.
+- Repeated target references link only once per text block.
+
+Install: extract over current project, then npm.cmd test, npm.cmd run web, Ctrl+F5.
+
+Next planned version remains v0.22 Content Translation Engine.

@@ -1,0 +1,11 @@
+{
+  "entities": 2008,
+  "total": 8125,
+  "ignored": 705,
+  "reviewed": 0,
+  "machine": 7276,
+  "terms": 849,
+  "pending": 0,
+  "complete": true,
+  "pendingSegments": []
+}

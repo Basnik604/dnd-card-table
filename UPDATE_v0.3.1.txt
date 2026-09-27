@@ -1,0 +1,27 @@
+D&D Card Table — Prototype v0.3.1: Creature data repair + statblock formatting
+
+Что исправлено:
+- Open5e V2 ability_scores теперь нормализуются в STR/DEX/CON/INT/WIS/CHA;
+- повторный import:creatures сам чинит ранее импортированных существ с пустыми ability scores;
+- speed нормализуется и показывается как "10 ft., swim 40 ft." вместо сырого JSON;
+- languages и senses показываются нормальным текстом;
+- CR больше не отображается как 10.00;
+- на странице существа ability score показывает и модификатор, например 21 (+5);
+- HP рядом показывает hit dice;
+- отображаются saving throws, skills, damage/condition defenses, если они есть;
+- v0.3.1 в шапке интерфейса.
+
+Установка поверх v0.3:
+1. Остановить web-сервер: Ctrl+C.
+2. Скопировать содержимое архива в корень dnd-card-table с заменой файлов.
+3. Выполнить:
+   npm.cmd run import:creatures
+4. Ожидается failed: 0. Ранее импортированные записи могут показать updated вместо unchanged — это нормально.
+5. Запустить интерфейс:
+   npm.cmd run web
+6. Обновить страницу браузера Ctrl+F5.
+
+Проверка:
+- открыть Aboleth или Mimic;
+- должны появиться STR/DEX/CON/INT/WIS/CHA;
+- Speed/Languages/Senses должны быть читаемыми.

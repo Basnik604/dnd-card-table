@@ -1,0 +1,91 @@
+import assert from 'node:assert/strict';
+import {mkdirSync} from 'node:fs';
+import {tabletopFixture} from './helpers/tabletop-fixture.mjs';
+import {seedTokenSources,tokenSourceIds,TOKEN_PNG} from './helpers/token-sources.mjs';
+import {LOCAL_GM} from '../src/web/tabletop.mjs';
+const {chromium}=await import(process.env.PLAYWRIGHT_MODULE||'playwright');
+const browser=await chromium.launch({headless:true,...(process.env.CHROMIUM_EXECUTABLE?{executablePath:process.env.CHROMIUM_EXECUTABLE}:{}),args:JSON.parse(process.env.CHROMIUM_ARGS||'["--no-sandbox"]')});
+const f=await tabletopFixture({server:true}),errors=[],qa=process.env.VTT_QA_DIR;
+if(qa)mkdirSync(qa,{recursive:true});
+try {
+  await seedTokenSources(f);
+  const secondCharacter='55555555-5555-4555-8555-555555555555';await f.sql`INSERT INTO characters(id,name,class_name,level) VALUES(${secondCharacter},'Бран','Fighter',3)`;
+  const session=await f.store.createSession(LOCAL_GM,'Дом у озера'),location=await f.store.createLocation(session.id,LOCAL_GM,'Старое поместье');
+  const first=location.scene_id;
+  const context=await browser.newContext({viewport:{width:1512,height:1120},reducedMotion:'reduce'});
+  await context.addInitScript(()=>{localStorage.setItem('dnd-lang','ru');localStorage.setItem('dnd-theme','tavern');});
+  const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));page.on('dialog',d=>d.accept());
+  const floor=()=>page.locator('[data-vtt-config]').evaluate(el=>JSON.parse(el.textContent).scene.id);
+  const idle=()=>page.waitForFunction(()=>!document.querySelector('[data-vtt-root]').hasAttribute('aria-busy'));
+  const dbScene=id=>f.store.scene(id,LOCAL_GM),rows=id=>f.store.tokens.list(id,LOCAL_GM);
+  const settings=page.locator('[data-vtt-settings]'),editor=page.locator('[data-token-editor]'),modal=page.locator('[data-token-transfer]');
+  const gotoFloor=async id=>{await page.locator(`[data-vtt-floor="${id}"]`).click();await page.waitForURL(new RegExp('scene='+id));await page.waitForFunction(id=>JSON.parse(document.querySelector('[data-vtt-config]').textContent).scene.id===id,id);};
+  const newFloor=async name=>{
+    const details=page.locator('.vtt-new-floor');if(!await details.evaluate(el=>el.open))await details.locator('summary').click();
+    await page.locator('[data-floor-add] input').fill(name);const previous=await floor();await page.locator('[data-floor-add] button').click();
+    await page.waitForFunction(id=>JSON.parse(document.querySelector('[data-vtt-config]').textContent).scene.id!==id,previous);return floor();
+  };
+  const pick=async id=>{await page.locator('[data-inspector-tab=tokens]').click();await page.locator(`[data-select-token="${id}"]`).click();};
+  const openTransfer=async()=>{await page.locator('[data-inspector-tab=tokens]').click();await page.locator('[data-token-transfer-open]').click();await modal.waitFor({state:'visible'});await idle();};
+  const createToken=async(kind,source_id,name,x)=> (await f.store.tokens.add(first,LOCAL_GM,{kind,source_id,name,x,y:300,snap:true,scene_revision:(await dbScene(first)).revision})).token;
+  const pc=await createToken('character',tokenSourceIds.character,'',300),pc2=await createToken('character',secondCharacter,'',450),npc=await createToken('npc',null,'Торговец',650);
+  await f.store.tokens.change(pc.id,LOCAL_GM,{...pc,scene_revision:1,icon_color:'#44cc99',border_color:'#aa55cc'});
+  await page.goto(f.origin+'/tabletop/'+session.id);
+  assert.equal(await page.locator('[data-vtt-floor]').count(),1);assert.equal(await page.locator('[data-vtt-delete-floor]').isDisabled(),true);
+  await settings.locator('[name=cellSize]').fill('150');const second=await newFloor('Подвал');
+  assert.equal((await dbScene(first)).grid.cellSize,150);assert.equal(await page.locator('[data-token-id]').count(),0);assert.equal((await dbScene(second)).grid.cellSize,70);
+  console.log('PASS new floor saves pending source settings, starts with its own grid and leaves source tokens in place');
+
+  const map=await page.evaluate(()=>{const c=document.createElement('canvas');c.width=900;c.height=700;const x=c.getContext('2d');x.fillStyle='#263332';x.fillRect(0,0,900,700);x.strokeStyle='#a3936f';x.lineWidth=24;x.strokeRect(60,60,780,580);return c.toDataURL();});
+  await settings.locator('[name=floor_name]').fill('Винный погреб');await settings.locator('[name=cellSize]').fill('80');
+  await page.locator('[data-vtt-file]').setInputFiles({name:'cellar.png',mimeType:'image/png',buffer:Buffer.from(map.split(',')[1],'base64')});await idle();
+  assert.equal((await dbScene(second)).floor_name,'Винный погреб');assert.equal((await dbScene(first)).has_map,false);
+  assert.equal(await page.locator('[data-vtt-floor-title]').textContent(),'Винный погреб');
+  const third=await newFloor('Крыша');await page.locator('[data-floor-order=up]').click();await page.waitForEvent('load');
+  await page.locator('[data-floor-order=up]').click();await page.waitForEvent('load');
+  assert.equal(await page.locator('[data-vtt-floor]').first().getAttribute('data-vtt-floor'),third);
+  await page.locator('[data-vtt-delete-floor]').click();await page.waitForURL(new RegExp('scene='+first));
+  assert.equal(await page.locator('[data-vtt-floor]').count(),2);assert.equal((await f.store.locations(session.id,LOCAL_GM)).length,1);
+  console.log('PASS separate map, floor rename, ordering and removal of the top floor preserve the location');
+
+  await settings.locator('[name=cellSize]').fill('70');await openTransfer();
+  assert.equal(await modal.locator('[data-transfer-list] input:checked').count(),2);
+  await modal.locator('[data-transfer-target]').selectOption(second);
+  const endpoint='**/api/tabletop/scenes/'+first+'/transfer';await page.route(endpoint,route=>route.abort());
+  await modal.locator('[data-transfer-apply]').click();await idle();
+  assert.match(await modal.locator('[data-transfer-status]').textContent(),/Не удалось связаться/);assert.equal((await rows(first)).length,3);assert.equal((await rows(second)).length,0);assert.equal((await dbScene(first)).grid.cellSize,70);
+  await page.unroute(endpoint);await modal.locator('[data-transfer-apply]').click();await page.waitForURL(new RegExp('scene='+second));
+  assert.equal(await page.locator('[data-token-id]').count(),2);assert.equal((await rows(first))[0].id,npc.id);
+  assert.equal(await page.locator(`[data-token-id="${pc.id}"]`).evaluate(el=>el.style.width),'80px');
+  let moved=(await rows(second)).find(t=>t.id===pc.id);assert.equal(moved.icon_color,'#44cc99');assert.equal(moved.border_color,'#aa55cc');assert.equal(moved.has_image,true);
+  console.log('PASS party transfer, automatic grid save, network failure/retry, following the destination and retained portraits/colors');
+
+  await page.locator('[data-vtt-delete-floor]').click();await idle();assert.match(await page.locator('[data-vtt-status]').textContent(),/Сначала перенесите/);
+  await pick(pc.id);await page.locator(`[data-token-id="${pc.id}"]`).press('ArrowRight');await idle();
+  const away=(await rows(second)).find(t=>t.id===pc.id);
+  await openTransfer();assert.equal(await modal.locator('input:checked[data-transfer-kind]').count(),1);
+  await modal.locator('[data-transfer-target]').selectOption(first);await modal.locator('[data-transfer-follow]').uncheck();
+  await modal.locator('[data-transfer-apply]').click();await idle();assert.equal(await modal.isVisible(),false);assert.equal(await floor(),second);assert.equal((await rows(second)).length,1);
+  await gotoFloor(first);const returned=(await rows(first)).find(t=>t.id===pc.id);assert.equal(returned.x,pc.x);assert.equal(returned.y,pc.y);
+  assert.equal(await settings.locator('[name=cellSize]').inputValue(),'70');
+  await pick(pc.id);await openTransfer();await modal.locator('[data-transfer-target]').selectOption(second);await modal.locator('[data-transfer-apply]').click();await page.waitForURL(new RegExp('scene='+second));
+  moved=(await rows(second)).find(t=>t.id===pc.id);assert.equal(moved.x,away.x);assert.equal(moved.y,away.y);assert.equal(await settings.locator('[name=cellSize]').inputValue(),'80');
+  console.log('PASS occupied-floor deletion is blocked; single-token return remembers each floor position and supports staying on the source');
+
+  await pick(pc2.id);await editor.locator('[name=name]').fill('Бран несохранённый');await page.locator('[data-token-transfer-open]').click();
+  assert.equal(await modal.isVisible(),false);assert.match(await page.locator('[data-vtt-status]').textContent(),/Сохраните настройки токена/);
+  await editor.locator('[name=name]').fill('Бран');await openTransfer();await modal.locator('[data-transfer-target]').selectOption(first);
+  const prior=await dbScene(first);await f.store.updateScene(first,LOCAL_GM,{revision:prior.revision,location_revision:prior.location_revision,name:prior.location_name,floor_name:prior.floor_name,grid:{...prior.grid,cellSize:90}});
+  await modal.locator('[data-transfer-apply]').click();await idle();assert.match(await modal.locator('[data-transfer-status]').textContent(),/Карта изменилась/);assert.equal((await rows(second)).length,2);
+  await modal.locator('[data-transfer-cancel]').click();await page.reload();
+  console.log('PASS unsaved token settings and a changed destination grid prevent transfer without data loss');
+
+  await page.locator('[data-vtt-zoom=in]').click();const zoom=await page.locator('[data-vtt-zoom-label]').textContent();await gotoFloor(first);await gotoFloor(second);
+  assert.equal(await page.locator('[data-vtt-zoom-label]').textContent(),zoom);
+  if(qa)await page.screenshot({path:qa+'/floors-desktop.png',fullPage:true});
+  await page.setViewportSize({width:390,height:844});await openTransfer();
+  assert.ok(await modal.evaluate(el=>el.scrollWidth<=el.clientWidth+2));assert.ok((await modal.locator('[data-transfer-list] label').first().boundingBox()).height<70);if(qa)await page.screenshot({path:qa+'/floors-transfer-mobile.png'});
+  await modal.locator('[data-transfer-characters]').click();assert.equal(await modal.locator('[data-transfer-list] input:checked').count(),2);
+  await modal.locator('[data-transfer-clear]').click();assert.equal(await modal.locator('[data-transfer-apply]').isDisabled(),true);await page.keyboard.press('Escape');
+  assert.deepEqual(errors,[]);console.log('PASS independent camera state, mobile transfer controls, character selection and Escape; no browser errors');
+} finally {await browser.close();await f.close();}

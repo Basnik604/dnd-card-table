@@ -1,0 +1,68 @@
+D&D Card Table v0.22.0 — DnD.su-aligned Russian Content Localization Foundation
+
+GOAL
+Use the established Russian D&D terminology as a reference without importing unrelated
+content or replacing the canonical English database.
+
+REFERENCE POLICY
+- D&D 2024 terminology is aligned to next.dnd.su when a matching entry is available.
+- Legacy 2014 records remain distinct in metadata; an established Russian name can be shared
+  between editions when the entity name itself is unchanged.
+- Only entities that already exist in the local D&D Card Table database are localized.
+  DnD.su-only records are NOT imported into this project.
+- Long translated rule descriptions are not copied from third-party pages. The project keeps
+  its English canonical rule text and will translate descriptions independently using the
+  verified terminology catalog.
+- Unknown third-party names are left in English until reviewed instead of being guessed.
+
+WHAT IS LOCALIZED IN THIS PACK
+- Core class names.
+- PHB 2024 species names plus several current catalog species.
+- All 16 PHB 2024 background names.
+- Core/SRD feat names already present in the project, including 2024 Epic Boons and Fighting Styles.
+- Ability scores and all skills.
+- Spell schools.
+- Conditions.
+- Damage types and common senses.
+- Creature sizes/types and common standalone rule labels.
+
+IMPORTANT EXAMPLES
+Warlock -> Колдун
+Sorcerer -> Чародей
+Wizard -> Волшебник
+Arcana -> Тайная магия
+Thunder -> Звук
+Restrained -> Опутанный
+Magic Initiate (Cleric) -> Посвящённый в магию (Жрец)
+Boon of Combat Prowess -> Дар боевой удали
+
+LOCALIZATION AUDIT
+A new command compares the translation catalog with the ACTUAL local database:
+
+  npm.cmd run i18n:audit
+
+It prints translation coverage and a list of names still needing review for Builder Data and
+Content Library. This is the source-of-truth reconciliation step for the user's real database.
+
+NO MIGRATION
+No database migration and no Open5e re-import are required.
+
+INSTALL
+1. Stop server: Ctrl + C
+2. Extract over the existing project with replacement.
+3. Run:
+   npm.cmd install
+   npm.cmd test
+   npm.cmd run i18n:audit
+   npm.cmd run web
+4. Browser: Ctrl + F5
+
+NEXT LOCALIZATION PACK
+Use the audit output to build the next verified name pack for:
+- subclasses
+- third-party species/backgrounds/feats already present locally
+- spells
+- monsters
+- equipment / magic items
+Then translate long rule prose independently from canonical English while preserving the
+verified glossary and numerical/mechanical expressions.

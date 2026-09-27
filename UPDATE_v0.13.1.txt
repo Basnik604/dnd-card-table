@@ -1,0 +1,34 @@
+D&D Card Table v0.13.1 — Equipment Type Hotfix
+
+Why this hotfix exists:
+Some SRD equipment had been imported with the broad type "gear" even though
+its structured fields clearly described a weapon or armor. As a result Shield
+showed Equip/Unequip, while Chain Mail, Dagger, Javelin and Longsword could
+incorrectly appear as ordinary Adventuring Gear.
+
+FIXES
+- Existing SRD items are repaired from structured data:
+  damage dice / weapon category -> Weapon
+  armor class -> Armor
+  shield metadata/name -> Shield
+- Existing generated card templates are repaired too.
+- Future cards use a robust type classifier.
+- Character inventory no longer trusts a stale "gear" label when weapon/armor
+  mechanics are present.
+- Dagger, Javelin, Longsword etc. can now be equipped and get attack/damage rolls.
+- Chain Mail and other armor can now be equipped and participate in Auto AC.
+- Inventory labels show the effective type instead of misleading "GEAR".
+- General gear such as Crowbar, Pouch, Packs and tools remains normal gear.
+
+INSTALL
+1. Stop the server with Ctrl + C.
+2. Copy this update into dnd-card-table with replacement.
+3. Run:
+   npm.cmd run db:migrate:012
+4. Run:
+   npm.cmd run web
+5. Ctrl + F5 in the browser.
+
+After migration, reopen the same character. You should see Equip buttons on
+Chain Mail, Dagger, Javelin and Longsword. Crowbar/Pouch/Priest's Pack should
+still have no Equip button.

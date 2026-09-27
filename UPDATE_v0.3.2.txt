@@ -1,0 +1,85 @@
+D&D Card Table — v0.3.2 Item Normalization
+
+Что меняется
+=============
+
+1. Добавляется расширенная структура предметов:
+   - item_type
+   - weapon_category
+   - damage_dice / versatile_damage_dice
+   - damage_type
+   - normal_range / long_range
+   - mastery
+   - armor_class_base
+   - правила DEX для брони
+   - strength_requirement
+   - stealth_disadvantage
+   - magic_bonus
+   - consumable
+   - base_item_name
+   - charges
+   - detail_source
+
+2. Добавлены отдельные обогатители Open5e V2:
+   - /weapons
+   - /armor
+
+Они дополняют общую запись из /items более подробными игровыми данными.
+
+3. Magic Items повторно нормализуются. Бонус +1/+2/+3 также определяется из
+   структурированных полей либо названия, если источник хранит его именно там.
+
+4. Web Library теперь показывает специализированные характеристики оружия,
+   брони и магических предметов вместо почти пустой общей страницы.
+
+Установка
+=========
+
+1. Остановить web-сервер: Ctrl+C
+2. Скопировать содержимое архива в корень dnd-card-table с заменой файлов.
+3. Выполнить:
+
+   npm.cmd run db:migrate
+
+4. Перенормализовать и обогатить предметы:
+
+   npm.cmd run import:itemdetails
+
+   Команда последовательно выполнит:
+   - import:items
+   - import:weapons
+   - import:armor
+   - import:magicitems
+
+5. Запустить интерфейс:
+
+   npm.cmd run web
+
+6. В браузере: Ctrl+F5
+
+Что проверить
+=============
+
+Battleaxe:
+- тип Weapon
+- damage
+- damage type
+- properties
+- weapon category
+- mastery (если Open5e SRD 5.2 отдаёт это поле)
+- cost / weight
+
+Ammunition (+3):
+- тип Magic Ammunition
+- rarity
+- Magic Bonus +3
+- consumable = Yes
+- attunement
+
+Примечание
+==========
+
+Open5e V2 предоставляет отдельные endpoints weapons и armor, поэтому v0.3.2
+использует их как enrichment-слой поверх общей библиотеки items. Это позволит
+Card Engine в следующем этапе автоматически понимать, что является атакой,
+экипировкой, боеприпасом и т.д.

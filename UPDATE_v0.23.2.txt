@@ -1,0 +1,43 @@
+D&D Card Table v0.23.2 — Safe Entity Localization Hotfix
+
+Purpose
+- Fix corrupted machine-translated entity names such as dragon names turning into
+  token fragments, temperatures, slash sequences, or random alphanumeric text.
+- Preserve the working v0.23.0 hybrid localization model for prose while making
+  proper D&D names deterministic and safe.
+
+What changed
+1. Entity names never use the generic NMT fallback.
+   - Known names use the curated D&D dictionary / deterministic patterns.
+   - Unknown names remain in canonical English until a trusted translation exists.
+2. Action / trait names are protected the same way during full localization sync.
+3. Browser-side localization no longer sends data-i18n-entity nodes to the
+   machine-translation endpoint.
+4. Translation cache version changed to ru-v4-safe-names.
+   - v0.23.0's old cache is ignored automatically.
+   - No manual cache deletion is required.
+5. Stale cache files are not imported into Russian search aliases.
+6. Machine-translated prose is validated. Output containing leaked ZXQ tokens,
+   extreme slash runs, obvious alphanumeric corruption, or pathological length is
+   rejected and canonical English is shown instead.
+7. Deterministic creature-name patterns added for core chromatic/metallic dragons
+   (Adult / Ancient / Young / Wyrmling) and the four classic elementals.
+8. Verified Aboleth names added for its core traits/actions.
+
+Data safety
+- PostgreSQL canonical English data is not modified.
+- No DB migration is required.
+- No re-import is required.
+- Existing characters/cards/encounters remain untouched.
+
+Install
+1. Stop the server.
+2. Extract over the working v0.23.0 project with replacement.
+3. npm.cmd install
+4. npm.cmd test
+5. npm.cmd run web
+6. Ctrl + F5 in the browser.
+
+Optional
+- npm.cmd run i18n:full can rebuild the new safe localization cache, but it is not
+  required merely to get rid of corrupted entity names.

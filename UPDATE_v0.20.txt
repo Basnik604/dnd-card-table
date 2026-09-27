@@ -1,0 +1,105 @@
+D&D Card Table v0.20 — Expanded Builder Data
+================================================
+
+What changed
+------------
+- Character content import now reads every current Open5e class, subclass,
+  species, background, and feat document instead of only SRD 5.2.
+- Every imported row preserves its document, publisher attribution, license,
+  and ruleset (5e 2024, 5e 2014 compatible, or A5E).
+- Guided Character Builder keeps the SRD 5.2 class engine but adds a content
+  scope selector:
+    * Expanded compatible catalog (default)
+    * SRD 5.2 only
+- Exact duplicate names are merged in the guided picker, preferring the 2024
+  record. The complete records remain available in Builder Data.
+- A5E content is searchable in Builder Data and clearly marked reference-only;
+  it is intentionally not mixed into the 5e Guided Builder.
+- Expanded options show source and rules year in selectors and review.
+- Legacy backgrounds can request their documented skill choices.
+- Legacy species apply fixed and flexible ability increases. Subspecies inherit
+  their parent species traits and ability increases.
+- Character metadata keeps exact entity IDs and sources, so duplicate names do
+  not make features resolve to the wrong record.
+- Subclass selection during level-up also preserves the exact source ID, and
+  level rollback restores it.
+- Builder Data now has ruleset filters and source chips.
+
+Live database comparison (2026-09-19)
+-------------------------------------
+Open5e v2 raw catalog:
+- 26 classes
+- 125 subclasses
+- 63 species
+- 58 backgrounds
+- 91 feats
+
+Guided Builder after compatibility filtering and exact-name deduplication:
+- 12 supported SRD 5.2 classes
+- 114 subclasses
+- 56 species
+- 29 backgrounds
+- 31 feats in the compatible reference pool
+
+Open5e can add records later, so counts may increase after a future import.
+
+Install / update
+----------------
+1. Back up the project and database.
+2. Extract this update over the project root, preserving directories.
+3. Install dependencies if needed:
+
+   npm install
+
+4. Make sure all earlier migrations through 017 have already been applied.
+   v0.20 adds no database migration.
+5. Re-import Character Builder content:
+
+   npm run import:charactercontent
+
+   On Windows Command Prompt or PowerShell, `npm.cmd run
+   import:charactercontent` is also valid.
+6. Run tests:
+
+   npm test
+
+7. Start the app:
+
+   npm run web
+
+How to verify
+-------------
+1. Watch the import finish without "Character content import failed". Near the
+   end it prints "Guided Builder compatible unique choices". With the API
+   snapshot used for this update, expect 12 classes, 114 subclasses,
+   56 species, 29 backgrounds, and 31 feats.
+2. Open Builder Data. With Ruleset = All imported, the snapshot totals are
+   26 classes, 125 subclasses, 63 species, 58 backgrounds, and 91 feats.
+3. Switch Ruleset among 5e 2024, 5e 2014 compatible, and A5E reference only.
+   Cards should update and show both source and ruleset. A5E entries must say
+   "reference only".
+4. Open Guided Character Builder. In Expanded mode, the summary should show
+   12 classes, 114 subclasses, 56 species, and 29 backgrounds. Switch to SRD
+   5.2 only: it should show 12 / 12 / 9 / 4.
+5. Set level 3, choose a class, and open Subclass. Expanded entries must include
+   source/year labels; switching to SRD 5.2 only must remove 2014 entries.
+6. Legacy rule check: choose High Elf and a non-2024 background such as Con
+   Artist. The Background step should say that bonuses come from the species
+   and preview DEX +2 and INT +1 (parent Elf + High Elf inheritance).
+7. Flexible legacy check: choose Half-Elf with a legacy background. The
+   Background step must require two different +1 ability choices in addition
+   to CHA +2.
+8. Background choice check: choose Crime Syndicate Member. On Skills, Deception
+   is fixed and the builder must require one of Sleight of Hand or Stealth.
+9. Complete the character. Confirm the final ability scores and skills match
+   the preview, then open Features and verify species, background, class, and
+   subclass entries link to the selected source records.
+10. Run `npm test`; this package should report 41 passing tests.
+
+Notes
+-----
+- Expanded 2014 options are licensed compatible content, not an assertion that
+  every cross-edition combination is an official 2024 build.
+- A legacy background contributes no 2024 background ability increase. The
+  builder applies the selected legacy species record instead and explains the
+  result before character creation.

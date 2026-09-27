@@ -1,0 +1,100 @@
+{
+  "scope": "Замеченные дефекты исходного английского импорта; не полный аудит источника.",
+  "issues": [
+    {
+      "requestTextId": 4094,
+      "issue": "Таблица колоды склеена с текстом и соседними ячейками.",
+      "canonicalSourceUnchanged": true,
+      "catalogSegments": [
+        {
+          "id": "9c1115d0c1612a9012bb6fce32732df14bfcc67c40b016697881ee04edcc6574",
+          "ruleset": "dnd5e-2024",
+          "source": "srd-2024",
+          "uses": [
+            {
+              "entity": "open5e:srd-2024:magicitem:srd-2024_deck-of-illusions",
+              "name": "Deck of Illusions",
+              "path": "description_en"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requestTextId": 4646,
+      "issue": "Строки таблицы, заголовки характеристик и отдельные предложения перемешаны при импорте.",
+      "canonicalSourceUnchanged": true,
+      "catalogSegments": [
+        {
+          "id": "c0fa4321388148ea6131f60591424553e0a1033e7bcff70458b9099b1ce22f6e",
+          "ruleset": "dnd5e-2024",
+          "source": "srd-2024",
+          "uses": [
+            {
+              "entity": "open5e:srd-2024:magicitem:srd-2024_mysterious-deck",
+              "name": "Mysterious Deck",
+              "path": "description_en"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requestTextId": 4846,
+      "issue": "Числовые ячейки таблицы слиты в последовательность 14d1232d625d442d4; в переводе сохранена исходная последовательность.",
+      "canonicalSourceUnchanged": true,
+      "catalogSegments": [
+        {
+          "id": "62589cd31d603f41b9a936db8e8fbb51de842eec3daf783e2808c9b616a1fde0",
+          "ruleset": "dnd5e-2024",
+          "source": "srd-2024",
+          "uses": [
+            {
+              "entity": "open5e:srd-2024:magicitem:srd-2024_ring-of-shooting-stars",
+              "name": "Ring of Shooting Stars",
+              "path": "description_en"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requestTextId": 4983,
+      "issue": "В описание посоха попали обрывки другого правила и перемешанные строки таблицы.",
+      "canonicalSourceUnchanged": true,
+      "catalogSegments": [
+        {
+          "id": "4fe1e42975903fff166c0de25d4026da1d050a890576a0d62d5b19ba9726950f",
+          "ruleset": "dnd5e-2024",
+          "source": "srd-2024",
+          "uses": [
+            {
+              "entity": "open5e:srd-2024:magicitem:srd-2024_staff-of-fire",
+              "name": "Staff of Fire",
+              "path": "description_en"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requestTextId": 5122,
+      "issue": "Таблица эффектов склеена с описанием и соседними ячейками.",
+      "canonicalSourceUnchanged": true,
+      "catalogSegments": [
+        {
+          "id": "b2d3e787eb6233a1a123a7c4ebf07c2bac28cc0f8f51c59f785b10103cf2e560",
+          "ruleset": "dnd5e-2024",
+          "source": "srd-2024",
+          "uses": [
+            {
+              "entity": "open5e:srd-2024:magicitem:srd-2024_wand-of-wonder",
+              "name": "Wand of Wonder",
+              "path": "description_en"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

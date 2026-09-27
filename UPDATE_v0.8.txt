@@ -1,0 +1,37 @@
+D&D Card Table v0.8 — Guided Character Builder
+
+Adds a real guided character creation flow for SRD 5.2 level 1–3 characters.
+
+Included:
+- Name, level, class, subclass at level 3, species and background.
+- Ability score methods:
+  Standard Array
+  27-point Point Buy
+  4d6 drop lowest
+  Randomized Standard Array
+- Live ability modifiers and Point Buy cost.
+- 2024 background ability boosts:
+  +2/+1 across the background's three abilities, or +1/+1/+1.
+- Background Origin feat, skills and tool proficiency.
+- Class skill selection with count validation and automatic duplicate avoidance.
+- Recommended class/background starting equipment or starting gold.
+- Automatic character HP, AC, proficiency bonus and saving throw proficiencies.
+- Recognized starting equipment becomes Card Instances in the character inventory.
+- Guided-builder metadata is stored on the character for future upgrades.
+- Existing manual character creation remains available.
+
+Scope:
+- v0.8 is the core creation loop for levels 1–3.
+- Spell/cantrip choice, weapon mastery choices, class-specific level choices,
+  resources, rests and spell slots are intentionally reserved for the next Character Engine stage.
+
+Install:
+1. Stop the web server: Ctrl + C
+2. Copy this update into dnd-card-table with replacement.
+3. Run:
+   npm.cmd run db:migrate:008
+4. Run:
+   npm.cmd run web
+5. Refresh browser with Ctrl + F5
+6. Open:
+   http://localhost:3000/character-builder

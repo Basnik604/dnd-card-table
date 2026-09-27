@@ -1,0 +1,33 @@
+D&D Card Table v0.7.2 — reliable Class/Subclass split
+
+Why
+The v0.7.1 screenshot showed 24 Classes and 0 Subclasses.
+The current Open5e production response did not give our importer a reliable
+is_subclass split even though the API has subclass-related filters.
+
+Fix
+- Fetches the SRD 5.2 class resource once and classifies the known SRD set locally.
+- The 12 base classes are explicitly recognized.
+- The 12 SRD subclasses are explicitly mapped to their parent classes.
+- Repairs the 12 subclass rows that v0.7/v0.7.1 previously stored as Class,
+  preserving their entity IDs when possible.
+- Adds a primary-ability fallback for the 12 base classes.
+- No new database migration is required if v0.7.1 migration was already applied.
+
+Expected Builder Data counts after re-import:
+- Classes: 12
+- Subclasses: 12
+- Species: 9
+- Backgrounds: 4
+- Feats: 17
+- Total: 54
+
+Install
+1. Ctrl + C
+2. Copy this update into dnd-card-table with replacement.
+3. Run:
+   npm.cmd run import:charactercontent
+4. Run:
+   npm.cmd run web
+5. Ctrl + F5
+6. Open /builder-data

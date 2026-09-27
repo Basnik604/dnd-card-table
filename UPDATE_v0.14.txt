@@ -1,0 +1,85 @@
+D&D Card Table v0.14 — Full Item Library Audit & Canonical Enrichment
+
+WHY
+The local Open5e SRD-2024 import contained incomplete or wrongly normalized
+equipment details. Examples included Plate Armor and Leather Armor with no AC
+data and Blowgun with no damage.
+
+THIS PASS AUDITS THE ENTIRE LOCAL `items` TABLE
+That means both:
+- Equipment
+- Magic Items
+
+SOURCES USED
+1. Existing local Open5e srd-2024 import (original source / raw provenance)
+2. 5e-bits / 5e-database structured 2024 SRD datasets
+3. Official D&D SRD v5.2.1 weapon and armor tables, embedded as canonical
+   mechanical checks for every core weapon and armor entry
+
+WHAT IS REPAIRED / ENRICHED
+Equipment:
+- correct type: weapon / armor / shield / ammunition / tool / gear
+- category and subtype
+- weapon class (Simple/Martial + Melee/Ranged)
+- damage, damage type, versatile damage
+- range
+- mastery
+- properties
+- AC and Dexterity rule
+- Strength requirement
+- Stealth disadvantage
+- don / doff times
+- cost and weight
+- tool ability, Utilize actions, Craft list
+- pack contents, ammo quantity/storage
+- useful descriptions instead of placeholders like "A plate armor."
+
+Magic items:
+- cross-check name against independent 2024 SRD dataset
+- category
+- rarity
+- attunement
+- complete SRD description
+- magic bonus when encoded in the item name
+- specific standard base weapon/armor linkage when it can be determined safely
+- no guessing for generic "any weapon/any armor" items
+
+SAFETY
+Unmatched entries are NOT overwritten.
+They receive audit_status=open5e-only and are listed in item-audit-report.json.
+
+CARDS
+Existing item card templates are refreshed automatically after data correction.
+
+FUTURE IMPORTS
+The Open5e item normalizer is also fixed so a future import does not recreate
+the same category/weapon-category/nested-field bugs.
+
+INSTALL / RUN
+1. Stop server with Ctrl + C.
+2. Copy this update into dnd-card-table with replacement.
+3. Run:
+   npm.cmd run db:migrate:014
+4. Run the full audit (internet required for the independent SRD dataset):
+   npm.cmd run audit:items
+5. Start:
+   npm.cmd run web
+6. Browser: Ctrl + F5
+
+The audit writes:
+  item-audit-report.json
+
+The terminal prints totals for:
+- total local items
+- equipment
+- magic items
+- independently matched records
+- official 3-source weapon/armor checks
+- corrected/enriched records
+- card templates refreshed
+- unmatched records
+
+After running, verify:
+- Plate Armor: AC 18, Str 15, Stealth Disadvantage, Heavy, don/doff
+- Leather Armor: AC 11 + full DEX
+- Blowgun: Martial Ranged, 1 Piercing, 25/100, Ammunition + Loading, Vex

@@ -1,0 +1,27 @@
+D&D Card Table — v0.4 Card Engine
+
+Что добавлено
+- card_templates: карточка как представление канонического content entity.
+- card_instances: конкретные копии карточек для будущих персонажей, сундуков, торговцев и encounter.
+- Card Library: /cards
+- На каждой странице контента появилась кнопка Create / refresh card.
+- Автоматическое построение карточек для monsters, spells, weapons/armor/items и conditions.
+- Actions хранятся в карточке отдельно от текста.
+- Безопасный базовый dice roller для фиксированных формул (например 1d8, 2d6+3).
+- roll_log для истории бросков.
+- Кнопка Create world instance показывает разделение Template / Instance на практике.
+
+Установка
+1. Остановить web-сервер Ctrl+C.
+2. Скопировать содержимое архива в корень dnd-card-table с заменой файлов.
+3. npm.cmd run db:migrate
+4. npm.cmd run web
+5. Открыть http://localhost:3000/library
+6. Открыть Battleaxe / Fireball / Monster и нажать Create / refresh card.
+7. Card Library: http://localhost:3000/cards
+
+Важно
+- Карточка не заменяет запись Content Library. Content остаётся каноническим источником.
+- Attack roll с STR/DEX/PB пока не считается: у нас ещё нет Character Engine.
+- Weapon damage button сейчас бросает только базовые dice предмета.
+- Изображения, русская локализация, ownership персонажей и realtime будут позже.

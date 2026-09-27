@@ -1,0 +1,97 @@
+D&D Card Table v0.17 — Full Spellcasting Engine
+
+This stage replaces the old level-1-to-3 spell prototype with a level-1-to-20
+SRD 5.2 spellcasting runtime.
+
+FULL SPELL SLOT PROGRESSION
+- Bard, Cleric, Druid, Sorcerer, Wizard: full 1–20 full-caster slot table.
+- Paladin, Ranger: full 1–20 class slot table, including level-1 spellcasting.
+- Warlock: Pact Magic 1–20, correct slot count/slot level and Short Rest recharge.
+
+CLASS SPELL LIMITS
+The engine now tracks the official class-table limits for:
+- Cantrips
+- Prepared Spells
+for Bard, Cleric, Druid, Paladin, Ranger, Sorcerer, Warlock and Wizard.
+
+The Spell tab shows counters such as:
+  Cantrips 3/4
+  Prepared 7/9
+and, for Wizard:
+  Spellbook 12
+
+ADDING SPELLS
+- A spell must be on the character's class spell list.
+- A spell can't be above the highest spell level currently accessible.
+- Cantrip limits are enforced.
+- Non-Wizard classes can't exceed their Prepared Spells limit.
+- Wizard level-1+ spells are added to the spellbook; preparation is managed
+  separately and respects the Wizard Prepared Spells limit.
+- Spell selection is grouped by spell level.
+
+WIZARD SPELLBOOK
+- Wizard can keep more level-1+ spells in the spellbook than can be prepared.
+- Prepare / Unprepare buttons appear only where that distinction actually
+  exists in the current engine.
+- Unprepared Wizard ritual spells are marked "Ritual from spellbook".
+
+CASTING VALIDATION
+- Level-1+ spells must be prepared before normal casting.
+- Cantrips need no spell slot.
+- Pact Magic automatically spends an available Pact slot.
+- Other casters can choose an eligible higher-level slot when casting.
+- Full high-level slot progression now works through level 20.
+
+CORE ALWAYS-PREPARED SPELLS
+v0.17 automatically adds and protects the core class spells that the SRD
+explicitly says are always prepared:
+- Druid 1: Speak with Animals
+- Ranger 1: Hunter's Mark
+- Paladin 2: Divine Smite
+- Paladin 5: Find Steed
+- Warlock 9: Contact Other Plane
+- Bard 20: Power Word Heal
+- Bard 20: Power Word Kill
+
+These spells:
+- display as Always Prepared
+- can't be unprepared
+- can't be deleted
+- do not consume the normal Prepared Spells allowance
+- disappear automatically if a character is rolled back below the granting level
+
+Subclass always-prepared spell packages are deliberately left for the next
+Class Choice / Subclass Engine stage rather than guessed from prose.
+
+INSTALL
+1. Stop server:
+   Ctrl + C
+2. Copy this update into dnd-card-table with replacement.
+3. Run:
+   npm.cmd run db:migrate:017
+4. Run:
+   npm.cmd run web
+5. Browser:
+   Ctrl + F5
+
+TESTS
+- Bard level 3:
+  2 cantrips, 6 prepared spells, slots 4/2.
+- Wizard level 5:
+  4 cantrips, 9 prepared spells, slots 4/3/2; extra level-1+ spells can remain
+  in the spellbook unprepared.
+- Paladin level 5:
+  prepared limit 6, slots 4/2; Divine Smite + Find Steed appear as Always Prepared.
+- Ranger level 1:
+  prepared limit 2, two level-1 slots; Hunter's Mark appears as Always Prepared.
+- Warlock level 11:
+  prepared limit 11, 4 cantrips, three level-5 Pact slots recharging on Short Rest.
+
+NEXT
+Class-choice engine:
+- Divine Order
+- Primal Order
+- Metamagic
+- Eldritch Invocations
+- subclass always-prepared spell packages
+- additional feature choices with prerequisites

@@ -1,0 +1,24 @@
+D&D Card Table v0.21.1 — Localization Coverage Hotfix
+
+This patch keeps canonical entity names and rule descriptions in their imported language, but finishes Russian localization for interface text visible on Content Library and Builder Data.
+
+FIXED FROM USER SCREENSHOTS
+- Content Library explanatory paragraph is translated.
+- Builder Data explanatory paragraph is translated.
+- Counted navigation tabs now translate: Monsters · 331, Subclasses · 125, etc.
+- Empty/fallback content card summary is translated.
+- Builder/content metadata labels are translated (class, subclass, species, background, feat, creature, condition, item).
+- Common creature type labels shown as UI metadata are translated (Dragon, Aberration, Beast, Undead, etc.).
+- description match / reference only labels are translated.
+- Canonical names such as Adult Black Dragon, Champion, Abjurationist and imported rule descriptions are intentionally preserved.
+
+NO DATABASE MIGRATION.
+NO REIMPORT REQUIRED.
+
+INSTALL
+1. Stop server: Ctrl + C
+2. Copy this archive over the current project with replacement.
+3. Run: npm.cmd install
+4. Run: npm.cmd test
+5. Run: npm.cmd run web
+6. Browser: Ctrl + F5

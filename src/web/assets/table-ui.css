@@ -1,0 +1,126 @@
+/* v0.19.2: readable rules, compact controls, and dice at the table. */
+.rules-text{white-space:normal;line-height:1.65;overflow-wrap:anywhere}
+.rules-text p{margin:0 0 .8em}.rules-text p:last-child{margin-bottom:0}
+.rules-text ul,.rules-text ol{padding-left:1.35em;margin:.6em 0}.rules-text li+li{margin-top:.55em}
+.rules-text h4{font:700 15px Georgia,serif;margin:1em 0 .5em}.rules-text strong{color:inherit}
+.spell-runtime-card{min-width:0;display:flex;flex-direction:column;gap:10px}
+.spell-runtime-card .spellbook-head{align-items:flex-start;gap:8px}.spell-runtime-card h4{margin:4px 0}
+.spell-runtime-card .spell-meta{margin:0}.spell-runtime-card .spell-stat{display:inline-flex;align-items:center;align-self:flex-start;line-height:1.35;min-height:24px;max-width:100%;white-space:normal}
+.spell-runtime-card .spell-status-stack{flex-shrink:0;gap:5px}
+.spell-description{margin:0;border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:13px 15px;color:var(--text)}
+.spell-description-preview{margin:0;font-size:13px;line-height:1.6}
+.spell-description-toggle{margin-top:9px}
+.spell-description-toggle>summary{display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-size:11px;font-weight:600;line-height:1.4;color:var(--gold);list-style:none;border-bottom:1px dashed currentColor;padding:3px 0}
+.spell-description-toggle>summary::-webkit-details-marker{display:none}
+.spell-description-toggle>summary::before{content:"+";font:700 15px/1 monospace}
+.spell-description-toggle[open]>summary::before{content:"−"}
+.spell-description-toggle .rules-text{padding-top:12px;font-size:13px}
+.spell-description:has(.spell-description-toggle[open])>.spell-description-preview{display:none}
+.spell-component-note{margin:10px 0 0;font-size:12px}.spell-component-note b{font-weight:700}
+.spell-cast-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:rgba(0,0,0,.12);margin-top:auto}
+.spell-cast-cost{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}
+.spell-cast-cost small{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.spell-cast-cost strong{font-size:12px;line-height:1.5}
+.spell-cast-form{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0;max-width:100%}
+.spell-cast-form select{max-width:100%;width:170px;min-width:0;font-size:11px}
+.spell-cast-row .spell-stat{height:auto;padding:5px 8px}
+.spell-runtime-card .spell-actions{margin:0;align-items:center;gap:7px}
+.spell-actions>form,.spell-actions>.button{align-self:center}
+.spell-runtime-card .spell-actions button,.spell-runtime-card .spell-actions .button{font-size:11px;padding:8px 10px}
+.spell-cast-form button{white-space:nowrap}
+.spell-ritual-note{font-size:11px;color:var(--muted);margin:0}
+.sheet-header{grid-template-columns:minmax(210px,.85fr) minmax(250px,1fr) minmax(360px,1.15fr)}
+.sheet-header>section{min-width:0}.sheet-core{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.core-stat{min-width:0}.core-stat strong{white-space:nowrap}.core-stat b{overflow-wrap:anywhere}
+.sheet-mode-illustrated .sheet-header{grid-template-columns:minmax(220px,.8fr) minmax(330px,1.25fr) minmax(360px,1.05fr);align-items:start}
+.sheet-mode-illustrated .sheet-identity,.sheet-mode-illustrated .sheet-vitals{align-self:stretch}
+.sheet-mode-illustrated .sheet-portrait,.sheet-mode-illustrated .media-fallback{min-height:0;height:410px}
+.sheet-mode-illustrated .sheet-portrait img{height:100%;min-height:0;object-fit:cover}
+.sheet-mode-compact .sheet-header{grid-template-columns:minmax(210px,1fr) 180px minmax(360px,1.1fr)}
+.sheet-vitals .runtime-toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.sheet-vitals .runtime-toolbar>.form-row{flex:1 0 100%;flex-wrap:nowrap;min-width:0}
+.sheet-vitals .runtime-toolbar>.form-row input{width:76px;min-width:0;flex:1}
+.sheet-vitals .runtime-toolbar>form:not(.form-row){flex:1}.sheet-vitals .runtime-toolbar>form:not(.form-row)>button{width:100%;white-space:nowrap;padding:9px 10px;font-size:11px}
+.ac-mode-label{display:block;font-size:10px;color:var(--muted);margin-top:4px}
+.ac-settings{position:relative;margin-top:7px}
+.ac-settings>summary{display:inline-flex;gap:5px;align-items:center;list-style:none;font-size:10px;font-weight:600;line-height:1.4;border:1px solid var(--line);border-radius:7px;padding:4px 8px;cursor:pointer;color:var(--gold)}
+.ac-settings>summary::-webkit-details-marker{display:none}
+.ac-settings>summary::before{content:"⚙";font:14px sans-serif}
+.ac-settings-form{position:absolute;z-index:40;right:0;top:calc(100% + 7px);width:290px;max-width:calc(100vw - 54px);display:grid;gap:12px;padding:16px;border:1px solid var(--line);border-radius:12px;background:#17211b;color:#eef3ed;box-shadow:0 15px 45px #0008}
+.ac-settings-form label{display:grid;gap:5px;font-size:11px}.ac-settings-form select,.ac-settings-form input{display:block;min-width:0;width:100%;padding:9px 10px;color:#edf3ef;background:#101512;border:1px solid #526157;border-radius:7px;font-size:12px}
+.ac-settings-form p{font-size:11px;color:#b6c7bd;margin:0}.ac-settings-form [hidden]{display:none}
+.ac-settings-form button{width:100%;padding:9px}.ac-settings-form label:has(input:disabled){opacity:.6}
+select option,select optgroup{color:#edf3ef;background:#151b18}
+html[data-theme="tavern"] select{color-scheme:light}
+html[data-theme="tavern"] select option,html[data-theme="tavern"] select optgroup{color:#2b180d;background:#f1e1c1}
+html[data-theme="tavern"] .owner-pill{color:#24452e;font-weight:700}
+html[data-theme="tavern"] .builder-score-status.good{color:#23422c;border-color:#586e42;background:#e3e4bf;font-weight:700}
+html[data-theme="tavern"] .builder-score-status.bad{color:#7b201c;border-color:#995143;background:#f1d5bd}
+html[data-theme="tavern"] .builder-ability span[id^="mod_"]{color:#673413;font-weight:700}
+.concentration-area{display:contents}
+html[data-theme="tavern"] .spell-runtime-card>.spellbook-head .eyebrow{color:#c6ac80}
+html[data-theme="tavern"] .spell-description{color:#342110;border-color:#af8952;background:#e4cfa2 url('/assets/parchment.webp') center/420px}
+html[data-theme="tavern"] .spell-description-toggle>summary{color:#603b1a}
+html[data-theme="tavern"] .spell-description .rules-text,html[data-theme="tavern"] .spell-description .rules-text h4{color:#342110}
+html[data-theme="tavern"] .spell-cast-row{color:#ead8ac;border-color:#75542d;background:#1a1009}
+html[data-theme="tavern"] .spell-cast-cost small,html[data-theme="tavern"] .spell-ritual-note{color:#c4ac83}
+html[data-theme="tavern"] .spell-cast-cost strong{color:#f0ddb1}
+html[data-theme="tavern"] .spell-cast-row .spell-stat{background:#d8c087;color:#294127;border-color:#617543}
+html[data-theme="tavern"] .spell-cast-row .runtime-danger{color:#f6c9b8;background:#582b22;border-color:#95634d}
+html[data-theme="tavern"] .ac-mode-label{color:#c5af86}
+html[data-theme="tavern"] .ac-settings>summary{border-color:#876434;color:#f0d39a;background:#392312}
+html[data-theme="tavern"] .ac-settings-form{background:#eddbb4 url('/assets/parchment.webp') center/420px;border-color:#926730;color:#352010}
+html[data-theme="tavern"] .ac-settings-form label,html[data-theme="tavern"] .ac-settings-form p{color:#4b321b}
+html[data-theme="tavern"] .ac-settings-form select,html[data-theme="tavern"] .ac-settings-form input{background:#fff4d8;color:#352010;border-color:#967341}
+.dice-tray{position:fixed;right:22px;bottom:22px;z-index:2000;width:370px;max-width:calc(100vw - 28px);max-height:min(70vh,650px);overflow:auto;padding:20px;border:1px solid #a38b58;border-radius:18px;background:#15201a;color:#edf3ef;box-shadow:0 18px 65px #0009;font-family:Inter,ui-sans-serif,system-ui,sans-serif}
+.dice-tray[hidden]{display:none}.dice-tray .dice-close{position:absolute;top:9px;right:9px;width:30px;height:30px;padding:0;display:grid;place-items:center;background:transparent;color:inherit;border:0;box-shadow:none;font-size:22px}
+.dice-kicker{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#c6ad77;margin:0 30px 5px 0}
+.dice-label{font:600 17px/1.35 Georgia,serif;margin:0 24px 14px 0;overflow-wrap:anywhere}
+.dice-faces{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;min-height:60px;perspective:500px}
+.dice-piece{width:52px;text-align:center;color:#eccf88}.dice-piece .die-icon{position:relative;width:52px;height:52px;display:grid;place-items:center}
+.dice-piece svg{position:absolute;width:100%;height:100%;inset:0;fill:#3b4227;stroke:#c4a667;stroke-width:1.5;filter:drop-shadow(0 4px 4px #0007)}
+.dice-piece strong{position:relative;z-index:1;font:700 18px Georgia,serif;color:#ffe9b6}.dice-piece small{display:block;font-size:9px;letter-spacing:.04em;margin-top:4px;color:#bdc9bf}
+.dice-piece.discarded{opacity:.4}.dice-piece.discarded strong{text-decoration:line-through}
+.dice-tray.is-rolling .die-icon{animation:table-dice-tumble .65s ease-in-out infinite;animation-delay:calc(var(--die-index,0) * -65ms)}
+.dice-total-row{display:flex;align-items:baseline;justify-content:center;gap:10px;margin-top:14px}.dice-total-row strong{font:700 42px/1 Georgia,serif;color:#ffe9b6}.dice-total-row span{font-size:12px;color:#c6cfca}
+.dice-formula{text-align:center;font-size:12px;color:#d2bc89;margin:10px 0 0}
+.dice-detail{font-size:11px;color:#b9c7be;line-height:1.6;margin:9px 0 0;overflow-wrap:anywhere;white-space:pre-line}.dice-outcome{color:#d9e7ca;font-weight:700;font-size:12px;text-align:center;margin-top:10px}
+.dice-tray.is-error .dice-total-row strong,.dice-tray.is-error .dice-detail{color:#ffb9ab}
+html[data-theme="tavern"] .dice-tray{background:linear-gradient(145deg,#382416,#1a100a);border-color:#bc9451;color:#f0dfb4}
+html[data-theme="tavern"] .dice-piece svg{fill:#583820;stroke:#d8b778}
+html[data-theme="tavern"] .dice-close{color:#f0dfb4!important;background:transparent!important;box-shadow:none!important;border:0!important}
+.inline-roll-value{display:inline-flex;align-items:center;gap:4px;padding:4px 7px;border:1px solid #718560;border-radius:6px;font-size:11px;background:#243120;color:#d8e6c8;white-space:nowrap}
+html[data-theme="tavern"] .inline-roll-value{color:#f4e0ad;background:#37281a;border-color:#a88d4e}
+@keyframes table-dice-tumble{0%{transform:translateY(0) rotate(-14deg) rotateY(0)}45%{transform:translateY(-8px) rotate(26deg) rotateY(150deg)}100%{transform:translateY(0) rotate(-14deg) rotateY(360deg)}}
+@media(max-width:1180px){.sheet-header,.sheet-mode-illustrated .sheet-header,.sheet-mode-compact .sheet-header{grid-template-columns:minmax(220px,1fr) minmax(300px,1fr)}.sheet-portrait-section{grid-column:2;grid-row:1/3}.sheet-vitals{grid-column:1;grid-row:2}.sheet-mode-illustrated .sheet-portrait,.sheet-mode-illustrated .media-fallback{height:430px}}
+@media(max-width:720px){.sheet-header,.sheet-mode-illustrated .sheet-header,.sheet-mode-compact .sheet-header{grid-template-columns:minmax(0,1fr)}.sheet-portrait-section,.sheet-vitals{grid-column:auto;grid-row:auto}.sheet-mode-illustrated .sheet-portrait,.sheet-mode-illustrated .media-fallback{height:320px}.spell-runtime-grid{grid-template-columns:minmax(0,1fr)}.dice-tray{right:14px;bottom:14px;padding:16px}.spell-cast-form{width:100%}.spell-cast-form select{flex:1;width:auto}.spell-runtime-card .spell-status-stack{align-items:flex-start}}
+@media(prefers-reduced-motion:reduce){.dice-tray.is-rolling .die-icon{animation:none}}
+
+/* v0.20: multi-source Builder Data and guided catalog controls. */
+.builder-field-note{font-size:11px;line-height:1.45;letter-spacing:0;text-transform:none;color:var(--muted)}
+.builder-catalog-count{line-height:1.55}
+.builder-data-toolbar{display:grid;grid-template-columns:minmax(190px,240px) minmax(280px,1fr);align-items:end;gap:12px}
+.builder-ruleset-filter{display:grid;gap:6px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#e6c58f}
+.builder-ruleset-filter select{width:100%;box-sizing:border-box;min-height:44px;padding:10px 12px;border:1px solid #91682e;border-radius:8px;background:#f3e5c5;color:#34200f;color-scheme:light;font:inherit;font-size:14px;letter-spacing:normal;text-transform:none}
+.builder-ruleset-filter select option{background:#f3e5c5;color:#34200f}
+.builder-source-chip{max-width:100%;white-space:normal;overflow-wrap:anywhere}
+html[data-theme="tavern"] .builder-field-note{color:#5b432c}
+html[data-theme="tavern"] .builder-catalog-count{color:#3f2b18}
+@media(max-width:720px){.builder-data-toolbar{grid-template-columns:1fr}.builder-ruleset-filter{width:100%}}
+.temporary-hp-control{margin-top:10px;min-width:0;font-size:12px}
+.temporary-hp-control summary{cursor:pointer;color:var(--text)}
+.temporary-hp-control form{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;margin-top:8px}
+.temporary-hp-control label{display:grid;gap:5px;min-width:0;font-size:11px}
+.temporary-hp-control input{width:90px;max-width:100%;padding:6px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--text)}
+.temporary-hp-control p{max-width:30ch;margin:8px 0}
+.combatant-hp .temporary-hp-control{flex-basis:100%;margin:0}
+.combatant-entry{min-width:0}
+.combatant-entry .concentration-panel{margin-top:8px}
+.combatant-entry .concentration-alert form{max-width:100%}
+.combatant-entry .concentration-alert button{white-space:normal}
+
+/* Readable recovery guidance over either page theme. */
+html .database-repair-panel{margin:28px auto;padding:28px;max-width:760px;border:1px solid #a98c56;border-radius:14px;background:#251c14;color:#f1e4c8;box-shadow:0 12px 36px #0005}
+html .database-repair-panel h2{color:#f1e4c8;font:500 26px/1.2 Georgia,serif;margin:0 0 20px}
+html .database-repair-panel p{color:#ded0b6;line-height:1.6;margin:12px 0}
+html .database-repair-panel pre{white-space:pre-wrap;overflow-wrap:anywhere;padding:16px;margin:18px 0;background:#15120f;border-radius:8px;color:#f4d994}

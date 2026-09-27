@@ -1,0 +1,65 @@
+D&D Card Table v0.13 — Feature & Equipment Engine
+
+This version returns to gameplay systems after the Tavern visual pass.
+
+EQUIPMENT
+- Inventory card instances can now be Equipped / Unequipped.
+- Armor: equipping one armor automatically unequips the previous armor.
+- Shield: equipping one shield automatically unequips the previous shield.
+- Weapons can be equipped independently.
+- Character Inventory shows equipment state badges.
+- Combat tab now shows only the Equipped Loadout.
+- Card instance pages also surface Equipped / Attuned state.
+
+AUTO ARMOR CLASS
+- Character AC can be Manual or Auto from equipment.
+- Equipping an armor/shield switches the character to Auto AC.
+- Auto AC supports:
+  normal unarmored AC (10 + DEX),
+  Barbarian Unarmored Defense (DEX + CON),
+  Monk Unarmored Defense (DEX + WIS when no shield),
+  armor base AC + correct DEX mode,
+  medium-armor DEX cap,
+  shields,
+  magic AC bonuses present in normalized item data.
+- Manual AC remains available for homebrew, temporary effects and unusual builds.
+
+ATTUNEMENT
+- Items that require attunement can be Attuned / Unattuned.
+- The character sheet tracks Attunement X / 3.
+- The UI prevents a fourth attuned item.
+
+AUTOMATIC CLASS RESOURCES
+The sheet now creates and maintains common 2024 class resources automatically:
+- Barbarian: Rage
+- Bard: Bardic Inspiration
+- Cleric: Channel Divinity
+- Druid: Wild Shape
+- Fighter: Second Wind, Action Surge
+- Monk: Focus Points
+- Paladin: Lay on Hands, Channel Divinity
+- Ranger: Favored Enemy — Hunter's Mark
+- Sorcerer: Sorcery Points
+- Wizard: Arcane Recovery
+
+- Auto resources cannot be accidentally deleted.
+- Their maximum values update from class level / ability score.
+- Manual custom counters still work normally.
+- Short Rest supports both full short-rest recharge and the 2024
+  'regain one use' pattern used by several classes.
+- Long Rest restores all normal class resources.
+
+SCOPE
+- Subclass-specific resources and deep feature execution are the next layer.
+- Weapon Mastery selection/use is not automated yet.
+- Temporary AC effects still belong in Manual AC for now.
+
+Install:
+1. Stop server: Ctrl + C
+2. Copy the update into dnd-card-table with replacement.
+3. Run:
+   npm.cmd run db:migrate:011
+4. Run:
+   npm.cmd run web
+5. Refresh with Ctrl + F5.
+6. Open an existing character. Automatic class resources should appear immediately.

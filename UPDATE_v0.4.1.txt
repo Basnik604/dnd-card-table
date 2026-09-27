@@ -1,0 +1,16 @@
+D&D Card Table v0.4.1 — delete support
+
+New:
+- Delete button for every Card Instance.
+- Delete card template button in a danger zone.
+- Confirmation dialog before destructive actions.
+- Deleting an instance keeps the template.
+- Deleting a template also deletes all its instances (existing DB cascade).
+- Source Content Library data is never deleted and can recreate the template.
+
+Install:
+1. Ctrl + C to stop the web server.
+2. Copy this archive into the dnd-card-table root with replacement.
+3. No DB migration required.
+4. npm.cmd run web
+5. Ctrl + F5 in the browser.

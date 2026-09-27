@@ -1,0 +1,41 @@
+D&D Card Table v0.10 — Visual & UX Foundation
+
+CHARACTER SHEET
+- New classic-inspired interactive character sheet.
+- Tabs: Overview / Combat / Spells / Inventory / Features / Notes.
+- Three persistent layouts per character:
+  Standard, Compact, Illustrated.
+- Portrait becomes a central part of the sheet.
+- Ability checks, skills, saves, HP, conditions, resources, spells and inventory remain functional.
+- Level-appropriate normalized class/species/subclass/feat features are surfaced in Features.
+
+MEDIA FOUNDATION
+- Upload/replace/remove character portraits.
+- Upload/replace/remove artwork for Content Library entities.
+- Card art automatically inherits the source Content artwork.
+- Cards can have their own visual override.
+- Browser resizes uploaded images to max 1600px and stores WebP locally in PostgreSQL.
+- Database fields are ready for future custom creatures/items to use the same media system.
+- When no art exists, themed fallbacks are shown.
+
+THEME ENGINE
+- Base theme: current dark green/gold visual language, cleaned up.
+- Tavern theme: dark wood, warm parchment/brown surfaces, brass/gold accents.
+- Theme selection is saved in the browser and applies to the whole application.
+- Architecture is ready for Elven Forest / Dark Winter / Graveyard / Dungeon / Valley themes.
+
+NAVIGATION
+- Navigation is grouped around Play / Library / Build / System instead of one flat developer-like row.
+
+Install:
+1. docker compose up -d
+2. Ctrl + C to stop the web server.
+3. Copy this update into dnd-card-table with replacement.
+4. Run:
+   npm.cmd run db:migrate:010
+5. Run:
+   npm.cmd run web
+6. Ctrl + F5.
+7. Open a character and test Standard / Compact / Illustrated.
+8. Switch Base/Tavern from the top bar.
+9. Upload a portrait and an image to any Content entry.

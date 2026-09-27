@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: dnd
+      POSTGRES_PASSWORD: dnd
+      POSTGRES_DB: dndcards
+    ports:
+      - "5432:5432"
+    volumes:
+      - dndcards_pg:/var/lib/postgresql/data
+
+volumes:
+  dndcards_pg:

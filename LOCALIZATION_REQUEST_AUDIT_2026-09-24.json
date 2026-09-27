@@ -1,0 +1,45 @@
+{
+  "entities": 2008,
+  "displaySegments": 8125,
+  "ignored": 705,
+  "bundledTerms": 849,
+  "pendingSegments": 7276,
+  "pendingUniqueTexts": 7093,
+  "requestTexts": 7101,
+  "missingFromRequest": [],
+  "noLongerPending": [
+    {
+      "id": 156,
+      "text": "benefit"
+    },
+    {
+      "id": 1160,
+      "text": "trait"
+    },
+    {
+      "id": 5414,
+      "text": "SIZE"
+    },
+    {
+      "id": 5415,
+      "text": "SPEED"
+    },
+    {
+      "id": 5590,
+      "text": "advantage"
+    },
+    {
+      "id": 5591,
+      "text": "disadvantage"
+    },
+    {
+      "id": 5600,
+      "text": "incapacitated"
+    },
+    {
+      "id": 5607,
+      "text": "prone"
+    }
+  ],
+  "requestCoversAllPending": true
+}

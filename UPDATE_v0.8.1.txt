@@ -1,0 +1,22 @@
+D&D Card Table v0.8.1 — Builder Data UX
+
+This update is UI/server only. No database migration is required.
+
+Changes:
+- Removed visible raw JSON blocks from normal Builder Data reading flow.
+- Proficiencies, prerequisites, starting equipment, choices and spellcasting are rendered as readable sections.
+- Raw normalized JSON is still available inside a collapsed Developer data section.
+- Structured references are clickable.
+  Example: Champion -> Parent Class: Fighter opens the Fighter Builder Data page.
+- Known Builder Data names mentioned in descriptions/features are automatically linked where possible.
+- Builder Data search now has live autocomplete suggestions while typing.
+- Suggestions prioritize prefix matches and display entity type/category.
+- Keyboard support: Arrow Up/Down, Enter, Escape.
+
+Install:
+1. Stop web server with Ctrl + C.
+2. Copy this update into dnd-card-table with replacement.
+3. No migration and no re-import required.
+4. Run:
+   npm.cmd run web
+5. Refresh with Ctrl + F5.

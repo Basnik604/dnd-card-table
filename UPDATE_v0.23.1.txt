@@ -1,0 +1,51 @@
+D&D Card Table v0.23.1 — Russian localization rendering fix
+
+Why v0.23.0 could still show English content
+----------------------------------------------
+v0.23.0 rendered dynamic database text synchronously from the translation cache.
+If i18n:full had not already populated that exact cache key, the first HTML response
+still contained English and relied on the browser's asynchronous fallback. One-word
+imported names/traits were also too conservative in the client fallback filter.
+
+What changed
+------------
+- Russian entity pages now PRETRANSLATE the visible imported entity before HTML is rendered.
+  This includes entity name, description, traits, actions and common metadata values.
+- Content Library and Builder Data result pages pretranslate visible names/descriptions.
+- Builder Data detail pages pretranslate their normalized content before rendering.
+- Class pages pretranslate feature/subclass names and descriptions before rendering.
+- Client fallback now also translates one-word imported content inside rules/content cards
+  (e.g. Aboleth, Amphibious, Aberration) while keeping user character names hard-skipped.
+- Browser translation batches increased from 40 to 100 visible strings per request.
+- Server translation endpoint accepts up to 100 strings per request.
+- Added verified 2024 Russian reference terms for the Aboleth example shown during QA:
+  Aboleth, Amphibious, Eldritch Restoration, Legendary Resistance, Mucus Cloud,
+  Probing Telepathy, Consume Memories, Mind Enslave, Multiattack, Tentacle,
+  Psychic Drain.
+- Added Deep Speech and Natural Armor to the D&D rules glossary.
+- Canonical English database records are still not overwritten.
+
+Behavior
+--------
+- In RU mode, the first visit to an uncached content page may wait while the local model
+  translates that page. Once cached, subsequent loads are immediate.
+- npm run i18n:full is still recommended to prewarm the whole database, but it is no
+  longer required just to make an opened entity page render in Russian.
+- If the local model cannot be downloaded/loaded, curated terminology still works and the
+  server logs the translation error instead of silently corrupting canonical data.
+
+Install
+-------
+1. Stop the server (Ctrl+C).
+2. Extract v0.23.1 over the current project with replacement.
+3. npm.cmd install
+4. npm.cmd test
+5. npm.cmd run web
+6. Ctrl+F5 in the browser.
+
+Optional full prewarm:
+  npm.cmd run i18n:full
+
+Validation
+----------
+85 tests passed, 0 failed.

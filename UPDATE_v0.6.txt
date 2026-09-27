@@ -1,0 +1,31 @@
+D&D Card Table v0.6 — Combat / Encounter Engine
+
+Added:
+- Encounters section in the main navigation.
+- Create/delete encounters.
+- Add existing characters to an encounter.
+- Add any imported creature; duplicate monsters become independent combatants (#1, #2, ...).
+- Each combatant has independent HP, AC, DEX and Initiative.
+- Roll initiative for the whole encounter using d20 + DEX modifier.
+- Manual initiative override.
+- Round counter, Previous and Next Turn controls.
+- Current combatant highlight.
+- HP adjustment during combat; player-character HP syncs back to the Character sheet.
+- Remove a combatant without deleting the source character/creature.
+- Current-turn panel shows character inventory actions or imported creature actions.
+- Reset initiative while keeping combatants and current HP.
+
+Install:
+1. Make sure Docker Desktop is running.
+2. In project folder: docker compose up -d
+3. Stop web server with Ctrl + C if it is running.
+4. Copy this update into dnd-card-table with replacement.
+5. Run: npm.cmd run db:migrate:006
+6. Run: npm.cmd run web
+7. Ctrl + F5 in browser.
+8. Open: http://localhost:3000/encounters
+
+Prototype limits in v0.6:
+- Monster action descriptions are shown, but their attack/damage formulas are not yet auto-executed.
+- Conditions/status effects are not yet attached to combatants.
+- No battle map yet.

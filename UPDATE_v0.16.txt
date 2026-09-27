@@ -1,0 +1,124 @@
+D&D Card Table v0.16 — XP Progression & Guided Level Up
+
+1. FEATURE TABLES
+Markdown-style tables inside feature descriptions are now rendered as actual
+tables. Draconic Ancestry is the primary test case:
+Dragon | Damage Type
+Black  | Acid
+Blue   | Lightning
+...etc.
+
+The rich renderer also supports:
+- paragraphs
+- line breaks
+- **bold**
+- *italic*
+- `inline code`
+without allowing raw imported HTML.
+
+2. EXPERIENCE BAR
+Character sheets now show an XP bar under the character identity and a larger
+progression panel in Features.
+
+Thresholds:
+Level 2  = 300
+Level 3  = 900
+Level 4  = 2,700
+Level 5  = 6,500
+Level 6  = 14,000
+Level 7  = 23,000
+Level 8  = 34,000
+Level 9  = 48,000
+Level 10 = 64,000
+Level 11 = 85,000
+Level 12 = 100,000
+Level 13 = 120,000
+Level 14 = 140,000
+Level 15 = 165,000
+Level 16 = 195,000
+Level 17 = 225,000
+Level 18 = 265,000
+Level 19 = 305,000
+Level 20 = 355,000
+
+When the required XP is reached the Level Up button becomes available.
+XP is not automatically spent by leveling.
+
+You can:
+- Add XP
+- Set exact XP
+- See XP remaining
+- See percentage to next level
+
+Existing characters are migrated to at least the minimum XP required by their
+current level so old level-2/3 characters don't start below their own threshold.
+
+3. GUIDED LEVEL-UP FLOW
+Level is no longer intended to be typed freely in the character Features panel.
+The Level Up button opens a four-step flow styled like Guided Character Builder:
+
+1. Review
+   - old -> new level
+   - XP
+   - Proficiency Bonus
+   - newly unlocked features
+
+2. Hit Points
+   - fixed class Hit Die average + CON
+   - real browser RNG roll of the Hit Die + CON
+   - custom gain for house rules
+   - live new HP maximum preview
+
+3. Choices
+   - subclass selection when required
+   - notices for newly available Weapon Mastery / Expertise / Fighting Style
+   - no automatic class choice is silently made
+
+4. Confirm
+   - final summary
+   - applies level, HP, PB, subclass and resynchronizes resources/spell slots
+
+4. REVERSIBLE LEVEL UPS
+Before a level-up, v0.16 stores a progression snapshot.
+
+After leveling, a small:
+  ↶ Undo level
+
+button appears.
+
+It restores:
+- previous level
+- previous current/max HP
+- previous subclass
+- previous Proficiency Bonus
+- Weapon Mastery selections
+- Expertise selections
+- feature choices
+
+XP is deliberately NOT reduced on rollback because XP is not spent on leveling.
+
+5. GUIDED BUILDER XP
+New characters created directly at level 2 or 3 now receive the minimum XP
+consistent with that starting level instead of always receiving 0 XP.
+
+INSTALL
+1. Stop server:
+   Ctrl + C
+2. Copy this update into the project with replacement.
+3. Run:
+   npm.cmd run db:migrate:016
+4. Run:
+   npm.cmd run web
+5. Ctrl + F5.
+
+TEST
+- Open Dragonborn -> Features -> Draconic Ancestry:
+  the ancestry table should render normally.
+- On a level-2 character, set XP to 900:
+  Level Up to 3 should appear.
+- Open it:
+  the four-step level-up flow should appear.
+- Confirm:
+  character becomes level 3.
+- Return to Features:
+  a small Undo level button should be available.

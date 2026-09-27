@@ -1,0 +1,95 @@
+D&D Card Table — cumulative update v0.19.2
+============================================================
+
+This package includes every change from v0.19.1 and can be copied over the
+existing project. No new database migration is required.
+
+INSTALL ON WINDOWS
+------------------
+1. Stop the running server with Ctrl+C.
+2. Make a backup copy of your current project folder.
+3. Extract this archive and copy its contents into:
+   C:\Users\Имир\Desktop\dnd-card-table
+   Confirm replacement of existing files. Do not delete your existing .env.
+4. Open Command Prompt and run:
+
+   cd /d "C:\Users\Имир\Desktop\dnd-card-table"
+   npm.cmd install
+   npm.cmd test
+   npm.cmd run web
+
+5. Open the site and press Ctrl+F5 once so the browser reloads the new CSS
+   and JavaScript. The header and footer should show Prototype 0.19.2.
+
+WHAT CHANGED
+------------
+- Spell class data remains normalized, so eligible spells can be added without
+  the class-list error fixed in v0.19.1.
+- Every spell card has a small Full description disclosure. It opens directly
+  in the card and includes At Higher Levels and material details when present.
+- Imported Markdown emphasis and lists render normally instead of showing ***.
+- Spell timing, range, components, status, and casting controls were restyled.
+- Every spell card states its casting cost: no slot for a cantrip, ritual when
+  applicable, or one spell/Pact Magic slot and its level.
+- Attack and damage buttons roll on the current page. A dice tray animates the
+  appropriate d4/d6/d8/d10/d12/d20 shape and shows the total and breakdown.
+  The same tray also supports advantage/disadvantage, Second Wind,
+  Concentration saves, and the builder's 4d6 ability rolls.
+- Armor Class now has a compact Adjust control with a clear Auto/Manual mode.
+- The Illustrated character layout and its responsive column behavior were
+  rebalanced so the portrait no longer crushes the right-hand statistics.
+- Card-owner text, Standard Array status, ability modifiers, and native select
+  options have darker Tavern-theme colors for better contrast.
+
+HOW TO VERIFY
+-------------
+1. Spell adding
+   Open Characters -> a Bard/Cleric/Druid/Paladin/Ranger/Sorcerer/Warlock/
+   Wizard -> Spells. Add one eligible cantrip and one eligible level spell.
+   Both should appear without a server error. A spell from another class must
+   still be rejected.
+
+2. Full description and Markdown
+   On the Spells tab, click Full description on Druidcraft or another spell.
+   The card should expand in place without opening a separate page. Text such
+   as Weather Sensor should be bold/italic and must not contain visible ***.
+
+3. Spell-card status and cost
+   Check a cantrip and a level-1+ spell. The green status must sit neatly in the
+   header. The separate Casting cost row should say No spell slot for a cantrip
+   and 1 spell slot / 1 Pact Magic slot with a level for a leveled spell.
+   Changing the slot selector should immediately update the displayed level.
+
+4. Rolls on the current page
+   Click Damage or Spell attack. The URL and active Spells tab must not change.
+   A dice tray should appear at the lower right, animate briefly, then show the
+   rolled dice, formula, breakdown, and total. Close it with × or Escape.
+   Repeat with an inventory weapon attack/damage button. If available, also try
+   Second Wind or a Concentration save and confirm HP/resource/concentration
+   updates without leaving the page.
+
+5. Armor Class control
+   In the character header, click Adjust under Armor Class. In Auto mode the
+   manual number field is disabled and the equipment explanation is visible.
+   Select Manual, enter a value, save, and confirm the new AC. Switch back to
+   Auto and confirm the equipment-derived value returns.
+
+6. Illustrated layout
+   Select Illustrated on a character with a portrait. At normal desktop width,
+   the identity, portrait, and statistics must stay readable with no overlap or
+   squeezed AC controls. Narrow the window: the page should move to two columns
+   and then one column cleanly.
+
+7. Contrast
+   With Tavern theme enabled, open a card instance assigned to a character.
+   The owner line (character · name) should be dark and readable. In Character
+   Builder, Standard Array valid, ability modifiers, and dropdown options must
+   use dark readable text rather than pale green/orange on parchment or white.
+
+AUTOMATED CHECK
+---------------
+Run from the project folder:
+
+   npm.cmd test
+
+Expected result: 35 tests pass, 0 fail.

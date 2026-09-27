@@ -1,0 +1,788 @@
+{
+  "fixed_branch_keys": [
+    "undead",
+    "beast",
+    "dragon",
+    "construct",
+    "aberration",
+    "celestial",
+    "elemental",
+    "fey",
+    "fiend",
+    "giant",
+    "humanoid",
+    "monstrosity",
+    "ooze",
+    "plant",
+    "demon",
+    "devil",
+    "spirit",
+    "parasite",
+    "swarm",
+    "boss",
+    "character",
+    "npc",
+    "merchant",
+    "guard",
+    "blacksmith",
+    "healer",
+    "scholar",
+    "noble",
+    "quest_giver",
+    "companion",
+    "loot",
+    "trap",
+    "door",
+    "stairs",
+    "portal",
+    "marker",
+    "class_barbarian",
+    "class_fighter",
+    "class_paladin",
+    "class_ranger",
+    "class_rogue",
+    "class_monk",
+    "class_bard",
+    "class_druid",
+    "class_cleric",
+    "class_wizard",
+    "class_sorcerer",
+    "class_warlock"
+  ],
+  "art_branch_keys": [
+    "character",
+    "npc",
+    "undead",
+    "beast",
+    "dragon",
+    "construct",
+    "aberration",
+    "celestial",
+    "elemental",
+    "fey",
+    "fiend",
+    "giant",
+    "humanoid",
+    "monstrosity",
+    "ooze",
+    "plant",
+    "demon",
+    "devil",
+    "spirit",
+    "parasite",
+    "swarm",
+    "boss",
+    "merchant",
+    "questgiver",
+    "guard",
+    "innkeeper",
+    "blacksmith",
+    "mage",
+    "bandit",
+    "human",
+    "elf",
+    "dwarf",
+    "orc",
+    "gnome",
+    "halfling",
+    "half_orc",
+    "half_elf",
+    "tiefling",
+    "dragonborn"
+  ],
+  "source": "Original 48 entries from dnd-card-table-v0.30.2-fixed.zip; only missing race/role types from dnd-card-table-v0.30.3-token-art-fix-ru.zip.",
+  "fixed_branch_catalog": {
+    "undead": {
+      "label": "Undead",
+      "group": "Creatures",
+      "color": "#91d573",
+      "file": "token-icons-creatures-v1.png",
+      "width": 1448,
+      "height": 1086,
+      "crop": [
+        70,
+        76,
+        132,
+        164
+      ]
+    },
+    "beast": {
+      "label": "Beast",
+      "group": "Creatures",
+      "color": "#d3a35a",
+      "file": "token-icons-creatures-v1.png",
+      "width": 1448,
+      "height": 1086,
+      "crop": [
+        289,
+        76,
+        160,
+        164
+      ]
+    },
+    "dragon": {
+      "label": "Dragon",
+      "group": "Creatures",
+      "color": "#dd8971",
+      "file": "token-icons-creatures-v1.png",
+      "width": 1448,
+      "height": 1086,
+      "crop": [
+        502,
+        51,
+        214,
+        189
+      ]
+    },
+    "construct": {
+      "label": "Construct",
+      "group": "Creatures",
+      "color": "#a6bdc9",
+      "file": "token-icons-creatures-v1.png",
+      "width": 1448,
+      "height": 1086,
+      "crop": [
+        760,
+        70,
+        169,
+        170
+      ]
+    },
+    "aberration": {
+      "label": "Aberration",
+      "group": "Creatures",
+      "color": "#c294e6",
+      "file": "token-icons-creatures-v1.png",
+      "width": 1448,
+      "height": 1086,
+      "crop": [
+        988,
+        72,
+        197,
+        168
+      ]
+    },
+    "celestial": {
+      "label": "Celestial",
+      "group": "Creatures",
+      "color": "#f3de8b",
+      "file": "token-icons-creatures-v1.png",
+      "width": 1448,
+      "height": 1086,
+      "crop": [
+        1217,
+        79,
+        193,
+        157
+      ]
+    },
+    "elemental": {
+      "label": "Elemental",
+      "group": "Creatures",
+      "color": "#6fcde1",
+      "file": "token-icons-creatures-v1.png",
+      "width": 1448,
+      "height": 1086,
+      "crop": [
+        39,
+        314,
+        201,
+        181
+      ]
+    },
+    "fey": {
+      "label": "Fey",
+      "group": "Creatures",
+      "color": "#b5d780",
+      "file": "token-icons-creatures-v1.png",
+      "width": 1448,
+      "height": 1086,
+      "crop": [
+        271,
+        323,
+        214,
+        172
+      ]
+    },
+    "fiend": {
+      "label": "Fiend",
+      "group": "Creatures",
+      "color": "#e67474",
+      "file": "token-icons-creatures-v1.png",
+      "width": 1448,
+      "height": 1086,
+      "crop": [
+        520,
+        314,
+        198,
+        181
+      ]
+    },
+    "giant": {
+      "label": "Giant",
+      "group": "Creatures",
+      "color": "#cead8a",
+      "file": "token-icons-creatures-v1.png",
+      "width": 1448,
+      "height": 1086,
+      "crop": [
+        750,
+        315,
+        197,
+        180
+      ]
+    },
+    "humanoid": {
+      "label": "Humanoid",
+      "group": "Creatures",
+      "color": "#d4b690",
+      "file": "token-icons-creatures-v1.png",
+      "width": 1448,
+      "height": 1086,
+      "crop": [
+        987,
+        316,
+        209,
+        179
+      ]
+    },
+    "monstrosity": {
+      "label": "Monstrosity",
+      "group": "Creatures",
+      "color": "#b894d5",
+      "file": "token-icons-creatures-v1.png",
+      "width": 1448,
+      "height": 1086,
+      "crop": [
+        1229,
+        331,
+        195,
+        164
+      ]
+    },
+    "ooze": {
+      "label": "Ooze",
+      "group": "Creatures",
+      "color": "#9dbf54",
+      "file": "token-icons-creatures-v1.png",
+      "width": 1448,
+      "height": 1086,
+      "crop": [
+        37,
+        607,
+        200,
+        151
+      ]
+    },
+    "plant": {
+      "label": "Plant",
+      "group": "Creatures",
+      "color": "#78bf87",
+      "file": "token-icons-creatures-v1.png",
+      "width": 1448,
+      "height": 1086,
+      "crop": [
+        277,
+        569,
+        193,
+        189
+      ]
+    },
+    "demon": {
+      "label": "Demon",
+      "group": "Creatures",
+      "color": "#c86f85",
+      "file": "token-icons-creatures-v1.png",
+      "width": 1448,
+      "height": 1086,
+      "crop": [
+        518,
+        561,
+        195,
+        197
+      ]
+    },
+    "devil": {
+      "label": "Devil",
+      "group": "Creatures",
+      "color": "#d59864",
+      "file": "token-icons-creatures-v1.png",
+      "width": 1448,
+      "height": 1086,
+      "crop": [
+        758,
+        564,
+        172,
+        194
+      ]
+    },
+    "spirit": {
+      "label": "Spirit",
+      "group": "Creatures",
+      "color": "#b4dbea",
+      "file": "token-icons-creatures-v1.png",
+      "width": 1448,
+      "height": 1086,
+      "crop": [
+        996,
+        574,
+        177,
+        184
+      ]
+    },
+    "parasite": {
+      "label": "Parasite",
+      "group": "Creatures",
+      "color": "#93b786",
+      "file": "token-icons-creatures-v1.png",
+      "width": 1448,
+      "height": 1086,
+      "crop": [
+        1243,
+        576,
+        176,
+        182
+      ]
+    },
+    "swarm": {
+      "label": "Swarm",
+      "group": "Creatures",
+      "color": "#c9b585",
+      "file": "token-icons-creatures-v1.png",
+      "width": 1448,
+      "height": 1086,
+      "crop": [
+        47,
+        852,
+        180,
+        154
+      ]
+    },
+    "boss": {
+      "label": "Boss",
+      "group": "Creatures",
+      "color": "#e3c278",
+      "file": "token-icons-creatures-v1.png",
+      "width": 1448,
+      "height": 1086,
+      "crop": [
+        263,
+        816,
+        231,
+        190
+      ]
+    },
+    "character": {
+      "label": "Character",
+      "group": "People and roles",
+      "color": "#80bce7",
+      "file": "token-icons-roles-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "crop": [
+        39,
+        100,
+        281,
+        280
+      ]
+    },
+    "npc": {
+      "label": "NPC",
+      "group": "People and roles",
+      "color": "#d9c796",
+      "file": "token-icons-roles-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "crop": [
+        350,
+        101,
+        254,
+        276
+      ]
+    },
+    "merchant": {
+      "label": "Merchant",
+      "group": "People and roles",
+      "color": "#c8d2dc",
+      "file": "token-icons-roles-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "crop": [
+        657,
+        104,
+        247,
+        280
+      ]
+    },
+    "guard": {
+      "label": "Guard",
+      "group": "People and roles",
+      "color": "#c8d2dc",
+      "file": "token-icons-roles-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "crop": [
+        951,
+        39,
+        269,
+        339
+      ]
+    },
+    "blacksmith": {
+      "label": "Blacksmith",
+      "group": "People and roles",
+      "color": "#c8d2dc",
+      "file": "token-icons-roles-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "crop": [
+        42,
+        421,
+        271,
+        263
+      ]
+    },
+    "healer": {
+      "label": "Healer",
+      "group": "People and roles",
+      "color": "#c8d2dc",
+      "file": "token-icons-roles-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "crop": [
+        361,
+        426,
+        244,
+        242
+      ]
+    },
+    "scholar": {
+      "label": "Scholar",
+      "group": "People and roles",
+      "color": "#c8d2dc",
+      "file": "token-icons-roles-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "crop": [
+        627,
+        422,
+        294,
+        240
+      ]
+    },
+    "noble": {
+      "label": "Noble",
+      "group": "People and roles",
+      "color": "#c8d2dc",
+      "file": "token-icons-roles-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "crop": [
+        965,
+        437,
+        236,
+        238
+      ]
+    },
+    "quest_giver": {
+      "label": "Quest giver",
+      "group": "People and roles",
+      "color": "#c8d2dc",
+      "file": "token-icons-roles-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "crop": [
+        40,
+        713,
+        264,
+        241
+      ]
+    },
+    "companion": {
+      "label": "Companion",
+      "group": "People and roles",
+      "color": "#c8d2dc",
+      "file": "token-icons-roles-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "crop": [
+        347,
+        695,
+        262,
+        275
+      ]
+    },
+    "loot": {
+      "label": "Treasure",
+      "group": "Map markers",
+      "color": "#c8d2dc",
+      "file": "token-icons-roles-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "crop": [
+        640,
+        717,
+        270,
+        237
+      ]
+    },
+    "trap": {
+      "label": "Trap",
+      "group": "Map markers",
+      "color": "#c8d2dc",
+      "file": "token-icons-roles-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "crop": [
+        958,
+        745,
+        255,
+        189
+      ]
+    },
+    "door": {
+      "label": "Door",
+      "group": "Map markers",
+      "color": "#c8d2dc",
+      "file": "token-icons-roles-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "crop": [
+        51,
+        954,
+        241,
+        270
+      ]
+    },
+    "stairs": {
+      "label": "Stairs",
+      "group": "Map markers",
+      "color": "#c8d2dc",
+      "file": "token-icons-roles-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "crop": [
+        350,
+        999,
+        247,
+        217
+      ]
+    },
+    "portal": {
+      "label": "Portal",
+      "group": "Map markers",
+      "color": "#c8d2dc",
+      "file": "token-icons-roles-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "crop": [
+        639,
+        956,
+        286,
+        265
+      ]
+    },
+    "marker": {
+      "label": "Location marker",
+      "group": "Map markers",
+      "color": "#c8d2dc",
+      "file": "token-icons-roles-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "crop": [
+        969,
+        953,
+        263,
+        272
+      ]
+    },
+    "class_barbarian": {
+      "label": "Barbarian",
+      "group": "Character classes",
+      "color": "#c8d2dc",
+      "file": "token-icons-classes-v1.png",
+      "width": 1448,
+      "height": 1086,
+      "crop": [
+        31,
+        68,
+        352,
+        285
+      ]
+    },
+    "class_fighter": {
+      "label": "Fighter",
+      "group": "Character classes",
+      "color": "#c8d2dc",
+      "file": "token-icons-classes-v1.png",
+      "width": 1448,
+      "height": 1086,
+      "crop": [
+        434,
+        35,
+        234,
+        325
+      ]
+    },
+    "class_paladin": {
+      "label": "Paladin",
+      "group": "Character classes",
+      "color": "#c8d2dc",
+      "file": "token-icons-classes-v1.png",
+      "width": 1448,
+      "height": 1086,
+      "crop": [
+        738,
+        25,
+        324,
+        333
+      ]
+    },
+    "class_ranger": {
+      "label": "Ranger",
+      "group": "Character classes",
+      "color": "#c8d2dc",
+      "file": "token-icons-classes-v1.png",
+      "width": 1448,
+      "height": 1086,
+      "crop": [
+        1093,
+        29,
+        324,
+        336
+      ]
+    },
+    "class_rogue": {
+      "label": "Rogue",
+      "group": "Character classes",
+      "color": "#c8d2dc",
+      "file": "token-icons-classes-v1.png",
+      "width": 1448,
+      "height": 1086,
+      "crop": [
+        29,
+        379,
+        343,
+        321
+      ]
+    },
+    "class_monk": {
+      "label": "Monk",
+      "group": "Character classes",
+      "color": "#c8d2dc",
+      "file": "token-icons-classes-v1.png",
+      "width": 1448,
+      "height": 1086,
+      "crop": [
+        408,
+        394,
+        293,
+        323
+      ],
+      "clip": "400,370 734,370 734,717 620,717 620,700 400,700"
+    },
+    "class_bard": {
+      "label": "Bard",
+      "group": "Character classes",
+      "color": "#c8d2dc",
+      "file": "token-icons-classes-v1.png",
+      "width": 1448,
+      "height": 1086,
+      "crop": [
+        745,
+        376,
+        301,
+        341
+      ]
+    },
+    "class_druid": {
+      "label": "Druid",
+      "group": "Character classes",
+      "color": "#c8d2dc",
+      "file": "token-icons-classes-v1.png",
+      "width": 1448,
+      "height": 1086,
+      "crop": [
+        1087,
+        386,
+        344,
+        309
+      ]
+    },
+    "class_cleric": {
+      "label": "Cleric",
+      "group": "Character classes",
+      "color": "#c8d2dc",
+      "file": "token-icons-classes-v1.png",
+      "width": 1448,
+      "height": 1086,
+      "crop": [
+        39,
+        700,
+        323,
+        355
+      ]
+    },
+    "class_wizard": {
+      "label": "Wizard",
+      "group": "Character classes",
+      "color": "#c8d2dc",
+      "file": "token-icons-classes-v1.png",
+      "width": 1448,
+      "height": 1086,
+      "crop": [
+        369,
+        704,
+        365,
+        348
+      ],
+      "clip": "369,717 480,717 480,704 620,704 620,727 734,727 734,1052 369,1052"
+    },
+    "class_sorcerer": {
+      "label": "Sorcerer",
+      "group": "Character classes",
+      "color": "#c8d2dc",
+      "file": "token-icons-classes-v1.png",
+      "width": 1448,
+      "height": 1086,
+      "crop": [
+        754,
+        705,
+        292,
+        343
+      ]
+    },
+    "class_warlock": {
+      "label": "Warlock",
+      "group": "Character classes",
+      "color": "#c8d2dc",
+      "file": "token-icons-classes-v1.png",
+      "width": 1448,
+      "height": 1086,
+      "crop": [
+        1100,
+        723,
+        312,
+        324
+      ]
+    }
+  },
+  "asset_sha256": {
+    "token-icons-classes-v1.png": "d9ce4b186667f0032752f435224f8cc5573b5519ad8f7d2c2c1a319f96539b6e",
+    "token-icons-creatures-v1.png": "2191fbadaa0c0d4ebd593ce86f52e05ed16a3213a90d9c46e652eb4021806941",
+    "token-icons-roles-v1.png": "23fef730ad014445d95c1143ee36c138a934f0c18b2e273b0ec05bbabb2348fd",
+    "token-icons/bandit.png": "f1bf5a13a9960f9913efbb360bebe2282375300b89a0f47348b5410d8e4e5923",
+    "token-icons/dragonborn.png": "40f2aae1529d6e33e18cec4ef8f920bcc746e63b6a5beaf3070b055d10673692",
+    "token-icons/dwarf.png": "ab8f5c2a527709996c0d9cff27699abf92265f5778203d89d0e3878c977b9164",
+    "token-icons/elf.png": "c03026cb593c548c8926211a2826699fc839911c359e55a29d2799f7a135cc2a",
+    "token-icons/gnome.png": "42728a4e9ea415b07d01d1f691afa2adc642bd6093e509024e0d469cb97d656b",
+    "token-icons/half_elf.png": "832c5614fe8f2b3a9b6fcc7931e09a4c2a43a9bdcafc264b03ebcc07c1e33eb7",
+    "token-icons/half_orc.png": "b619ec7d703076273fd1a88f24a72346ac8a2007a0f01db0e570d4971634b221",
+    "token-icons/halfling.png": "10bd9cee431e8c40f510872a9a31983ccb12799a0f98d28f79e26e37785b56a3",
+    "token-icons/human.png": "0557cd9e4104b201f797e6b89cd40e14f75e307e6a5bd1cf172abd796bc25395",
+    "token-icons/innkeeper.png": "8bdbaa00e136731fdad67e833f5e46d9cf1ead36651b7a49c8fe48f947ea6fb2",
+    "token-icons/mage.png": "b32dd7875b4e2e99250f6f14011473cff8d09c36194f8af79b4052bd57a48234",
+    "token-icons/orc.png": "0ea90ac646d4487fc1e91650b25275bbbb45ca597065446648f072639a107478",
+    "token-icons/tiefling.png": "7abe0b450f43e9530b734836b8159861f23efc7f1bed82ea7e321d76c95f717c"
+  }
+}

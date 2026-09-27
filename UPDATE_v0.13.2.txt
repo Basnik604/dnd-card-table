@@ -1,0 +1,48 @@
+D&D Card Table v0.13.2 — Equipment Classification Fix
+
+The screenshot exposed a second-order bug in v0.13.1:
+Open5e sometimes stores placeholder values (0, null-like strings, "None") in
+weapon/armor columns. v0.13.1 treated those placeholders as real metadata.
+
+VISIBLE SYMPTOMS FIXED
+- Entertainer's Pack no longer appears as WEAPON or gets Equip.
+- Pouch no longer appears as WEAPON or gets Equip.
+- Thieves' Tools no longer appears as ARMOR or gets Equip.
+- Leather Armor is correctly ARMOR.
+- Dagger/Javelin/Longsword remain WEAPON and keep attack/damage controls.
+- Invalid equipped flags on ordinary gear/tools are cleared.
+- Inventory Cards heading is readable on the Tavern wood background.
+
+CLASSIFICATION IS NOW STRICT
+Weapon requires:
+- a real dice formula such as 1d4 / 2d6, or
+- a meaningful Simple/Martial weapon category.
+
+Armor requires:
+- a positive Armor Class value.
+
+Shield requires:
+- positive AC + shield identity.
+
+Tool requires:
+- actual tool/supplies/instrument metadata.
+
+Everything else stays Adventuring Gear unless it is a real consumable/magic item.
+
+STARTING INVENTORY
+- New Guided Builder characters now merge identical starting item stacks.
+  Example: Bard Dagger x2 + Criminal Dagger x2 becomes one Dagger x4 stack
+  instead of two duplicate Dagger x2 cards.
+- Existing equipped duplicate stacks are intentionally left untouched so the
+  hotfix does not silently destroy current equipment state.
+
+INSTALL
+1. Ctrl + C
+2. Copy the update into dnd-card-table with replacement.
+3. Run:
+   npm.cmd run db:migrate:013
+4. Run:
+   npm.cmd run web
+5. Ctrl + F5
+
+Reopen the same character after migration.

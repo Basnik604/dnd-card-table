@@ -1,0 +1,24 @@
+D&D Card Table — Content Core v0.2
+
+Что добавлено:
+- автоматическое применение всех SQL-миграций;
+- исправленная уникальность content_entities по типу сущности;
+- spells;
+- equipment/items;
+- magic items;
+- conditions;
+- общий безопасный Open5e V2 importer;
+- import:all.
+
+Установка поверх v0.1.1:
+1. Скопировать содержимое архива в корень dnd-card-table с заменой файлов.
+2. npm.cmd run db:migrate
+3. npm.cmd run import:spells
+4. npm.cmd run import:items
+5. npm.cmd run import:magicitems
+6. npm.cmd run import:conditions
+
+Или после миграции одной командой:
+   npm.cmd run import:all
+
+Важно: import:all повторно проверит creatures, но дублей не создаст.

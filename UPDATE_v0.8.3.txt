@@ -1,0 +1,34 @@
+D&D Card Table v0.8.3 — Search expansion
+
+The v0.8.2 search behavior is now applied outside Builder Data.
+
+CONTENT LIBRARY
+- Works separately inside the selected tab:
+  Monsters / Spells / Equipment / Magic Items / Conditions / All.
+- Suggestions search names first.
+- Typed characters must appear as one contiguous case-insensitive substring
+  in the same order.
+- Exact title match ranks first.
+- Prefix match ranks second.
+- Other title substring matches rank after that.
+- Description is searched ONLY if zero names in the selected category match.
+- Description fallback shows a context snippet.
+- Search button uses the same logic as autocomplete.
+- Old/stale autocomplete network responses cannot overwrite newer input.
+
+CARD LIBRARY
+- Same name-first / description-second search behavior.
+- Live autocomplete.
+- Description fallback snippets.
+- Search button and autocomplete use the same matching rules.
+
+Builder Data keeps the same v0.8.2 behavior.
+
+No database migration or re-import is required.
+
+Install:
+1. Stop the web server: Ctrl + C
+2. Copy this update into dnd-card-table with replacement.
+3. Run:
+   npm.cmd run web
+4. Refresh with Ctrl + F5.

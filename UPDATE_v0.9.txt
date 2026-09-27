@@ -1,0 +1,50 @@
+D&D Card Table v0.9 — Character Runtime
+
+Adds the next gameplay layer to Character Sheets.
+
+SPELLCASTING
+- Spellbook/known-spell assignment from the imported SRD spell database.
+- Spell options are filtered to the character class and current supported spell level.
+- Spell Attack bonus and Save DC are calculated from class spellcasting ability + proficiency.
+- Spell slots are tracked per character.
+- Casting a level 1+ spell consumes a slot.
+- Cantrips do not consume slots.
+- Warlock Pact Magic uses its own slot level and restores on Short Rest.
+- Paladin and Ranger use the SRD 2024 level 1-3 slot progression.
+- Full casters use the normal level 1-3 progression.
+- Prepared / Unprepared toggle.
+- Spell attack and detected damage dice can be rolled from the character sheet.
+
+CONDITIONS
+- Apply imported Conditions directly to a character.
+- Active conditions are shown as pills.
+- Each condition links back to its Content Library entry.
+- Remove conditions from the sheet.
+
+RESOURCES
+- Generic class-resource counters:
+  Rage, Bardic Inspiration, Channel Divinity, etc.
+- Choose Short Rest, Long Rest or Manual recharge.
+- +/- controls and delete.
+
+RESTS
+- Short Rest restores Short-Rest resources and Warlock Pact Magic slots.
+- Long Rest restores HP, clears Temp HP, restores all spell slots, and restores Short/Long-Rest resources.
+
+SCOPE
+- v0.9 intentionally does not auto-populate every class-specific resource yet.
+- The generic resource system is the stable data model those class automations can target next.
+- Spell selection is on the character sheet; deeper guided-builder spell choices come in a later refinement.
+
+Install:
+1. Make sure Docker/PostgreSQL is running:
+   docker compose up -d
+2. Stop web server:
+   Ctrl + C
+3. Copy this update into dnd-card-table with replacement.
+4. Apply:
+   npm.cmd run db:migrate:009
+5. Start:
+   npm.cmd run web
+6. Refresh with Ctrl + F5.
+7. Open an existing character.

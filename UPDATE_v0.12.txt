@@ -1,0 +1,53 @@
+D&D Card Table v0.12 — Tavern Visual Polish
+
+This is the corrective visual pass requested after v0.11.
+No database migration and no content re-import are required.
+
+REALISTIC TAVERN BACKGROUND
+- Uses the supplied tavern-table reference as the actual Tavern scene.
+- The background is locally bundled as optimized WebP.
+- It is fixed behind the app on desktop so the UI feels laid on a real table.
+- v0.11 vector candle/book/mug/sword/coin decorations are disabled to avoid duplication.
+
+REAL WOOD TOP BAR
+- The top navigation now uses real wood imagery from the tavern scene.
+- Brass border, inner bevel/shadow and rivets remain as interface framing.
+- Navigation, theme selector and connection status remain high-contrast.
+
+PARCHMENT MATERIAL
+- Added a locally generated parchment texture.
+- Applied to appropriate physical-paper surfaces:
+  Content cards, Encounter cards, Character panels, Builder panels,
+  Builder Data summaries, abilities, stat boxes, descriptions and inventory.
+- The texture is subtle enough to preserve text readability.
+
+CONTRAST FIXES
+- Fixed dark text accidentally inherited on the wood background.
+- Fixed Traits / Features and other section headings that were nearly invisible.
+- Fixed Builder Data Choices & Proficiencies dark Base panels leaking into Tavern.
+- Fixed monster/entity ability blocks where both tile and text were too dark.
+- Fixed ACTIVE status: it is now an opaque green badge with light text.
+- Added explicit rules for text on parchment vs text on leather/wood.
+
+MATERIAL RULES
+- Parchment = dark brown ink.
+- Dark wood/leather = warm cream/gold text.
+- Chips/tags = dark leather with high-contrast gold/cream text.
+- Combat/runtime surfaces remain dark but now explicitly force readable text.
+
+Install:
+1. Stop server: Ctrl + C
+2. Copy this update into dnd-card-table with replacement.
+   IMPORTANT: copy the included src/web/assets folder too.
+3. No migration is required.
+4. Run:
+   npm.cmd run web
+5. Refresh browser with Ctrl + F5.
+6. Select Tavern.
+
+Recommended checks:
+- Builder Data -> Acolyte / Background
+- Content -> any monster detail page
+- Encounters list (ACTIVE badge)
+- Character sheet -> Overview and Illustrated
+- Top navigation wood texture

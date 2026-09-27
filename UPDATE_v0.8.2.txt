@@ -1,0 +1,27 @@
+D&D Card Table v0.8.2 — Search behavior fix
+
+Search logic now follows this order:
+
+1. Search only inside the currently selected Builder Data category.
+2. Search entity NAMES first.
+   The typed text must occur as a case-insensitive contiguous substring,
+   preserving the same character order.
+3. Exact-name matches rank first.
+4. Names beginning with the typed text rank next.
+5. Other names containing the typed text follow.
+6. ONLY when zero names match, search the entity DESCRIPTION.
+7. Description fallback suggestions show a short context snippet.
+
+Also fixed stale autocomplete:
+- Previous network requests are aborted when the user keeps typing.
+- Old/slower responses can no longer overwrite suggestions for the newer text.
+- Browser fetch cache is disabled for live suggestions.
+
+The Search button uses the same title-first / description-second logic.
+
+Install:
+1. Ctrl + C
+2. Copy this update into dnd-card-table with replacement.
+3. No migration and no re-import required.
+4. npm.cmd run web
+5. Ctrl + F5

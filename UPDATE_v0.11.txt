@@ -1,0 +1,57 @@
+D&D Card Table v0.11 — Immersive Tavern Skin
+
+This update reworks Tavern from a brown palette into a full visual skin.
+No database migration and no content re-import are required.
+
+TAVERN SHELL
+- Dark timber tabletop across the entire application.
+- Fixed original vector decorations on wide screens:
+  candle, old adventure book, tankard, coins, sword and dice.
+- Decorations stay outside the interaction area and disappear automatically
+  on smaller screens.
+- Header is now a carved/wooden game-navigation bar with brass detailing.
+
+PARCHMENT UI
+- Hero sections read as large physical parchment sheets.
+- Content cards, Builder panels, character panels, detail panels and runtime
+  panels use parchment surfaces, irregular paper-like edges, brass pins and
+  physical shadows.
+- Search is presented as a dark wooden/leather input tray.
+- Buttons and tabs use dark wood / brass styling.
+- Tags use wax/leather-like dark badges.
+
+CONTENT / CARDS
+- Content entries feel like physical bestiary/index cards.
+- Uploaded artwork is slightly integrated into the parchment look.
+- Game Cards use parchment bodies instead of the Base dark-card treatment.
+
+CHARACTER SHEET
+- Character information is presented as a physical tabletop sheet.
+- Portrait remains the visual center.
+- Core combat stats are dark inset leather/wood boxes.
+- Ability blocks, skills, saves, features, resources, spell slots and
+  conditions all receive Tavern-specific physical-material styling.
+- Standard / Compact / Illustrated behavior from v0.10 remains unchanged.
+
+BUILDER / BUILDER DATA
+- The same Tavern art direction now carries through the creation and
+  reference screens instead of stopping at the library.
+
+BASE THEME
+- The Base theme is intentionally preserved. Tavern styling is isolated to
+  html[data-theme="tavern"] so future themes can be built as independent skins.
+
+Install:
+1. Stop the web server with Ctrl + C.
+2. Copy this update into dnd-card-table with replacement.
+3. No migration is required.
+4. Run:
+   npm.cmd run web
+5. Refresh with Ctrl + F5.
+6. Select Tavern in the top theme selector.
+
+Recommended first checks:
+- Content -> Monsters
+- Encounters
+- Character -> Illustrated layout
+- Builder

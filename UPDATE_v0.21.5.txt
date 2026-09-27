@@ -1,0 +1,13 @@
+D&D Card Table v0.21.5 — Guided Builder compatibility cleanup
+
+- Removed repeated rules years from Guided Builder option labels.
+  Example: "Path of the Dragon · Tome of Heroes" instead of "... · 2014".
+- Ruleset/year metadata is still stored internally and remains available on detail pages.
+- Same-name options still prefer the modern SRD record.
+- Added a compatibility guardrail for legacy background + modern species:
+  the builder now supplies the origin ability increase instead of producing a character with no ASI.
+- 2024 background + legacy species continues to use the modern background increase and ignores legacy species ASI.
+- Legacy background + legacy species continues to use the legacy species increase.
+- Legacy source status is shown as a subtle note after selection, not repeated inside every dropdown row.
+
+No database migration or content re-import is required.

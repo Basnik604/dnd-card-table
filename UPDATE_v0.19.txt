@@ -1,0 +1,119 @@
+D&D Card Table v0.19 — Combat Action Engine
+
+No database migration is required. Runtime state uses the existing character
+feature_choices JSON plus existing spell-slot/resource tables.
+
+CONCENTRATION
+- Casting a Concentration spell now automatically starts Concentration.
+- Casting another Concentration spell replaces the previous one.
+- Combat shows an active Concentration panel.
+- Taking damage through the character HP control automatically calculates:
+  DC = max(10, half the damage, rounded up)
+- A Roll Concentration Save button resolves the Constitution save and records
+  the roll in roll_log.
+- Eldritch Mind automatically rolls the Concentration save with Advantage.
+- Failed saves end Concentration.
+- Reaching 0 HP through the HP control ends Concentration.
+- Long Rest ends Concentration.
+- A manual End Concentration button remains available.
+
+FONT OF MAGIC / FLEXIBLE CASTING
+Sorcerer level 2+ now gets a Flexible Casting panel in Spells:
+- Convert an available spell slot into Sorcery Points equal to slot level.
+- Create temporary spell slots with the standard costs:
+  Level 1 = 2 SP
+  Level 2 = 3 SP
+  Level 3 = 5 SP
+  Level 4 = 6 SP
+  Level 5 = 7 SP
+- Sorcery Points cannot exceed their normal maximum.
+- Created slots are displayed separately from normal class slots.
+- Casting spends a created slot before a normal slot of the same level.
+- Created slots disappear on a Long Rest.
+- Temporary slots can be used to upcast lower-level prepared spells.
+
+INNATE SORCERY
+Sorcerer resource is now an actual action:
+- Activate spends 1 use.
+- While active:
+  Spell Save DC +1
+  Sorcerer spell attack rolls use Advantage in the integrated roller.
+- End manually at any time.
+- Short or Long Rest clears the active state.
+
+PACT OF THE BLADE
+When the Warlock has Pact of the Blade:
+- Features shows a Pact Weapon binder.
+- Choose an eligible melee weapon already in character inventory.
+- The bound weapon uses Charisma for attack and damage rolls.
+- Inventory and Combat mark it as Pact Weapon · CHA.
+- Removing Pact of the Blade clears the stored bond.
+
+MAGICAL CUNNING
+Warlock Magical Cunning now has Recover Pact Slots:
+- spends the feature use
+- restores up to half Pact slots (rounded up)
+- level 20 restores all expended Pact slots
+- refuses to spend the use if no Pact slots are missing
+
+SECOND WIND
+Fighter Second Wind is now automated:
+- spends one use
+- rolls 1d10 + Fighter level
+- heals the character up to HP maximum
+- records the roll in roll_log
+
+LAY ON HANDS
+Paladin Lay on Hands now has a compact amount field:
+- enter healing amount
+- spends that many points from the pool
+- heals the character up to HP maximum
+
+ADVANTAGE ROLLS
+The common roller now understands Advantage for d20 attack/check formulas.
+v0.19 uses it for Innate Sorcery spell attacks and Concentration saves from
+Eldritch Mind.
+
+INSTALL
+1. Stop server:
+   Ctrl + C
+2. Copy this update into dnd-card-table with replacement.
+3. No migration.
+4. Run:
+   npm.cmd run web
+5. Browser:
+   Ctrl + F5
+
+GOOD TESTS
+Sorcerer 2+
+- Combat -> Activate Innate Sorcery.
+- Spells -> DC should increase by 1.
+- A spell-attack button should say Advantage.
+- Flexible Casting should convert slots <-> Sorcery Points.
+
+Any caster with a Concentration spell
+- Cast it.
+- Combat should show the Concentration panel.
+- Apply -20 HP.
+- The panel should request a DC 10 Concentration save.
+- Roll the save; failure removes Concentration.
+
+Warlock with Pact of the Blade
+- Add a melee weapon to inventory.
+- Features -> Pact Weapon -> Bind.
+- Inventory/Combat should mark the weapon Pact Weapon · CHA.
+
+Fighter
+- Spend HP, then press Second Wind in Combat resources.
+
+Paladin
+- Spend HP, then use the Lay on Hands amount field.
+
+NEXT
+The next logical stage is the remaining Pact and form/subclass engines:
+- Pact of the Tome choices and ritual book
+- Pact of the Chain familiar state
+- Wild Shape form selector
+- Channel Divinity action cards
+- subclass-specific active actions
+- richer spell effect helpers (save buttons, healing, temporary HP, conditions)

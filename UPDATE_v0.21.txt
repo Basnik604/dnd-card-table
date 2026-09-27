@@ -1,0 +1,98 @@
+D&D Card Table v0.21 — RU/EN Localization Layer
+
+No database migration is required.
+
+WHAT CHANGED
+
+1. RU / EN LANGUAGE SWITCH
+- Added a persistent RU / EN selector to the top navigation.
+- Russian is the default UI language for new local sessions.
+- The selected language is stored in localStorage and a same-site cookie.
+- Switching language does not reload the page and is reversible.
+
+2. LOCALIZATION ARCHITECTURE
+- Added src/web/assets/i18n-core.mjs.
+- Added src/web/assets/i18n.js.
+- The browser localization layer translates known UI phrases only.
+- Imported canonical names and rules text remain unchanged unless a phrase is an explicit interface label.
+- Original text is remembered per DOM node, so RU -> EN restores the original English UI rather than translating Russian back heuristically.
+- MutationObserver support localizes UI created later by Character Builder, spell pickers, dice tray, and other dynamic components.
+
+3. GUIDED CHARACTER BUILDER
+The localization layer covers the creation flow, including:
+- step names
+- identity/origin fields
+- content-scope controls
+- ability-score methods
+- background-benefit UI
+- skill selection instructions and counters
+- equipment/review labels
+- Previous / Next / Create Character
+- validation alerts
+- dynamic Point Buy / Standard Array status text
+- dynamic catalog-count summaries
+
+Canonical option names from imported content remain in their source language.
+
+4. BUILDER DATA
+Localized interface labels include:
+- Character Builder Data
+- Classes / Subclasses / Species / Backgrounds / Feats
+- filters, search, source/ruleset labels
+- normalized summary / choices / traits headings
+- reference-only UI wording
+
+Imported entity names and descriptive rules prose are preserved.
+
+5. CHARACTER / SPELL / COMBAT UI
+Added translations for the common interface vocabulary used by:
+- Character list and Character Sheet tabs
+- HP / AC / rests / resources
+- inventory and cards
+- spellbook / slots / prepared state
+- concentration and Sorcerer controls
+- class-choice panels
+- XP / level-up UI
+- encounters and initiative
+- dice tray and common live-roll errors
+
+6. ERRORS AND CONFIRMATIONS
+- Browser alert() / confirm() text is localized when it matches a known UI or validation message.
+- Dynamic server errors such as spell-list rejection and missing spell slots have Russian patterns.
+- JSON error responses honor the saved dnd-lang cookie.
+
+7. VERSION DISPLAY FIX
+- Top bar now displays Prototype 0.21 instead of the stale 0.19.2 label.
+- table-ui asset cache versions are bumped to 0.21.
+
+IMPORTANT CONTENT POLICY
+v0.21 intentionally does NOT machine-translate imported class/subclass/species/background/feat/spell/item names or rules descriptions. This keeps the canonical source intact. A later content-localization layer can add reviewed Russian aliases/descriptions without overwriting English source data.
+
+INSTALL
+1. Stop the server:
+   Ctrl + C
+2. Copy/extract this archive over the current dnd-card-table project with replacement.
+3. No migration or re-import is required.
+4. Run:
+   npm.cmd install
+   npm.cmd test
+   npm.cmd run web
+5. Browser:
+   Ctrl + F5
+
+FIRST TEST
+- Open Builder Data: the surrounding UI should be Russian by default while names such as Ability Score Improvement / Alert remain original.
+- Switch RU -> EN in the top bar: UI should return to English immediately.
+- Open Guided Builder and move through all five steps.
+- Trigger a validation alert by pressing Next with required data missing.
+- Switch back to RU and confirm dynamic builder counters also localize.
+
+NEXT
+After v0.21 verification, the next major work can return to gameplay depth:
+- Pact of the Tome
+- Pact of the Chain
+- Wild Shape
+- Channel Divinity
+- subclass active actions
+- richer spell-effect automation
+or we can first extend the reviewed Russian content-alias layer if preferred.

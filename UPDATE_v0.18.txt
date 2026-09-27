@@ -1,0 +1,129 @@
+D&D Card Table v0.18 — Class Choice Engine
+
+No database migration is required. The existing `feature_choices` JSON state
+and v0.17 always-prepared spell provenance are used.
+
+NEW: CLASS CHOICES SECTION
+Character -> Features now has a dedicated Class Choices section. Choices persist
+on the character and are not just display notes.
+
+CLERIC — DIVINE ORDER
+Level 1:
+- Protector
+  Martial weapon proficiency + Heavy armor training are recorded/displayed.
+- Thaumaturge
+  +1 Cleric cantrip capacity.
+  Arcana and Religion checks add Wisdom modifier (minimum +1).
+
+DRUID — PRIMAL ORDER
+Level 1:
+- Magician
+  +1 Druid cantrip capacity.
+  Arcana and Nature checks add Wisdom modifier (minimum +1).
+- Warden
+  Martial weapon proficiency + Medium armor training are recorded/displayed.
+
+WIZARD — SCHOLAR
+Level 2:
+- choose one proficient Arcana, History, Investigation, Medicine, Nature, or
+  Religion skill.
+- The character sheet treats that skill as Expertise (double PB).
+
+SORCERER — METAMAGIC
+- Level 2: 2 options
+- Level 10: 4 options
+- Level 17: 6 options
+All ten SRD 5.2 options are available:
+Careful, Distant, Empowered, Extended, Heightened, Quickened, Seeking,
+Subtle, Transmuted, Twinned.
+Each selected option has a Use button that spends the appropriate number of
+Sorcery Points. The sheet also now has an Innate Sorcery 2-use resource.
+
+WARLOCK — ELDRITCH INVOCATIONS
+Invocation limits now follow the 1–20 Warlock table:
+1 / 3 / 3 / 3 / 5 / 5 / 6 / 6 / 7 / 7 / 7 / 8 / 8 / 8 / 9 / 9 / 9 / 10 / 10 / 10
+
+The Basic Rules invocation list is selectable in Features.
+Validation includes:
+- Warlock level prerequisites
+- invocation-to-invocation prerequisites such as:
+  Pact of the Blade -> Thirsting Blade -> Devouring Blade
+  Pact of the Tome -> Gift of the Protectors
+  Pact of the Chain -> Investment of the Chain Master
+- targeted repeatable invocations only offer eligible currently-known Warlock
+  cantrips or eligible Origin feats.
+- a prerequisite invocation cannot be removed while a dependent invocation is
+  selected.
+Warlock level 2 also gains an auto-managed Magical Cunning resource.
+
+SUBCLASS CHOICES
+Circle of the Land:
+- choose Arid / Polar / Temperate / Tropical.
+- current land automatically controls the correct always-prepared Circle Spells.
+- changing land updates the spell package.
+
+Draconic Sorcery:
+- at level 6 choose Acid / Cold / Fire / Lightning / Poison for Elemental Affinity.
+
+College of Lore:
+- at level 6 choose two Magical Discoveries from eligible Cleric, Druid, or
+  Wizard spells.
+- selected spells are always prepared and do not consume normal Bard prepared
+  spell allowance.
+
+SUBCLASS ALWAYS-PREPARED SPELLS
+Automatically synchronized by level for:
+- Life Domain
+- Oath of Devotion
+- Fiend Patron
+- Draconic Sorcery
+- Circle of the Land (depends on selected land)
+- College of Lore Magical Discoveries (depends on user choice)
+
+They:
+- appear as Always Prepared in the Spells tab
+- don't count against normal Prepared Spells
+- are protected from accidental deletion
+- update automatically after level changes / rollback / subclass-choice changes
+
+LEVEL-UP
+The guided Level Up screen now announces newly unlocked modeled choices such as:
+- Metamagic increases
+- Eldritch Invocation increases
+- Wizard Scholar
+- Circle land
+- Draconic Elemental Affinity
+- College of Lore Magical Discoveries
+
+PENDING CHOICES
+A small chip appears next to the character identity when the sheet has unresolved
+modeled choices.
+
+INSTALL
+1. Stop server:
+   Ctrl + C
+2. Copy this update into dnd-card-table with replacement.
+3. No migration is required.
+4. Run:
+   npm.cmd run web
+5. Ctrl + F5.
+
+GOOD TESTS
+- Cleric 1: switch Protector / Thaumaturge; Thaumaturge raises cantrip limit by 1.
+- Druid 3 Circle of the Land: pick a land and open Spells; Circle spells should
+  appear automatically.
+- Wizard 2: choose Scholar and verify the selected skill modifier uses double PB.
+- Sorcerer 2: choose two Metamagic options and spend Sorcery Points with Use.
+- Warlock 5: invocation limit should be 5 and dependent invocations should only
+  appear after their prerequisite invocation exists.
+- Bard 6 College of Lore: choose two Magical Discoveries and verify they appear
+  as Always Prepared.
+
+NEXT
+The next logical layer is deeper action automation:
+- Font of Magic slot <-> Sorcery Point conversion
+- Pact of the Blade bonded-weapon selector and Charisma attacks
+- Pact of the Tome spell/cantrip sub-choices
+- Pact of the Chain familiar state
+- Channel Divinity / Wild Shape / subclass action cards
+- spell effect helpers and concentration tracking

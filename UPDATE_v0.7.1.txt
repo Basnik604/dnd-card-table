@@ -1,0 +1,35 @@
+D&D Card Table v0.7.1 — Builder Data cleanup
+
+The v0.7 screenshots exposed two issues:
+1. Open5e /classes returned both base classes and subclasses, so Champion,
+   Circle of the Land, Draconic Sorcery, etc. appeared in the Classes count.
+2. SRD 5.2 backgrounds imported successfully, but the first generic normalizer
+   did not expose their important creation mechanics.
+
+Fixes:
+- Base Classes and Subclasses are now separate builder-data categories.
+- Adds a subclass content type and uses Open5e's is_subclass filtering.
+- Re-normalizes the four SRD 5.2 backgrounds:
+  Acolyte, Criminal, Sage, Soldier.
+- Adds reliable background values for ability-score options, Origin feat,
+  skill proficiencies, tool proficiency and starting equipment.
+- Builder detail pages show common data in readable blocks rather than only JSON.
+- Original raw_source is still preserved.
+
+Install:
+1. Stop web server: Ctrl + C
+2. Copy this update into dnd-card-table with replacement.
+3. Run:
+   npm.cmd run db:migrate:0071
+4. Re-run:
+   npm.cmd run import:charactercontent
+5. Run:
+   npm.cmd run web
+6. Refresh with Ctrl + F5
+7. Open /builder-data
+
+Criminal should now show:
+- Ability Scores: Dexterity, Constitution, Intelligence
+- Origin Feat: Alert
+- Skills: Sleight of Hand, Stealth
+- Tool: Thieves' Tools

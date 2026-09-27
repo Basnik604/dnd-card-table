@@ -1,0 +1,59 @@
+D&D Card Table v0.15.1 — Feature Level Gating & Accordion UI
+
+BUG FOUND
+v0.15 checked `granted_at`, while the Open5e v2 class feature schema uses
+`gained_at`. That caused class features with future unlock levels to fall
+through the level filter and appear on low-level characters.
+
+FIXES
+- Reads Open5e `gained_at` correctly.
+- Keeps compatibility with legacy `granted_at`.
+- Also understands direct level/class_level/character_level fields.
+- Adds a prose fallback for traits such as:
+  "When you reach character level 5..."
+- Future class, subclass and species features are hidden until their level.
+- Presentation-only class table rows are not shown as abilities:
+  Proficiency Bonus
+  [Column data]
+  Core <Class> Traits
+  species Size / Speed / Creature Type
+
+PROFICIENCY BONUS
+- Proficiency Bonus is not an unlockable feature.
+- It is now shown next to Level in the Progression panel as computed character data.
+
+FEATURE UI
+- Unlocked Features is now a compact accordion.
+- Default view = source + name + unlock level.
+- Click the arrow/name to expand the full description.
+- Each expanded feature links to its Builder Data source entry.
+- Full descriptions are no longer permanently occupying the whole page.
+
+EXPECTED EXAMPLE
+Level 2 Fighter / Dragonborn:
+Species:
+- Draconic Ancestry
+- Breath Weapon
+- Damage Resistance
+- Darkvision
+NOT Draconic Flight (level 5)
+
+Fighter:
+- Fighting Style (level 1)
+- Second Wind (level 1)
+- Weapon Mastery (level 1)
+- Action Surge (level 2)
+- Tactical Mind (level 2)
+NOT Fighter Subclass (level 3)
+NOT Ability Score Improvement (level 4)
+NOT Extra Attack / Tactical Shift (level 5)
+NOT later Fighter features.
+
+INSTALL
+1. Stop server: Ctrl + C
+2. Copy this update into dnd-card-table with replacement.
+3. No migration is required.
+4. Run:
+   npm.cmd run web
+5. Ctrl + F5.
+6. Open the same level 2 Fighter -> Features.

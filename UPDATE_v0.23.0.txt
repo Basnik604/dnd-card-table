@@ -1,0 +1,41 @@
+D&D Card Table v0.23.0 — Full Russian Localization Engine
+
+WHAT CHANGED
+- Russian localization now uses a hybrid architecture instead of a finite hand-written list.
+- Curated D&D terminology remains the highest-priority layer.
+- Unknown English UI/content is translated locally with Transformers.js + Xenova/opus-mt-en-ru.
+- Generated translations are cached in .localization/ru-cache.json.
+- The browser batches untranslated visible strings through /api/i18n/translate.
+- All main content prose can be translated: creatures, spells, items, conditions, Builder Data, class features, actions and traits.
+- User-created character/encounter names and personal notes are not machine translated.
+- D&D formulas, URLs, technical notation and source/product names are protected during translation.
+- Russian search can use cached machine-translated entity names after they are translated.
+- import:all and import:charactercontent automatically run i18n:sync afterwards.
+
+FIRST INSTALL / UPDATE
+1. Stop the server (Ctrl+C).
+2. Extract this archive over the existing project with replacement.
+3. Run:
+   npm.cmd install
+4. Pretranslate the whole current database:
+   npm.cmd run i18n:full
+5. Validate:
+   npm.cmd test
+   npm.cmd run i18n:audit
+6. Start:
+   npm.cmd run web
+7. Browser: Ctrl+F5
+
+IMPORTANT
+- The first i18n:full run downloads the local EN→RU translation model once and caches it.
+- The first full pass can take a while depending on CPU and database size.
+- English canonical records in PostgreSQL are not overwritten.
+- No database migration is required.
+- Long text from DnD.su is not copied. DnD.su/next.dnd.su terminology is used as a reference; descriptions are independently translated from canonical English text.
+
+STATUS ENDPOINTS
+GET  /api/i18n/status
+POST /api/i18n/translate
+
+TESTS
+82 tests passed before packaging.

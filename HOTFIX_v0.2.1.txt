@@ -1,0 +1,23 @@
+D&D Card Table — hotfix v0.2.1 (Conditions)
+
+Причина:
+Open5e V2 endpoint conditions сейчас не возвращает SRD 5.2 / srd-2024 conditions,
+поэтому v0.2 показывал discovered: 0.
+
+Исправление:
+- import:conditions теперь использует канонический локальный seed из 15 условий
+  SRD 5.2 Rules Glossary.
+- Источник хранится отдельно как wotc-srd / srd-5.2-conditions.
+- Лицензия и обязательная CC BY 4.0 атрибуция сохраняются в content_sources.
+- Английский остаётся каноническим; русский будет добавляться через translations.
+
+Установка:
+1. Скопировать папку src из этого архива в корень dnd-card-table с заменой файла.
+2. В PowerShell из dnd-card-table:
+   npm.cmd run import:conditions
+
+Ожидаемый первый результат:
+{ discovered: 15, created: 15, updated: 0, unchanged: 0, failed: 0 }
+
+Повторный запуск:
+{ discovered: 15, created: 0, updated: 0, unchanged: 15, failed: 0 }

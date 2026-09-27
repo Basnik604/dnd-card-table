@@ -1,0 +1,28 @@
+D&D Card Table — Prototype v0.3: Web Content Library
+
+Что добавлено:
+- локальный web-интерфейс без новых npm-зависимостей;
+- вкладки Monsters / Spells / Equipment / Magic Items / Conditions;
+- поиск по английскому названию;
+- пагинация;
+- карточки в каталоге;
+- детальная страница каждой сущности;
+- traits/actions у существ;
+- основные поля заклинаний и предметов;
+- API для будущего React-интерфейса:
+    GET /api/stats
+    GET /api/entities
+    GET /api/entities/:id
+- /health для проверки базы;
+- hotfix Conditions v0.2.1 включён в пакет.
+
+Установка поверх v0.2/v0.2.1:
+1. Скопировать содержимое архива в корень dnd-card-table с заменой файлов.
+2. Если Conditions ещё не были импортированы:
+   npm.cmd run import:conditions
+3. Запустить web-интерфейс:
+   npm.cmd run web
+4. Открыть браузер:
+   http://localhost:3000
+
+Остановка сервера: Ctrl+C в PowerShell.
