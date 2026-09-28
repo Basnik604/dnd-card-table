@@ -1,6 +1,20 @@
 // Shared by the renderer, client and API. User-entered names never pass through
 // the general game-content translator.
 export const TABLETOP_RU = {
+  "Workspace":"Рабочее пространство",
+  "Workspace panels":"Панели рабочего пространства",
+  "Inspector":"Инспектор",
+  "Table help":"Подсказки",
+  "Map only":"Только карта",
+  "Restore panels":"Вернуть панели",
+  "Reset layout":"Сбросить раскладку",
+  "Close locations":"Закрыть локации",
+  "Close inspector":"Закрыть инспектор",
+  "Close table help":"Закрыть подсказки",
+  "Layout is saved in this browser for this session. Resetting it does not change the map, tokens or characters.":"Раскладка этой сессии сохраняется в этом браузере. Её сброс не меняет карту, токены и персонажей.",
+  "Layout storage is unavailable. This layout will last until you leave the page.":"Не удалось сохранить раскладку в браузере. Она действует до ухода со страницы.",
+  "Layout reset. Map and token data are unchanged.":"Раскладка сброшена. Карта и токены сохранены.",
+
   "Choose artwork from collection":"Выбрать изображение из набора",
   "Collection images keep their original colors. Border color remains editable.":"Изображения набора сохраняют исходные цвета. Цвет рамки можно менять.",
   "Selected artwork is unavailable. Reinstall its image pack to restore it.":"Выбранное изображение недоступно. Установите его пакет повторно, чтобы восстановить токен.",

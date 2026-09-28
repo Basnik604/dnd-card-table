@@ -46,10 +46,11 @@ export function initTokens(ctx) {
     editor.elements.namedItem('icon_color').value=tokenColor(editor.elements.namedItem('icon_type').value);previewIcon();updateDirty();
   });
   function tab(value) {
+    if(ctx.workspace){ctx.workspace.showInspector(value);return;}
     panel.hidden=value!=='tokens';root.querySelector('[data-vtt-settings]').hidden=value!=='map';
     root.querySelectorAll('[data-inspector-tab]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.inspectorTab===value)));
   }
-  root.querySelectorAll('[data-inspector-tab]').forEach(button=>button.addEventListener('click',()=>tab(button.dataset.inspectorTab)));
+  if(!ctx.workspace)root.querySelectorAll('[data-inspector-tab]').forEach(button=>button.addEventListener('click',()=>tab(button.dataset.inspectorTab)));
   root.querySelectorAll('[data-token-tool]').forEach(button=>button.addEventListener('click',()=>{
     mode=button.dataset.tokenTool;layer.classList.toggle('is-pan',mode==='pan');
     root.querySelectorAll('[data-token-tool]').forEach(el=>el.setAttribute('aria-pressed',String(el===button)));

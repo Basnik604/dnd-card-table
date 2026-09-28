@@ -41,6 +41,9 @@ const PAGE_SIZE = 30;
 
 const WEB_DIR = path.dirname(fileURLToPath(import.meta.url));
 const THEME_ASSETS = new Map([
+  ["/assets/workspace.js", ["text/javascript; charset=utf-8", "workspace.js"]],
+  ["/assets/workspace-state.mjs", ["text/javascript; charset=utf-8", "workspace-state.mjs"]],
+  ["/assets/workspace.css", ["text/css; charset=utf-8", "workspace.css"]],
   ["/assets/tabletop-art.js", ["text/javascript; charset=utf-8", "tabletop-art.js"]],
   ["/assets/tabletop-art-display.mjs", ["text/javascript; charset=utf-8", "tabletop-art-display.mjs"]],
   ["/assets/tabletop-transfer.js", ["text/javascript; charset=utf-8", "tabletop-transfer.js"]],
@@ -1730,9 +1733,9 @@ html[data-theme="tavern"] .builder-variant-badges .chip{
 
 .localized-original-name{margin-top:-2px;margin-bottom:7px;font-size:10px;line-height:1.2;color:var(--muted);font-style:italic;opacity:.86}
 </style>
-<link rel="stylesheet" href="/assets/table-ui.css?v=0.31.2">
-<script src="/assets/table-ui.js?v=0.31.2" defer></script>
-<script type="module" src="/assets/i18n.js?v=0.31.2"></script>
+<link rel="stylesheet" href="/assets/table-ui.css?v=0.32.0">
+<script src="/assets/table-ui.js?v=0.32.0" defer></script>
+<script type="module" src="/assets/i18n.js?v=0.32.0"></script>
 </head>
 <body>
 <div class="tavern-decor decor-candle" aria-hidden="true">
@@ -1823,7 +1826,7 @@ html[data-theme="tavern"] .builder-variant-badges .chip{
   <div class="status"><b>●</b><span>Local database connected</span></div>
 </div></header>
 ${content}
-<footer class="footer"><a href="/localization">Translation</a> · D&D Card Table v0.31.2</footer>
+<footer class="footer"><a href="/localization">Translation</a> · D&D Card Table v0.32.0</footer>
 </main>
 <script>
 (()=>{
@@ -5787,7 +5790,7 @@ async function createGuidedCharacter(form) {
           background:{key:backgroundData.source_key,ruleset:backgroundData.ruleset}
         }
       })},
-      ${"Created with Guided Character Builder v0.31.2. Content source IDs and rulesets are preserved in builder metadata."}
+      ${"Created with Guided Character Builder v0.32.0. Content source IDs and rulesets are preserved in builder metadata."}
     )
     RETURNING id::text
   `;
