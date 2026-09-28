@@ -81,6 +81,8 @@ try {
   console.log('PASS unsaved token settings and a changed destination grid prevent transfer without data loss');
 
   await page.locator('[data-vtt-zoom=in]').click();const zoom=await page.locator('[data-vtt-zoom-label]').textContent();await gotoFloor(first);await gotoFloor(second);
+  // Navigation can finish before ResizeObserver restores the saved camera.
+  await page.waitForFunction(expected=>document.querySelector('[data-vtt-zoom-label]')?.textContent===expected,zoom);
   assert.equal(await page.locator('[data-vtt-zoom-label]').textContent(),zoom);
   if(qa)await page.screenshot({path:qa+'/floors-desktop.png',fullPage:true});
   await page.setViewportSize({width:390,height:844});await openTransfer();
