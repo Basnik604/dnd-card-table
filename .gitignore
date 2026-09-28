@@ -164,3 +164,8 @@ large-files.txt
 Thumbs.db
 .vscode/
 .idea/
+# Local cache; shipped data/translations stays tracked.
+.localization/
+playwright-report/
+test-results/
+qa-artifacts/

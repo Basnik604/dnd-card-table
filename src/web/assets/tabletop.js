@@ -193,7 +193,7 @@ function initTabletop(root) {
   }
   async function upload(file) {
     if(!file||busy) return;
-    if(!form.reportValidity()) return;
+    if(!validateMapSettings()) return;
     if(scene.has_map && !confirm(t('Replace this map? Its current grid settings will be kept.'))) return;
     const body={...data(),revision:scene.revision,file_name:file.name};
     await run(async()=>{
