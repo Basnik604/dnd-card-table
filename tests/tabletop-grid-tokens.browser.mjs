@@ -71,7 +71,7 @@ try {
   console.log('PASS adding a token saves the new grid and both survive reload');
   const edge=await current(),scene=await f.store.scene(location.scene_id,LOCAL_GM);
   await f.store.tokens.change(edge.id,LOCAL_GM,{x:1925,y:0,snap:false,revision:edge.revision,scene_revision:scene.revision},'move');
-  await page.reload();await page.locator('[name=cellSize]').fill('500');
+  await page.reload();await page.locator('[data-inspector-tab=map]').click();await page.locator('[name=cellSize]').fill('500');
   await page.locator(`[data-token-id="${edge.id}"]`).press('ArrowLeft');await idle();
   const clamped=await current();assert.equal(clamped.x,1500);assert.equal(clamped.revision,edge.revision+3);
   console.log('PASS grid enlargement clamps at the map edge and uses the refreshed token revision');

@@ -1,0 +1,15 @@
+.workspace-toolbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:12px 14px;margin-bottom:14px;border:1px solid var(--vt-border);border-radius:12px;background:var(--vt-panel)}
+.workspace-toolbar .vtt-kicker{margin:0!important}.workspace-panel-buttons,.workspace-layout-buttons{display:flex;gap:7px;flex-wrap:wrap}.workspace-layout-buttons{margin-left:auto}
+html .vtt .workspace-toolbar button,html .vtt .workspace-close{background:var(--vt-bg);color:var(--vt-text);border-color:var(--vt-border)}
+html .vtt .workspace-toolbar button[aria-pressed=true]{border-color:var(--vt-gold);color:var(--vt-gold)}
+.workspace-status{color:var(--vt-muted);font-size:12px;margin-bottom:12px!important}.workspace-status:empty{display:none}
+.vtt-workspace[data-workspace]{grid-template-columns:190px minmax(0,1fr) 260px}
+.vtt-workspace[data-workspace].workspace-no-locations{grid-template-columns:minmax(0,1fr) 260px}
+.vtt-workspace[data-workspace].workspace-no-inspector{grid-template-columns:190px minmax(0,1fr)}
+.vtt-workspace[data-workspace].workspace-no-locations.workspace-no-inspector{grid-template-columns:minmax(0,1fr)}
+[data-workspace-panel]{position:relative}.vtt-workspace .vtt-locations>h3{padding-right:28px}.vtt-workspace .vtt-inspector-tabs{padding-right:26px}
+html .vtt .workspace-close{position:absolute;right:8px;top:8px;z-index:1;width:26px;height:26px;padding:0;font-size:19px;line-height:1}
+.workspace-help{grid-column:1/-1;padding-right:42px}.workspace-help h3{font-size:18px;margin-bottom:8px}.workspace-help>p{font-size:12px;color:var(--vt-muted);margin-top:6px}
+@media(min-width:1151px){.vtt-workspace[data-workspace]>.vtt-locations{grid-column:auto}}
+@media(min-width:761px) and (max-width:1150px){.vtt-workspace[data-workspace],.vtt-workspace[data-workspace].workspace-no-locations{grid-template-columns:minmax(0,1fr) 250px}.vtt-workspace[data-workspace].workspace-no-inspector{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:760px){.vtt-workspace[data-workspace],.vtt-workspace[data-workspace].workspace-no-locations,.vtt-workspace[data-workspace].workspace-no-inspector{grid-template-columns:minmax(0,1fr)}.workspace-toolbar{gap:10px}.workspace-toolbar>.vtt-kicker{flex-basis:100%}.workspace-layout-buttons{margin-left:0}html .vtt .workspace-toolbar button{min-height:36px}}

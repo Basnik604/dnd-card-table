@@ -1,0 +1,9 @@
+// Workspace owns the chrome; existing tabletop views own their data and forms.
+export function renderWorkspaceToolbar(t,hasInspector){
+  const toggle=(name,label,shown)=>`<button type="button" data-workspace-control data-workspace-toggle="${name}" aria-controls="workspace-${name}" aria-expanded="${shown}" aria-pressed="${shown}">${t(label)}</button>`;
+  return `<nav class="workspace-toolbar" aria-label="${t('Workspace panels')}"><span class="vtt-kicker">${t('Workspace')}</span><div class="workspace-panel-buttons">${toggle('locations','Locations',true)}${hasInspector?toggle('inspector','Inspector',true):''}${toggle('help','Table help',false)}</div><div class="workspace-layout-buttons"><button type="button" data-workspace-control data-workspace-map-only aria-pressed="false">${t('Map only')}</button><button type="button" data-workspace-control data-workspace-reset>${t('Reset layout')}</button></div></nav><p class="workspace-status" data-workspace-status role="status" aria-live="polite"></p>`;
+}
+export const renderPanelClose=(name,label,t)=>`<button type="button" class="workspace-close" data-workspace-control data-workspace-close="${name}" aria-label="${t(label)}" title="${t(label)}">×</button>`;
+export function renderWorkspaceHelp(t){
+  return `<aside class="vtt-panel workspace-help" id="workspace-help" data-workspace-panel="help" aria-label="${t('Table help')}" hidden>${renderPanelClose('help','Close table help',t)}<h3>${t('Table help')}</h3><p>${t('Drag to pan · Scroll to zoom · Arrow keys to pan')}</p><p>${t('Select a token to customize it. Drag it to move.')}</p><p class="vtt-note">${t('Layout is saved in this browser for this session. Resetting it does not change the map, tokens or characters.')}</p><p class="vtt-note">${t('The map and grid are saved on the server. The viewing position is saved in this browser.')}</p></aside>`;
+}
