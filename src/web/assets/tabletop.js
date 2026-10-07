@@ -49,7 +49,7 @@ function initTabletop(root) {
   async function run(task) {
     if(busy) return;
     busy=true; root.setAttribute('aria-busy','true');
-    const controls=[...root.querySelectorAll('button:not([data-workspace-control]),input,select')].map(el=>[el,el.disabled]);
+    const controls=[...root.querySelectorAll('button:not([data-workspace-control]),input:not([data-workspace-control]),select:not([data-workspace-control])')].map(el=>[el,el.disabled]);
     controls.forEach(([el])=>el.disabled=true); updateDirty();
     try { return await task(); }
     catch(error) { message(error.message,true,error.status===409); return null; }

@@ -304,4 +304,9 @@ export const TABLETOP_RU = {
   'The tabletop tables could not be initialized. Check the database connection and permissions, then reload.':'Не удалось подготовить таблицы игрового стола. Проверьте подключение и права пользователя базы, затем обновите страницу.',
   'Full screen is unavailable in this browser.':'В этом браузере недоступен полноэкранный режим.'
 };
+Object.assign(TABLETOP_RU,{
+  'Left dock':'Слева', 'Right dock':'Справа', 'Bottom dock':'Снизу',
+  'Panel location':'Расположение панели', 'Resize dock':'Изменить размер зоны',
+  'Drag panel to a dock':'Перетащите панель в другую зону'
+});
 export const tabletopText = (text, language = 'ru') => language === 'en' ? text : TABLETOP_RU[text] || text;

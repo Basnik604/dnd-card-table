@@ -38,6 +38,38 @@ try{
   await mapName.fill('Старый зал');await page.locator('[data-inspector-tab=tokens]').click();await tokenName.fill('Страж');
   console.log('PASS hiding, map-only, restore and reset preserve map/token drafts and all game data');
 
+  // Docks use original panel/form nodes; exercise all destinations and controls.
+  await page.locator('[data-inspector-tab=map]').click();await mapName.fill('Новый черновик');
+  await page.locator('[data-inspector-tab=tokens]').click();await tokenName.fill('Новый токен');
+  for(const dock of ['left','bottom','right']){
+    await page.locator('[data-workspace-location=inspector]').selectOption(dock);
+    assert.equal(await panel('inspector').evaluate(e=>e.parentElement.dataset.workspaceDock),dock);
+    assert.equal(await tokenName.inputValue(),'Новый токен');
+    const separator=page.locator(`[data-workspace-resize="${dock}"]`);
+    await separator.focus();await page.keyboard.press('End');
+    assert.equal(Number(await separator.getAttribute('aria-valuenow')),dock==='bottom'?420:dock==='left'?440:480);
+    await page.keyboard.press('Home');
+    const bounds=await separator.boundingBox();await page.mouse.move(bounds.x+bounds.width/2,bounds.y+bounds.height/2);await page.mouse.down();
+    await page.mouse.move(bounds.x+bounds.width/2+(dock==='left'?50:dock==='right'?-50:0),bounds.y+bounds.height/2+(dock==='bottom'?-50:0),{steps:5});await page.mouse.up();
+    assert.ok(Number(await separator.getAttribute('aria-valuenow'))>(dock==='bottom'?120:dock==='left'?180:240));
+    assert.ok((await page.locator('[data-vtt-stage]').boundingBox()).width>=320);
+  }
+  await toggle('help').click();await page.locator('[data-workspace-location=help]').selectOption('right');
+  await page.locator('[data-workspace-tab=inspector]').click();
+  assert.equal(await panel('help').isVisible(),false);assert.equal(await tokenName.inputValue(),'Новый токен');
+  await page.locator('[data-workspace-tab=inspector]').focus();await page.keyboard.press('ArrowRight');assert.equal(await panel('help').isVisible(),true);
+  await page.locator('[data-workspace-close=help]').click();assert.equal(await panel('inspector').isVisible(),true);
+  await toggle('locations').click(); // Reveal an empty left destination during drag.
+  await page.locator('[data-workspace-drag=inspector]').evaluate(el=>{window.workspaceTransfer=new DataTransfer();el.dispatchEvent(new DragEvent('dragstart',{bubbles:true,dataTransfer:window.workspaceTransfer}));});
+  await page.locator('[data-workspace-dock=left]').evaluate(el=>el.dispatchEvent(new DragEvent('drop',{bubbles:true,dataTransfer:window.workspaceTransfer})));
+  assert.equal(await panel('inspector').evaluate(e=>e.parentElement.dataset.workspaceDock),'left');
+  assert.equal(await page.locator('[data-token-editor]').count(),1);assert.equal(await tokenName.inputValue(),'Новый токен');
+  await page.locator('[data-workspace-reset]').click();assert.equal(await mapName.inputValue(),'Новый черновик');
+  await page.locator('[data-inspector-tab=tokens]').click();assert.equal(await tokenName.inputValue(),'Новый токен');
+  assert.deepEqual(await f.store.scene(l.scene_id,LOCAL_GM),savedScene);assert.deepEqual(await f.store.tokens.list(l.scene_id,LOCAL_GM),savedTokens);
+  await mapName.fill('Старый зал');await tokenName.fill('Страж');
+  console.log('PASS every dock, pointer/keyboard resize, accessible movement, tabs and drag preserve drafts and server data');
+
   await toggle('locations').click();await toggle('help').click();await page.reload();
   assert.equal(await panel('locations').isVisible(),false);assert.equal(await panel('help').isVisible(),true);assert.equal(await page.locator('[data-token-panel]').isVisible(),true);
   await page.goto(f.origin+'/tabletop/'+s.id+'?scene='+floor.id);assert.equal(await panel('locations').isVisible(),false);assert.equal(await panel('help').isVisible(),true);

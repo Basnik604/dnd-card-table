@@ -11,6 +11,7 @@ const allowed=/^(?:D&D Card Table(?: v[\d.]+)?|SRD [\d.]+|Tal'Dorei Campaign Set
 function add(text,file){
  const value=text.trim().replace(/\s+/g,' ');
  // Raster format signatures and CSS transforms are protocol/style values.
+ if(/^\((?:max|min)-width:/.test(value))return;
  if(value==='VP8'||/^translate\(.*\) scale\(/.test(value))return;
  if(/^(?:data-i18n-skip|feature-\{\d+\}-\{\d+\}|[·\s]*D&D Card Table(?: v[\d.]+)?|\{\d+\} · D&D Card Table|D&D Card Table Library running at http:|Health check: http:|\(prefers-reduced-motion:|\" data-legacy-species-choice)/.test(value))return;
  if(value.length<2||!/[A-Za-z]{2}/.test(value)||/[А-Яа-я]/.test(value)||allowed.test(value)||/^(?:https?:|\/|\.|#|\[|INSERT |SELECT |UPDATE |DELETE |ALTER |CREATE |RETURNING )/.test(value))return;
