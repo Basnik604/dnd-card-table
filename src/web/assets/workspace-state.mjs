@@ -48,6 +48,12 @@ export function moveWorkspacePanel(state,panel,dock){
 // Clamp the rendered desktop layout without overwriting the user's saved sizes.
 export function fitWorkspaceSizes(sizes,width){
   const result={...sizes},budget=Math.max(0,width-320-32),total=sizes.left+sizes.right;
-  if(total>budget){result.left=budget*sizes.left/total;result.right=budget*sizes.right/total;}
+  if(total>budget){
+    const leftMin=DOCK_LIMITS.left[0],rightMin=DOCK_LIMITS.right[0];
+    if(budget>=leftMin+rightMin){
+      const extra=budget-leftMin-rightMin,wanted=total-leftMin-rightMin;
+      result.left=leftMin+extra*(sizes.left-leftMin)/wanted;result.right=budget-result.left;
+    }else{result.left=budget*sizes.left/total;result.right=budget*sizes.right/total;}
+  }
   return result;
 }

@@ -104,6 +104,7 @@ try{
   let release;const gate=new Promise(resolve=>release=resolve);
   await page.route('**/api/tabletop/scenes/'+l.scene_id,async route=>{await gate;await route.continue();});
   await page.locator('[data-vtt-save]').click();await page.waitForFunction(()=>document.querySelector('[data-vtt-root]').hasAttribute('aria-busy'));
+  await page.locator('[data-workspace-location=inspector]').selectOption('bottom');assert.equal(await panel('inspector').evaluate(e=>e.parentElement.dataset.workspaceDock),'bottom');
   await toggle('inspector').click();assert.equal(await panel('inspector').isVisible(),false);release();await idle();await page.unroute('**/api/tabletop/scenes/'+l.scene_id);
   await toggle('inspector').click();assert.equal(await page.locator('[name=cellSize]').inputValue(),'70');assert.equal((await f.store.scene(l.scene_id,LOCAL_GM)).grid.cellSize,70);
   console.log('PASS workspace controls remain responsive during server saves');
@@ -132,5 +133,12 @@ try{
   const english=await browser.newContext({viewport:{width:1512,height:1120}});await english.addInitScript(()=>localStorage.setItem('dnd-lang','en'));
   await english.addCookies([{name:'dnd-lang',value:'en',url:f.origin}]);const en=await english.newPage();en.on('pageerror',e=>errors.push(e.message));await en.goto(url);
   assert.equal(await en.locator('[data-workspace-map-only]').textContent(),'Map only');assert.equal(await en.locator('[data-workspace-reset]').textContent(),'Reset layout');
-  assert.deepEqual(errors,[]);console.log('PASS English controls and no browser exceptions');
+  await en.evaluate(async()=>{
+    const {initWorkspace}=await import('/assets/workspace.js');const root=document.querySelector('[data-vtt-root]');
+    const cfg=JSON.parse(root.querySelector('[data-vtt-config]').textContent),options={sessionId:cfg.session.id,t:s=>s};
+    const first=initWorkspace(root,options);initWorkspace(root,options);first.showInspector('tokens');
+  });
+  assert.equal(await en.locator('[data-workspace-dock]').count(),3);assert.equal(await en.locator('.workspace-panel-header').count(),3);assert.equal(await en.locator('[data-vtt-settings]').count(),1);
+  await en.locator('[data-workspace-toggle=locations]').click();assert.equal(await en.locator('[data-workspace-panel=locations]').isVisible(),false);
+  assert.deepEqual(errors,[]);console.log('PASS English controls, repeated initialization cleans up and no browser exceptions');
 }finally{await browser.close();await f.close();}

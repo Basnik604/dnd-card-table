@@ -74,7 +74,7 @@ export function initWorkspace(root,{sessionId,t}){
   }
   function save(){render();message.textContent=writeWorkspace(storage,key,state)?'':t('Layout storage is unavailable. This layout will last until you leave the page.');}
   function move(name,dock){moveWorkspacePanel(state,name,dock);save();panels.get(name)?.querySelector('[data-workspace-location]')?.focus({preventScroll:true});}
-  function showInspector(tab){if(!panels.get('inspector')||!['map','tokens'].includes(tab))return;state.inspectorTab=tab;state.panels.inspector=true;state.mapOnly=false;state.active[zoneOf('inspector')]='inspector';save();}
+  function showInspector(tab){if(signal.aborted||!panels.get('inspector')||!['map','tokens'].includes(tab))return;state.inspectorTab=tab;state.panels.inspector=true;state.mapOnly=false;state.active[zoneOf('inspector')]='inspector';save();}
   root.querySelectorAll('[data-workspace-toggle]').forEach(button=>button.addEventListener('click',()=>{const name=button.dataset.workspaceToggle;if(!panels.get(name))return;state.panels[name]=!visible(name);state.mapOnly=false;if(state.panels[name])state.active[zoneOf(name)]=name;save();},{signal}));
   root.querySelectorAll('[data-workspace-close]').forEach(button=>button.addEventListener('click',()=>{state.panels[button.dataset.workspaceClose]=false;save();},{signal}));
   root.querySelector('[data-workspace-map-only]').addEventListener('click',()=>{state.mapOnly=!state.mapOnly;save();},{signal});

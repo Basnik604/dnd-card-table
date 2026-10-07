@@ -19,5 +19,5 @@ test('every panel moves to every zone exactly once; active close finds another v
  const restored=normalizeWorkspace(JSON.parse(JSON.stringify(state)));assert.deepEqual(restored.docks,state.docks);
 });
 test('viewport fitting leaves map width and does not overwrite desktop preferences',()=>{
- const sizes={left:440,right:480,bottom:300},fit=fitWorkspaceSizes(sizes,980);assert.ok(980-fit.left-fit.right-32>=320);assert.deepEqual(sizes,{left:440,right:480,bottom:300});assert.deepEqual(fitWorkspaceSizes(sizes,1500),sizes);
+ const sizes={left:440,right:480,bottom:300},fit=fitWorkspaceSizes(sizes,980);assert.ok(980-fit.left-fit.right-32>=320);assert.deepEqual(sizes,{left:440,right:480,bottom:300});assert.deepEqual(fitWorkspaceSizes(sizes,1500),sizes);const narrow=fitWorkspaceSizes({left:190,right:480,bottom:180},850);assert.ok(narrow.left>=180);assert.ok(narrow.right>=240);
 });

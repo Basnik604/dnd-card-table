@@ -30,3 +30,4 @@ html .vtt-workspace.workspace-dragging{--left-size:var(--workspace-left);--right
 html .vtt-workspace[data-workspace]>.vtt-stage{position:relative;top:auto}
 html .vtt-workspace[data-workspace] .vtt-stage-toolbar{position:static;flex-shrink:0}
 @media(min-width:901px) and (max-width:1150px){html .vtt-workspace .vtt-location-list{display:grid}html .vtt-workspace .vtt-locations details{display:block;min-width:0;margin-right:5px}}
+.workspace-panel-header{flex-wrap:nowrap}.workspace-drag-handle{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}html .vtt .workspace-panel-header select{flex-shrink:0;max-width:90px}
