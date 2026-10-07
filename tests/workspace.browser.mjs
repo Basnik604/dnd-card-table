@@ -38,6 +38,39 @@ try{
   await mapName.fill('Старый зал');await page.locator('[data-inspector-tab=tokens]').click();await tokenName.fill('Страж');
   console.log('PASS hiding, map-only, restore and reset preserve map/token drafts and all game data');
 
+  // Docks use original panel/form nodes; exercise all destinations and controls.
+  await page.locator('[data-inspector-tab=map]').click();await mapName.fill('Новый черновик');
+  await page.locator('[data-inspector-tab=tokens]').click();await tokenName.fill('Новый токен');
+  for(const dock of ['left','bottom','right']){
+    await page.locator('[data-workspace-location=inspector]').selectOption(dock);
+    assert.equal(await panel('inspector').evaluate(e=>e.parentElement.dataset.workspaceDock),dock);
+    assert.equal(await tokenName.inputValue(),'Новый токен');
+    const separator=page.locator(`[data-workspace-resize="${dock}"]`);
+    await separator.focus();await page.keyboard.press('End');
+    assert.equal(Number(await separator.getAttribute('aria-valuenow')),dock==='bottom'?420:dock==='left'?440:480);
+    await page.keyboard.press('Home');
+    const bounds=await separator.boundingBox();await page.mouse.move(bounds.x+bounds.width/2,bounds.y+bounds.height/2);await page.mouse.down();
+    await page.mouse.move(bounds.x+bounds.width/2+(dock==='left'?50:dock==='right'?-50:0),bounds.y+bounds.height/2+(dock==='bottom'?-50:0),{steps:5});await page.mouse.up();
+    assert.ok(Number(await separator.getAttribute('aria-valuenow'))>(dock==='bottom'?120:dock==='left'?180:240));
+    assert.ok((await page.locator('[data-vtt-stage]').boundingBox()).width>=320);
+  }
+  await toggle('help').click();await page.locator('[data-workspace-location=help]').selectOption('right');
+  await page.locator('[data-workspace-tab=inspector]').click();
+  assert.equal(await panel('help').isVisible(),false);assert.equal(await tokenName.inputValue(),'Новый токен');
+  await page.locator('[data-workspace-map-only]').click();await page.locator('[data-workspace-map-only]').click();assert.equal(await panel('inspector').isVisible(),true);
+  await page.locator('[data-workspace-tab=inspector]').focus();await page.keyboard.press('ArrowRight');assert.equal(await panel('help').isVisible(),true);
+  await page.locator('[data-workspace-close=help]').click();assert.equal(await panel('inspector').isVisible(),true);
+  await toggle('locations').click(); // Reveal an empty left destination during drag.
+  await page.locator('[data-workspace-drag=inspector]').evaluate(el=>{window.workspaceTransfer=new DataTransfer();el.dispatchEvent(new DragEvent('dragstart',{bubbles:true,dataTransfer:window.workspaceTransfer}));});
+  await page.locator('[data-workspace-dock=left]').evaluate(el=>el.dispatchEvent(new DragEvent('drop',{bubbles:true,dataTransfer:window.workspaceTransfer})));
+  assert.equal(await panel('inspector').evaluate(e=>e.parentElement.dataset.workspaceDock),'left');
+  assert.equal(await page.locator('[data-token-editor]').count(),1);assert.equal(await tokenName.inputValue(),'Новый токен');
+  await page.locator('[data-workspace-reset]').click();assert.equal(await mapName.inputValue(),'Новый черновик');
+  await page.locator('[data-inspector-tab=tokens]').click();assert.equal(await tokenName.inputValue(),'Новый токен');
+  assert.deepEqual(await f.store.scene(l.scene_id,LOCAL_GM),savedScene);assert.deepEqual(await f.store.tokens.list(l.scene_id,LOCAL_GM),savedTokens);
+  await page.locator('[data-inspector-tab=map]').click();await mapName.fill('Старый зал');await page.locator('[data-inspector-tab=tokens]').click();await tokenName.fill('Страж');
+  console.log('PASS every dock, pointer/keyboard resize, accessible movement, tabs and drag preserve drafts and server data');
+
   await toggle('locations').click();await toggle('help').click();await page.reload();
   assert.equal(await panel('locations').isVisible(),false);assert.equal(await panel('help').isVisible(),true);assert.equal(await page.locator('[data-token-panel]').isVisible(),true);
   await page.goto(f.origin+'/tabletop/'+s.id+'?scene='+floor.id);assert.equal(await panel('locations').isVisible(),false);assert.equal(await panel('help').isVisible(),true);
@@ -71,6 +104,7 @@ try{
   let release;const gate=new Promise(resolve=>release=resolve);
   await page.route('**/api/tabletop/scenes/'+l.scene_id,async route=>{await gate;await route.continue();});
   await page.locator('[data-vtt-save]').click();await page.waitForFunction(()=>document.querySelector('[data-vtt-root]').hasAttribute('aria-busy'));
+  await page.locator('[data-workspace-location=inspector]').selectOption('bottom');assert.equal(await panel('inspector').evaluate(e=>e.parentElement.dataset.workspaceDock),'bottom');
   await toggle('inspector').click();assert.equal(await panel('inspector').isVisible(),false);release();await idle();await page.unroute('**/api/tabletop/scenes/'+l.scene_id);
   await toggle('inspector').click();assert.equal(await page.locator('[name=cellSize]').inputValue(),'70');assert.equal((await f.store.scene(l.scene_id,LOCAL_GM)).grid.cellSize,70);
   console.log('PASS workspace controls remain responsive during server saves');
@@ -81,8 +115,30 @@ try{
   assert.match(await page.locator('[data-vtt-status]').textContent(),/Проверьте настройки/);assert.equal((await f.store.scene(l.scene_id,LOCAL_GM)).grid.cellSize,70);
   await page.locator('[name=cellSize]').fill('70');console.log('PASS dropping a map with invalid hidden settings reveals the inspector before upload');
 
+  const migration=await browser.newContext({viewport:{width:1512,height:1120}});
+  await migration.addInitScript(({key,old})=>{localStorage.setItem('dnd-lang','ru');localStorage.setItem(old,JSON.stringify({version:1,panels:{locations:false,inspector:false,help:true},mapOnly:true,inspectorTab:'tokens'}));},{key:workspaceKey(s.id),old:workspaceKey(s.id).replace(':v2:',':v1:')});
+  const migrated=await migration.newPage();await migrated.goto(url);
+  assert.equal(await migrated.locator('[data-workspace-panel=inspector]').isVisible(),false);
+  await migrated.locator('[data-workspace-map-only]').click();assert.equal(await migrated.locator('[data-workspace-panel=help]').isVisible(),true);
+  await migrated.locator('[data-workspace-toggle=inspector]').click();assert.equal(await migrated.locator('[data-token-panel]').isVisible(),true);
+  const preferences=await migrated.evaluate(key=>({next:JSON.parse(localStorage.getItem(key)),old:localStorage.getItem(key.replace(':v2:',':v1:'))}),workspaceKey(s.id));assert.equal(preferences.next.version,2);assert.ok(preferences.old);
+  await migrated.locator('[data-workspace-location=inspector]').selectOption('bottom');
+  await migrated.locator('[data-workspace-resize=bottom]').focus();await migrated.keyboard.press('End');
+  await migrated.reload();assert.equal(await migrated.locator('[data-workspace-panel=inspector]').evaluate(e=>e.parentElement.dataset.workspaceDock),'bottom');assert.equal(await migrated.locator('[data-workspace-tab=inspector]').getAttribute('aria-selected'),'true');
+  await migrated.setViewportSize({width:390,height:844});await migrated.locator('[data-workspace-map-only]').click();await migrated.locator('[data-workspace-map-only]').click();
+  assert.equal(await migrated.evaluate(key=>JSON.parse(localStorage.getItem(key)).sizes.bottom,workspaceKey(s.id)),420);
+  await migrated.setViewportSize({width:1512,height:1120});assert.equal(await migrated.locator('[data-workspace-resize=bottom]').getAttribute('aria-valuenow'),'420');
+  await migration.close();console.log('PASS browser v1 migration, stored dock/tab/size and mobile preferences');
+
   const english=await browser.newContext({viewport:{width:1512,height:1120}});await english.addInitScript(()=>localStorage.setItem('dnd-lang','en'));
   await english.addCookies([{name:'dnd-lang',value:'en',url:f.origin}]);const en=await english.newPage();en.on('pageerror',e=>errors.push(e.message));await en.goto(url);
   assert.equal(await en.locator('[data-workspace-map-only]').textContent(),'Map only');assert.equal(await en.locator('[data-workspace-reset]').textContent(),'Reset layout');
-  assert.deepEqual(errors,[]);console.log('PASS English controls and no browser exceptions');
+  await en.evaluate(async()=>{
+    const {initWorkspace}=await import('/assets/workspace.js');const root=document.querySelector('[data-vtt-root]');
+    const cfg=JSON.parse(root.querySelector('[data-vtt-config]').textContent),options={sessionId:cfg.session.id,t:s=>s};
+    const first=initWorkspace(root,options);initWorkspace(root,options);first.showInspector('tokens');
+  });
+  assert.equal(await en.locator('[data-workspace-dock]').count(),3);assert.equal(await en.locator('.workspace-panel-header').count(),3);assert.equal(await en.locator('[data-vtt-settings]').count(),1);
+  await en.locator('[data-workspace-toggle=locations]').click();assert.equal(await en.locator('[data-workspace-panel=locations]').isVisible(),false);
+  assert.deepEqual(errors,[]);console.log('PASS English controls, repeated initialization cleans up and no browser exceptions');
 }finally{await browser.close();await f.close();}

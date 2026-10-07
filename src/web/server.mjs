@@ -1733,9 +1733,9 @@ html[data-theme="tavern"] .builder-variant-badges .chip{
 
 .localized-original-name{margin-top:-2px;margin-bottom:7px;font-size:10px;line-height:1.2;color:var(--muted);font-style:italic;opacity:.86}
 </style>
-<link rel="stylesheet" href="/assets/table-ui.css?v=0.32.0">
-<script src="/assets/table-ui.js?v=0.32.0" defer></script>
-<script type="module" src="/assets/i18n.js?v=0.32.0"></script>
+<link rel="stylesheet" href="/assets/table-ui.css?v=0.32.1">
+<script src="/assets/table-ui.js?v=0.32.1" defer></script>
+<script type="module" src="/assets/i18n.js?v=0.32.1"></script>
 </head>
 <body>
 <div class="tavern-decor decor-candle" aria-hidden="true">
@@ -1826,7 +1826,7 @@ html[data-theme="tavern"] .builder-variant-badges .chip{
   <div class="status"><b>●</b><span>Local database connected</span></div>
 </div></header>
 ${content}
-<footer class="footer"><a href="/localization">Translation</a> · D&D Card Table v0.32.0</footer>
+<footer class="footer"><a href="/localization">Translation</a> · D&D Card Table v0.32.1</footer>
 </main>
 <script>
 (()=>{
@@ -5790,7 +5790,7 @@ async function createGuidedCharacter(form) {
           background:{key:backgroundData.source_key,ruleset:backgroundData.ruleset}
         }
       })},
-      ${"Created with Guided Character Builder v0.32.0. Content source IDs and rulesets are preserved in builder metadata."}
+      ${"Created with Guided Character Builder v0.32.1. Content source IDs and rulesets are preserved in builder metadata."}
     )
     RETURNING id::text
   `;
