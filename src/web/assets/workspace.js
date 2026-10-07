@@ -1,8 +1,10 @@
 import {defaultWorkspace,readWorkspace,writeWorkspace,workspaceKey,WORKSPACE_PANELS,WORKSPACE_DOCKS,DOCK_LIMITS,clampDockSize,moveWorkspacePanel,fitWorkspaceSizes} from './workspace-state.mjs';
+const instances=new WeakMap();
 
 // Existing forms move as DOM nodes so drafts and handlers remain intact.
 export function initWorkspace(root,{sessionId,t}){
   const shell=root.querySelector('[data-workspace]');if(!shell||!sessionId)return null;
+  instances.get(shell)?.destroy();
   const lifecycle=new AbortController(),signal=lifecycle.signal;let storage;
   try{storage=window.localStorage;}catch{}
   const key=workspaceKey(sessionId);let state=readWorkspace(storage,key);
@@ -53,11 +55,12 @@ export function initWorkspace(root,{sessionId,t}){
   function render(){
     for(const dock of WORKSPACE_DOCKS){
       const zone=docks.get(dock),bar=zone.querySelector('[role=tablist]'),list=state.docks[dock].filter(visible);
-      if(!list.includes(state.active[dock]))state.active[dock]=list[0]||null;
+      if(!state.mapOnly&&!list.includes(state.active[dock]))state.active[dock]=list[0]||null;
       zone.hidden=!list.length;shell.classList.toggle(`workspace-empty-${dock}`,!list.length);shell.querySelector(`[data-workspace-resize="${dock}"]`).hidden=!list.length;
+      let tabIndex=0;
       for(const name of state.docks[dock]){
         const panel=panels.get(name),tab=tabs.get(name);if(!panel)continue;
-        if(panel.parentElement!==zone)zone.append(panel);if(tab.parentElement!==bar)bar.append(tab);
+        if(panel.parentElement!==zone)zone.append(panel);if(bar.children[tabIndex]!==tab)bar.insertBefore(tab,bar.children[tabIndex]||null);tabIndex++;
         const active=list.includes(name)&&state.active[dock]===name;
         if(!active&&panel.contains(document.activeElement)){const target=list.length?tabs.get(state.active[dock]):toggle(name);target?.focus({preventScroll:true});}
         panel.hidden=!active;tab.hidden=!list.includes(name);tab.setAttribute('aria-selected',String(active));tab.tabIndex=active?0:-1;panel.querySelector('[data-workspace-location]').value=dock;
@@ -78,5 +81,13 @@ export function initWorkspace(root,{sessionId,t}){
   root.querySelector('[data-workspace-reset]').addEventListener('click',()=>{state=defaultWorkspace();save();if(!message.textContent)message.textContent=t('Layout reset. Map and token data are unchanged.');},{signal});
   root.querySelectorAll('[data-inspector-tab]').forEach(button=>button.addEventListener('click',()=>showInspector(button.dataset.inspectorTab),{signal}));
   const observer=new ResizeObserver(applySizes);observer.observe(shell);render();
-  return {showInspector,destroy(){lifecycle.abort();observer.disconnect();clearDrag();}};
+  const instance={showInspector,destroy(){
+    lifecycle.abort();observer.disconnect();clearDrag();
+    for(const panel of panels.values())if(panel){
+      const header=panel.querySelector('.workspace-panel-header'),close=header?.querySelector('[data-workspace-close]');
+      if(close)panel.prepend(close);header?.remove();panel.removeAttribute('role');panel.removeAttribute('aria-labelledby');shell.append(panel);
+    }
+    for(const zone of docks.values())zone.remove();shell.querySelectorAll('[data-workspace-resize]').forEach(el=>el.remove());instances.delete(shell);
+  }};
+  instances.set(shell,instance);return instance;
 }

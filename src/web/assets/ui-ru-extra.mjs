@@ -89,6 +89,7 @@ export const UI_RU_EXTRA = {
   "Created with Guided Character Builder v0.30.2. Content source IDs and rulesets are preserved in builder metadata.": "Создан в пошаговом конструкторе v0.30.2. ID источников и редакции правил сохранены в данных конструктора.",
   "Created with Guided Character Builder v0.31.2. Content source IDs and rulesets are preserved in builder metadata.": "Создан в пошаговом конструкторе v0.31.2. ID источников и редакции правил сохранены в данных конструктора.",
   "Created with Guided Character Builder v0.32.0. Content source IDs and rulesets are preserved in builder metadata.": "Создан в пошаговом конструкторе v0.32.0. ID источников и редакции правил сохранены в данных конструктора.",
+  "Created with Guided Character Builder v0.32.1. Content source IDs and rulesets are preserved in builder metadata.": "Создан в пошаговом конструкторе v0.32.1. ID источников и редакции правил сохранены в данных конструктора.",
   "Pending saves": "Ожидают проверки",
   "Temporary HP": "Временные хиты",
   "Replaces the current value. Temporary HP do not stack.": "Заменяет текущее значение. Временные хиты не складываются.",

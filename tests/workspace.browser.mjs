@@ -57,6 +57,7 @@ try{
   await toggle('help').click();await page.locator('[data-workspace-location=help]').selectOption('right');
   await page.locator('[data-workspace-tab=inspector]').click();
   assert.equal(await panel('help').isVisible(),false);assert.equal(await tokenName.inputValue(),'Новый токен');
+  await page.locator('[data-workspace-map-only]').click();await page.locator('[data-workspace-map-only]').click();assert.equal(await panel('inspector').isVisible(),true);
   await page.locator('[data-workspace-tab=inspector]').focus();await page.keyboard.press('ArrowRight');assert.equal(await panel('help').isVisible(),true);
   await page.locator('[data-workspace-close=help]').click();assert.equal(await panel('inspector').isVisible(),true);
   await toggle('locations').click(); // Reveal an empty left destination during drag.
@@ -67,7 +68,7 @@ try{
   await page.locator('[data-workspace-reset]').click();assert.equal(await mapName.inputValue(),'Новый черновик');
   await page.locator('[data-inspector-tab=tokens]').click();assert.equal(await tokenName.inputValue(),'Новый токен');
   assert.deepEqual(await f.store.scene(l.scene_id,LOCAL_GM),savedScene);assert.deepEqual(await f.store.tokens.list(l.scene_id,LOCAL_GM),savedTokens);
-  await mapName.fill('Старый зал');await tokenName.fill('Страж');
+  await page.locator('[data-inspector-tab=map]').click();await mapName.fill('Старый зал');await page.locator('[data-inspector-tab=tokens]').click();await tokenName.fill('Страж');
   console.log('PASS every dock, pointer/keyboard resize, accessible movement, tabs and drag preserve drafts and server data');
 
   await toggle('locations').click();await toggle('help').click();await page.reload();
@@ -112,6 +113,21 @@ try{
   assert.equal(await panel('inspector').isVisible(),true);assert.equal(await page.locator('[data-vtt-settings]').isVisible(),true);
   assert.match(await page.locator('[data-vtt-status]').textContent(),/Проверьте настройки/);assert.equal((await f.store.scene(l.scene_id,LOCAL_GM)).grid.cellSize,70);
   await page.locator('[name=cellSize]').fill('70');console.log('PASS dropping a map with invalid hidden settings reveals the inspector before upload');
+
+  const migration=await browser.newContext({viewport:{width:1512,height:1120}});
+  await migration.addInitScript(({key,old})=>{localStorage.setItem('dnd-lang','ru');localStorage.setItem(old,JSON.stringify({version:1,panels:{locations:false,inspector:false,help:true},mapOnly:true,inspectorTab:'tokens'}));},{key:workspaceKey(s.id),old:workspaceKey(s.id).replace(':v2:',':v1:')});
+  const migrated=await migration.newPage();await migrated.goto(url);
+  assert.equal(await migrated.locator('[data-workspace-panel=inspector]').isVisible(),false);
+  await migrated.locator('[data-workspace-map-only]').click();assert.equal(await migrated.locator('[data-workspace-panel=help]').isVisible(),true);
+  await migrated.locator('[data-workspace-toggle=inspector]').click();assert.equal(await migrated.locator('[data-token-panel]').isVisible(),true);
+  const preferences=await migrated.evaluate(key=>({next:JSON.parse(localStorage.getItem(key)),old:localStorage.getItem(key.replace(':v2:',':v1:'))}),workspaceKey(s.id));assert.equal(preferences.next.version,2);assert.ok(preferences.old);
+  await migrated.locator('[data-workspace-location=inspector]').selectOption('bottom');
+  await migrated.locator('[data-workspace-resize=bottom]').focus();await migrated.keyboard.press('End');
+  await migrated.reload();assert.equal(await migrated.locator('[data-workspace-panel=inspector]').evaluate(e=>e.parentElement.dataset.workspaceDock),'bottom');assert.equal(await migrated.locator('[data-workspace-tab=inspector]').getAttribute('aria-selected'),'true');
+  await migrated.setViewportSize({width:390,height:844});await migrated.locator('[data-workspace-map-only]').click();await migrated.locator('[data-workspace-map-only]').click();
+  assert.equal(await migrated.evaluate(key=>JSON.parse(localStorage.getItem(key)).sizes.bottom,workspaceKey(s.id)),420);
+  await migrated.setViewportSize({width:1512,height:1120});assert.equal(await migrated.locator('[data-workspace-resize=bottom]').getAttribute('aria-valuenow'),'420');
+  await migration.close();console.log('PASS browser v1 migration, stored dock/tab/size and mobile preferences');
 
   const english=await browser.newContext({viewport:{width:1512,height:1120}});await english.addInitScript(()=>localStorage.setItem('dnd-lang','en'));
   await english.addCookies([{name:'dnd-lang',value:'en',url:f.origin}]);const en=await english.newPage();en.on('pageerror',e=>errors.push(e.message));await en.goto(url);
