@@ -123,8 +123,9 @@ export function initTokens(ctx) {
     previewIcon();artUi?.refresh();updateDirty();
   }
   function select(id) {
+    const next=tokens.find(token=>token.id===id);if(ctx.workspaceData&&!ctx.workspaceData.beforeSelect(next))return false;
     if(selected!==id&&isDirty()&&!confirm(t('Discard unsaved token changes?')))return false;
-    const changed=selected!==id;selected=id;tab('tokens');if(changed)fillEditor();render();return true;
+    const changed=selected!==id;selected=id;tab('tokens');if(changed)fillEditor();render();ctx.workspaceData?.select(next);return true;
   }
   function replaceToken(token,fill=true) {
     const index=tokens.findIndex(row=>row.id===token.id);if(index<0)tokens.push(token);else tokens[index]=token;
