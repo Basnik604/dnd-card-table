@@ -1,7 +1,7 @@
 import {onCharacterChanged} from './workspace-character-sync.js';
 export function initWorkspaceData(root,{sessionId,sceneId,t}){
  const lifecycle=new AbortController(),signal=lifecycle.signal;
- const frames=new Map(),states=new Map();let token=null,serial=0;
+ const frames=new Map(),states=new Map();let token=null,serial=0,sourceMissing=false;
  const context=root.querySelector('[data-workspace-character-context]');
  for(const name of ['inventory','spells','abilities']){const panel=root.querySelector(`[data-workspace-panel="${name}"]`);if(!panel)continue;frames.set(name,panel.querySelector('iframe'));states.set(name,{dirty:false,busy:false,loaded:false});}
  const changedText=t('Character changed elsewhere. Refresh this panel when ready.');
@@ -11,17 +11,17 @@ export function initWorkspaceData(root,{sessionId,sceneId,t}){
  const unsubscribe=onCharacterChanged(stale);
  function hasDraft(){return [...states.values()].some(s=>s.dirty||s.busy);}
  function beforeSelect(next){if(next?.id===token?.id)return true;if([...states.values()].some(s=>s.busy))return false;return !hasDraft()||confirm(t('Discard unsaved character panel changes?'));}
- function load(name){const frame=frames.get(name),state=states.get(name);if(!frame||!token?.character_id||state.loaded)return;state.loaded=true;frame.src=source(name);frame.hidden=false;status(name).textContent='';}
+ function load(name){const frame=frames.get(name),state=states.get(name);if(!frame||!token?.character_id||state.loaded||sourceMissing)return;state.loaded=true;frame.src=source(name);frame.hidden=false;status(name).textContent='';}
  function select(next){
-   if(next?.id===token?.id)return;token=next;
+   if(next?.id===token?.id)return;token=next;sourceMissing=false;
    context.textContent=token?.name||t('Select a token to open its character panels.');
-   for(const [name,frame] of frames){frame.removeAttribute('src');frame.hidden=true;Object.assign(states.get(name),{dirty:false,busy:false,loaded:false});status(name).textContent=token?.character_id?'':t('This token has no linked character.');}
+   for(const [name,frame] of frames){frame.inert=false;frame.removeAttribute('src');frame.hidden=true;Object.assign(states.get(name),{dirty:false,busy:false,loaded:false});status(name).textContent=token?.character_id?'':t('This token has no linked character.');}
    refreshVisibility();
  }
  function refreshVisibility(){for(const [name,frame] of frames)if(!frame.closest('[data-workspace-panel]').hidden)load(name);}
  const observer=new MutationObserver(refreshVisibility);observer.observe(root.querySelector('[data-workspace]'),{subtree:true,attributes:true,attributeFilter:['hidden']});
  window.addEventListener('message',event=>{
-   if(event.origin!==location.origin||event.data?.characterId!==token?.character_id)return;
+   if(event.origin!==location.origin||event.data?.characterId!==token?.character_id||sourceMissing)return;
    const entry=[...frames].find(([,frame])=>event.source===frame.contentWindow);if(!entry)return;
    const [name]=entry,state=states.get(name);
    if(event.data.type==='workspace-character-dirty')state.dirty=event.data.dirty===true;
@@ -39,5 +39,6 @@ export function initWorkspaceData(root,{sessionId,sceneId,t}){
    }catch(error){if(!signal.aborted)results.textContent=error.message;}finally{button.disabled=false;}
  },{signal});
  select(null);context.textContent=t('Select a token to open its character panels.');
- return {beforeSelect,select,destroy(){lifecycle.abort();observer.disconnect();unsubscribe();}};
+ function syncTokens(tokens){if(!token||tokens.some(row=>row.id===token.id))return;sourceMissing=true;context.textContent=t('Selected token is no longer on this scene. Choose another token.');for(const [name,frame] of frames){frame.inert=true;status(name).textContent=context.textContent;}}
+ return {beforeSelect,select,syncTokens,destroy(){lifecycle.abort();observer.disconnect();unsubscribe();}};
 }

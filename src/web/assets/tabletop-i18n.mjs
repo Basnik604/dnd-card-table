@@ -318,4 +318,5 @@ Object.assign(TABLETOP_RU,{
 });
 
 TABLETOP_RU['Moving loaded character panels requires a browser with state-preserving DOM moves.']='Для переноса загруженных панелей нужен браузер с поддержкой перемещения DOM без перезагрузки. Черновики оставлены на месте.';
+TABLETOP_RU['Selected token is no longer on this scene. Choose another token.']='Выбранного токена больше нет на этой сцене. Выберите другой токен.';
 export const tabletopText = (text, language = 'ru') => language === 'en' ? text : TABLETOP_RU[text] || text;
