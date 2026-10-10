@@ -1,6 +1,10 @@
 // Shared by the renderer, client and API. User-entered names never pass through
 // the general game-content translator.
 export const TABLETOP_RU = {
+  "Dock panels":"Закрепить панели",
+  "Floating windows":"Свободные окна",
+  "Move window":"Переместить окно",
+  "Resize window":"Изменить размер окна",
   "Workspace":"Рабочее пространство",
   "Workspace panels":"Панели рабочего пространства",
   "Inspector":"Инспектор",

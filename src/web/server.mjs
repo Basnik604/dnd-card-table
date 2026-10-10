@@ -47,6 +47,7 @@ const THEME_ASSETS = new Map([
   ["/assets/workspace-character.css", ["text/css; charset=utf-8", "workspace-character.css"]],
   ["/assets/workspace-character-sync.js", ["text/javascript; charset=utf-8", "workspace-character-sync.js"]],
   ["/assets/workspace.js", ["text/javascript; charset=utf-8", "workspace.js"]],
+  ["/assets/workspace-floating.mjs", ["text/javascript; charset=utf-8", "workspace-floating.mjs"]],
   ["/assets/workspace-state.mjs", ["text/javascript; charset=utf-8", "workspace-state.mjs"]],
   ["/assets/workspace.css", ["text/css; charset=utf-8", "workspace.css"]],
   ["/assets/tabletop-art.js", ["text/javascript; charset=utf-8", "tabletop-art.js"]],
@@ -1832,7 +1833,7 @@ html[data-theme="tavern"] .builder-variant-badges .chip{
   <div class="status"><b>●</b><span>Local database connected</span></div>
 </div></header>
 ${content}
-<footer class="footer"><a href="/localization">Translation</a> · D&D Card Table v0.32.2</footer>
+<footer class="footer"><a href="/localization">Translation</a> · D&D Card Table v0.32.3</footer>
 </main>
 <script>
 (()=>{
