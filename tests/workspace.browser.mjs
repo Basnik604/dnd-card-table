@@ -138,7 +138,7 @@ try{
     const cfg=JSON.parse(root.querySelector('[data-vtt-config]').textContent),options={sessionId:cfg.session.id,t:s=>s};
     const first=initWorkspace(root,options);initWorkspace(root,options);first.showInspector('tokens');
   });
-  assert.equal(await en.locator('[data-workspace-dock]').count(),3);assert.equal(await en.locator('.workspace-panel-header').count(),3);assert.equal(await en.locator('[data-vtt-settings]').count(),1);
+  assert.equal(await en.locator('[data-workspace-dock]').count(),3);assert.equal(await en.locator('.workspace-panel-header').count(),7);assert.equal(await en.locator('[data-vtt-settings]').count(),1);
   await en.locator('[data-workspace-toggle=locations]').click();assert.equal(await en.locator('[data-workspace-panel=locations]').isVisible(),false);
   assert.deepEqual(errors,[]);console.log('PASS English controls, repeated initialization cleans up and no browser exceptions');
 }finally{await browser.close();await f.close();}

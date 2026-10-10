@@ -1,6 +1,7 @@
 import "dotenv/config";
 import {builderDatabaseError} from "./database-errors.mjs";
 import {createTabletopHandler} from "./tabletop.mjs";
+import {projectCharacterPanel} from "./workspace-character.mjs";
 import {TOKEN_ICONS} from "./assets/tabletop-icon-art.mjs";
 import {subclassControlResources, renderSubclassControls, useSubclassControl, dragonWingsActive} from "./subclass-controls.mjs";
 import {subclassResourceDefinitions, useSubclassAction, renderSubclassActionPanel} from "./subclass-actions.mjs";
@@ -41,6 +42,10 @@ const PAGE_SIZE = 30;
 
 const WEB_DIR = path.dirname(fileURLToPath(import.meta.url));
 const THEME_ASSETS = new Map([
+  ["/assets/workspace-data.js", ["text/javascript; charset=utf-8", "workspace-data.js"]],
+  ["/assets/workspace-character-frame.js", ["text/javascript; charset=utf-8", "workspace-character-frame.js"]],
+  ["/assets/workspace-character.css", ["text/css; charset=utf-8", "workspace-character.css"]],
+  ["/assets/workspace-character-sync.js", ["text/javascript; charset=utf-8", "workspace-character-sync.js"]],
   ["/assets/workspace.js", ["text/javascript; charset=utf-8", "workspace.js"]],
   ["/assets/workspace-state.mjs", ["text/javascript; charset=utf-8", "workspace-state.mjs"]],
   ["/assets/workspace.css", ["text/css; charset=utf-8", "workspace.css"]],
@@ -1733,9 +1738,10 @@ html[data-theme="tavern"] .builder-variant-badges .chip{
 
 .localized-original-name{margin-top:-2px;margin-bottom:7px;font-size:10px;line-height:1.2;color:var(--muted);font-style:italic;opacity:.86}
 </style>
-<link rel="stylesheet" href="/assets/table-ui.css?v=0.32.1">
-<script src="/assets/table-ui.js?v=0.32.1" defer></script>
-<script type="module" src="/assets/i18n.js?v=0.32.1"></script>
+<link rel="stylesheet" href="/assets/table-ui.css?v=0.32.2">
+<script src="/assets/table-ui.js?v=0.32.2" defer></script>
+<script type="module" src="/assets/workspace-character-sync.js?v=0.32.2"></script>
+<script type="module" src="/assets/i18n.js?v=0.32.2"></script>
 </head>
 <body>
 <div class="tavern-decor decor-candle" aria-hidden="true">
@@ -1826,7 +1832,7 @@ html[data-theme="tavern"] .builder-variant-badges .chip{
   <div class="status"><b>●</b><span>Local database connected</span></div>
 </div></header>
 ${content}
-<footer class="footer"><a href="/localization">Translation</a> · D&D Card Table v0.32.1</footer>
+<footer class="footer"><a href="/localization">Translation</a> · D&D Card Table v0.32.2</footer>
 </main>
 <script>
 (()=>{
@@ -5790,7 +5796,7 @@ async function createGuidedCharacter(form) {
           background:{key:backgroundData.source_key,ruleset:backgroundData.ruleset}
         }
       })},
-      ${"Created with Guided Character Builder v0.32.1. Content source IDs and rulesets are preserved in builder metadata."}
+      ${"Created with Guided Character Builder v0.32.2. Content source IDs and rulesets are preserved in builder metadata."}
     )
     RETURNING id::text
   `;
@@ -7741,7 +7747,7 @@ function combatReturnPath(value,characterId){
   return /^\/encounter\/[a-zA-Z0-9-]+$/.test(back)?back:`/character/${encodeURIComponent(characterId)}`;
 }
 
-async function characterPage(id) {
+async function characterPage(id,workspacePanel=null) {
   const result=await getCharacter(id);
   if(!result)return{status:404,body:layout({title:"Character not found",content:`<a class="back" href="/characters">← Characters</a><div class="empty">Character not found.</div>`})};
   const {character:c,inventory,spells,slots,conditions,resources}=result;
@@ -7771,7 +7777,7 @@ async function characterPage(id) {
 
   const conditionsBlock=`<div class="sheet-panel"><div class="spellbook-head"><h3>Conditions</h3><form class="spellbook-add" method="post" action="/character/${encodeURIComponent(c.id)}/condition/add"><select name="condition_entity_id"><option value="">Add condition…</option>${conditionChoices.map(x=>`<option value="${esc(x.id)}">${esc(x.name_en)}</option>`).join("")}</select><button>Apply</button></form></div><div class="condition-list">${conditions.length?conditions.map(x=>`<span class="condition-pill"><a href="/entity/${encodeURIComponent(x.entity_id)}">${esc(x.name_en)}</a><form method="post" action="/character/${encodeURIComponent(c.id)}/condition/${encodeURIComponent(x.id)}/remove"><button>×</button></form></span>`).join(""):`<span class="small-note">No active conditions.</span>`}</div></div>`;
 
-  const resourcesBlock=`<div class="sheet-panel"><div class="spellbook-head"><div><h3>Resources</h3><p class="small-note">Class resources are synchronized automatically. Supported class actions resolve their common bookkeeping here.</p></div><form class="spellbook-add" method="post" action="/character/${encodeURIComponent(c.id)}/resource/add"><input name="name" placeholder="Custom resource"><input name="max_value" type="number" min="1" value="1"><select name="recharge"><option value="short">Short Rest</option><option value="long" selected>Long Rest</option><option value="none">Manual</option></select><button>Add</button></form></div>${resources.length?resources.map(r=>`<div class="resource-row"><div><div class="resource-title"><b>${esc(r.name)}</b>${r.auto_managed?`<span class="auto-resource">Class</span>`:""}</div>${r.notes?`<div class="small-note">${esc(r.notes)}</div>`:`<div class="small-note">${esc(r.recharge)}</div>`}</div><div class="resource-actions"><span class="resource-value" data-resource-key="${esc(r.source_key||r.id)}">${esc(r.current_value)} / ${esc(r.max_value)}</span>${renderManagedResourceActions(c,r,slots,back)}${r.auto_managed?"":`<form method="post" action="/character/${encodeURIComponent(c.id)}/resource/${encodeURIComponent(r.id)}/delete" onsubmit="return confirm('Delete resource?')"><button class="danger-button" type="submit">×</button></form>`}</div></div>`).join(""):`<div class="small-note">This class has no automated limited-use resource at the current level.</div>`}</div>`;
+  const resourcesBlock=`<div class="sheet-panel" data-workspace-character-resources><div class="spellbook-head"><div><h3>Resources</h3><p class="small-note">Class resources are synchronized automatically. Supported class actions resolve their common bookkeeping here.</p></div><form class="spellbook-add" method="post" action="/character/${encodeURIComponent(c.id)}/resource/add"><input name="name" placeholder="Custom resource"><input name="max_value" type="number" min="1" value="1"><select name="recharge"><option value="short">Short Rest</option><option value="long" selected>Long Rest</option><option value="none">Manual</option></select><button>Add</button></form></div>${resources.length?resources.map(r=>`<div class="resource-row"><div><div class="resource-title"><b>${esc(r.name)}</b>${r.auto_managed?`<span class="auto-resource">Class</span>`:""}</div>${r.notes?`<div class="small-note">${esc(r.notes)}</div>`:`<div class="small-note">${esc(r.recharge)}</div>`}</div><div class="resource-actions"><span class="resource-value" data-resource-key="${esc(r.source_key||r.id)}">${esc(r.current_value)} / ${esc(r.max_value)}</span>${renderManagedResourceActions(c,r,slots,back)}${r.auto_managed?"":`<form method="post" action="/character/${encodeURIComponent(c.id)}/resource/${encodeURIComponent(r.id)}/delete" onsubmit="return confirm('Delete resource?')"><button class="danger-button" type="submit">×</button></form>`}</div></div>`).join(""):`<div class="small-note">This class has no automated limited-use resource at the current level.</div>`}</div>`;
 
   const slotsHtml=slots.length?slots.map(s=>{const normal=Number(s.current_slots)||0,bonus=Number(s.bonus_slots)||0,max=Number(s.max_slots)||0;return `<div class="spell-slot ${bonus?"spell-slot-bonus":""}"><b>${profile.pact?"Pact Slot":`Level ${esc(s.slot_level)} Slot`}</b><strong>${max?`${esc(normal)} / ${esc(max)}`:"Created"}${bonus?` <em>+${esc(bonus)}</em>`:""}</strong><div class="slot-pips">${Array.from({length:max},(_,i)=>`<span class="slot-pip ${i<normal?"full":""}"></span>`).join("")}${Array.from({length:bonus},()=>`<span class="slot-pip bonus"></span>`).join("")}</div>${profile.pact?`<span class="slot-note">Level ${esc(s.slot_level)} · Short Rest</span>`:bonus?`<span class="slot-note">${esc(bonus)} temporary slot${bonus===1?"":"s"} · Long Rest clears</span>`:""}</div>`}).join(""):`<div class="small-note">No spell slots.</div>`;
 
@@ -7991,7 +7997,8 @@ async function characterPage(id) {
     });
   })();
   </script>`;
-  return {status:200,body:layout({title:c.name,content,userTitle:true})};
+  const document=layout({title:c.name,content,userTitle:true});
+  return {status:200,body:workspacePanel?projectCharacterPanel(document,workspacePanel,c.id):document};
 }
 
 function numericArmorClass(value) {
@@ -9077,7 +9084,7 @@ async function builderDataEntityPage(id,lang="ru") {
   return {status:200,body:layout({title:entityDisplayName(e,lang,e.content_kind),content})};
 }
 
-const handleTabletop = createTabletopHandler({sql,layout,html,json,language:requestLanguage});
+const handleTabletop = createTabletopHandler({sql,layout,html,json,language:requestLanguage,characterPanel:characterPage});
 
 const server = http.createServer((req, res) => displayContext.run({language:requestLanguage(req)}, async () => {
   try {

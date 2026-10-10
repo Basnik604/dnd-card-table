@@ -206,7 +206,7 @@ async function readRequest(req,maxBytes=64_000) {
   } catch(error) { if(error instanceof TabletopError) throw error; fail('Invalid request.'); }
 }
 
-export function createTabletopHandler({sql,layout,html,json,language=()=> 'ru',artLibrary}) {
+export function createTabletopHandler({sql,layout,html,json,language=()=> 'ru',artLibrary,characterPanel}) {
   const store=createTabletopStore(sql,{artLibrary});
   // The existing application listens on loopback and has no accounts. In 0.29
   // the server assigns one installation-local GM. This is NOT internet auth.
@@ -228,6 +228,16 @@ export function createTabletopHandler({sql,layout,html,json,language=()=> 'ru',a
       }
       try { await store.ensureSchema(); } catch(error) { console.error({tabletopSchema:error}); fail('The tabletop tables could not be initialized. Check the database connection and permissions, then reload.',503); }
       let match;
+      if(req.method==='GET'&&(match=url.pathname.match(/^\/tabletop\/([^/]+)\/scenes\/([^/]+)\/tokens\/([^/]+)\/panels\/(inventory|spells|abilities)$/))){
+        const session=await store.session(match[1],principal),current=await store.scene(match[2],principal);
+        if(current.session_id!==session.id)fail(missing,404);
+        const token=(await store.tokens.list(current.id,principal)).find(token=>token.id===match[3]);
+        if(!token?.character_id||!characterPanel)fail(missing,404);
+        // Only the installation-local master is currently supported. Online must
+        // replace this verified server principal and authorize before rendering.
+        const result=await characterPanel(token.character_id,match[4]);
+        res.setHeader('Cache-Control','no-store');html(res,result.status,result.body);return true;
+      }
       if(req.method==='GET' && url.pathname==='/tabletop') {
         html(res,200,layout({title:t('Game Table'),content:renderTabletopHome(await store.sessions(principal),lang)})); return true;
       }

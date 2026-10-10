@@ -309,4 +309,14 @@ Object.assign(TABLETOP_RU,{
   'Panel location':'Расположение панели', 'Resize dock':'Изменить размер зоны',
   'Drag panel to a dock':'Перетащите панель в другую зону'
 });
+Object.assign(TABLETOP_RU,{
+ 'Abilities and resources':'Способности и ресурсы','Creature library':'Библиотека существ','Layout preset':'Пресет раскладки','Default layout':'Обычная раскладка','Preparation layout':'Подготовка','Play layout':'Проведение игры',
+ 'Select a token to open its character panels.':'Выберите токен для открытия панелей персонажа.','Close panel':'Закрыть панель','Refresh character data':'Обновить данные персонажа','Search creatures':'Найти существо',
+ 'This token has no linked character.':'Этот токен не связан с персонажем.','Character changed elsewhere. Refresh this panel when ready.':'Персонаж изменился в другой панели или вкладке. Обновите данные, когда закончите с черновиком.','Discard unsaved character panel changes?':'Отменить несохранённые изменения в панелях персонажа?',
+ 'No creatures found.':'Существа не найдены.','Could not save character changes.':'Не удалось сохранить изменения персонажа.','Saved. Other drafts remain; refresh when ready.':'Сохранено. Остальные черновики оставлены; обновите данные, когда будете готовы.',
+ 'Invalid character panel':'Некорректная панель персонажа','Character panel unavailable':'Панель персонажа недоступна'
+});
+
+TABLETOP_RU['Moving loaded character panels requires a browser with state-preserving DOM moves.']='Для переноса загруженных панелей нужен браузер с поддержкой перемещения DOM без перезагрузки. Черновики оставлены на месте.';
+TABLETOP_RU['Selected token is no longer on this scene. Choose another token.']='Выбранного токена больше нет на этой сцене. Выберите другой токен.';
 export const tabletopText = (text, language = 'ru') => language === 'en' ? text : TABLETOP_RU[text] || text;

@@ -11,7 +11,7 @@ test('layouts are isolated between sessions and future viewers',()=>{
 });
 test('corrupt or future layouts recover; game data and unknown panels are ignored',()=>{
   for(const raw of ['{broken','null','[]','{"version":99,"mapOnly":true}'])assert.deepEqual(readWorkspace({getItem:()=>raw},'x'),defaultWorkspace());
-  assert.deepEqual(normalizeWorkspace({version:1,panels:{locations:false,inspector:'false',help:true,unknown:true},mapOnly:'yes',inspectorTab:'notes',tokens:[{}]}),{...defaultWorkspace(),panels:{locations:false,inspector:true,help:true}});
+  assert.deepEqual(normalizeWorkspace({version:1,panels:{locations:false,inspector:'false',help:true,unknown:true},mapOnly:'yes',inspectorTab:'notes',tokens:[{}]}),{...defaultWorkspace(),panels:{...defaultWorkspace().panels,locations:false,inspector:true,help:true}});
 });
 test('blocked storage and quota errors do not prevent using a layout',()=>{
   const storage={getItem(){throw Error('blocked');},setItem(){throw Error('quota');}};

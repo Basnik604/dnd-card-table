@@ -1,4 +1,4 @@
-import {defaultWorkspace,readWorkspace,writeWorkspace,workspaceKey,WORKSPACE_PANELS,WORKSPACE_DOCKS,DOCK_LIMITS,clampDockSize,moveWorkspacePanel,fitWorkspaceSizes} from './workspace-state.mjs';
+import {defaultWorkspace,readWorkspace,writeWorkspace,workspaceKey,WORKSPACE_PANELS,WORKSPACE_DOCKS,DOCK_LIMITS,clampDockSize,moveWorkspacePanel,fitWorkspaceSizes,applyWorkspacePreset} from './workspace-state.mjs';
 const instances=new WeakMap();
 
 // Existing forms move as DOM nodes so drafts and handlers remain intact.
@@ -11,7 +11,7 @@ export function initWorkspace(root,{sessionId,t}){
   const panels=new Map(WORKSPACE_PANELS.map(name=>[name,shell.querySelector(`[data-workspace-panel="${name}"]`)]));
   const message=root.querySelector('[data-workspace-status]');
   const toggle=name=>root.querySelector(`[data-workspace-toggle="${name}"]`);
-  const labels={locations:'Locations',inspector:'Inspector',help:'Table help',left:'Left dock',right:'Right dock',bottom:'Bottom dock'};
+  const labels={locations:'Locations',inspector:'Inspector',help:'Table help',inventory:'Inventory',spells:'Spells',abilities:'Abilities and resources',library:'Creature library',left:'Left dock',right:'Right dock',bottom:'Bottom dock'};
   const docks=new Map(),tabs=new Map();let drag=null,resize=null;
   const visible=name=>!!panels.get(name)&&state.panels[name]&&!state.mapOnly;
   const zoneOf=name=>WORKSPACE_DOCKS.find(dock=>state.docks[dock].includes(name));
@@ -60,7 +60,7 @@ export function initWorkspace(root,{sessionId,t}){
       let tabIndex=0;
       for(const name of state.docks[dock]){
         const panel=panels.get(name),tab=tabs.get(name);if(!panel)continue;
-        if(panel.parentElement!==zone)zone.append(panel);if(bar.children[tabIndex]!==tab)bar.insertBefore(tab,bar.children[tabIndex]||null);tabIndex++;
+        if(panel.parentElement!==zone){if(zone.moveBefore)zone.moveBefore(panel,null);else zone.append(panel);}if(bar.children[tabIndex]!==tab)bar.insertBefore(tab,bar.children[tabIndex]||null);tabIndex++;
         const active=list.includes(name)&&state.active[dock]===name;
         if(!active&&panel.contains(document.activeElement)){const target=list.length?tabs.get(state.active[dock]):toggle(name);target?.focus({preventScroll:true});}
         panel.hidden=!active;tab.hidden=!list.includes(name);tab.setAttribute('aria-selected',String(active));tab.tabIndex=active?0:-1;panel.querySelector('[data-workspace-location]').value=dock;
@@ -73,19 +73,31 @@ export function initWorkspace(root,{sessionId,t}){
     root.querySelectorAll('[data-inspector-tab]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.inspectorTab===state.inspectorTab)));applySizes();
   }
   function save(){render();message.textContent=writeWorkspace(storage,key,state)?'':t('Layout storage is unavailable. This layout will last until you leave the page.');}
-  function move(name,dock){moveWorkspacePanel(state,name,dock);save();panels.get(name)?.querySelector('[data-workspace-location]')?.focus({preventScroll:true});}
+  function move(name,dock){
+    const panel=panels.get(name);
+    if(!docks.get(dock).moveBefore&&panel?.querySelector('iframe[src]')){panel.querySelector('[data-workspace-location]').value=zoneOf(name);message.textContent=t('Moving loaded character panels requires a browser with state-preserving DOM moves.');return;}
+    moveWorkspacePanel(state,name,dock);save();panel?.querySelector('[data-workspace-location]')?.focus({preventScroll:true});
+  }
   function showInspector(tab){if(signal.aborted||!panels.get('inspector')||!['map','tokens'].includes(tab))return;state.inspectorTab=tab;state.panels.inspector=true;state.mapOnly=false;state.active[zoneOf('inspector')]='inspector';save();}
+  function preset(name,reset=false){
+    const next=defaultWorkspace();next.inspectorTab=reset?'map':state.inspectorTab;applyWorkspacePreset(next,name);
+    if([...panels].some(([id,panel])=>panel?.querySelector('iframe[src]')&&!shell.moveBefore&&next.docks[zoneOf(id)]?.includes(id)===false)){
+      message.textContent=t('Moving loaded character panels requires a browser with state-preserving DOM moves.');return;
+    }
+    state=next;save();
+  }
   root.querySelectorAll('[data-workspace-toggle]').forEach(button=>button.addEventListener('click',()=>{const name=button.dataset.workspaceToggle;if(!panels.get(name))return;state.panels[name]=!visible(name);state.mapOnly=false;if(state.panels[name])state.active[zoneOf(name)]=name;save();},{signal}));
   root.querySelectorAll('[data-workspace-close]').forEach(button=>button.addEventListener('click',()=>{state.panels[button.dataset.workspaceClose]=false;save();},{signal}));
   root.querySelector('[data-workspace-map-only]').addEventListener('click',()=>{state.mapOnly=!state.mapOnly;save();},{signal});
-  root.querySelector('[data-workspace-reset]').addEventListener('click',()=>{state=defaultWorkspace();save();if(!message.textContent)message.textContent=t('Layout reset. Map and token data are unchanged.');},{signal});
+  root.querySelector('[data-workspace-preset]').addEventListener('change',event=>preset(event.target.value),{signal});
+  root.querySelector('[data-workspace-reset]').addEventListener('click',()=>{preset('default',true);if(!message.textContent)message.textContent=t('Layout reset. Map and token data are unchanged.');},{signal});
   root.querySelectorAll('[data-inspector-tab]').forEach(button=>button.addEventListener('click',()=>showInspector(button.dataset.inspectorTab),{signal}));
   const observer=new ResizeObserver(applySizes);observer.observe(shell);render();
   const instance={showInspector,destroy(){
     lifecycle.abort();observer.disconnect();clearDrag();
     for(const panel of panels.values())if(panel){
       const header=panel.querySelector('.workspace-panel-header'),close=header?.querySelector('[data-workspace-close]');
-      if(close)panel.prepend(close);header?.remove();panel.removeAttribute('role');panel.removeAttribute('aria-labelledby');shell.append(panel);
+      if(close)panel.prepend(close);header?.remove();panel.removeAttribute('role');panel.removeAttribute('aria-labelledby');if(shell.moveBefore)shell.moveBefore(panel,null);else shell.append(panel);
     }
     for(const zone of docks.values())zone.remove();shell.querySelectorAll('[data-workspace-resize]').forEach(el=>el.remove());instances.delete(shell);
   }};

@@ -123,8 +123,9 @@ export function initTokens(ctx) {
     previewIcon();artUi?.refresh();updateDirty();
   }
   function select(id) {
+    const next=tokens.find(token=>token.id===id);if(ctx.workspaceData&&!ctx.workspaceData.beforeSelect(next))return false;
     if(selected!==id&&isDirty()&&!confirm(t('Discard unsaved token changes?')))return false;
-    const changed=selected!==id;selected=id;tab('tokens');if(changed)fillEditor();render();return true;
+    const changed=selected!==id;selected=id;tab('tokens');if(changed)fillEditor();render();ctx.workspaceData?.select(next);return true;
   }
   function replaceToken(token,fill=true) {
     const index=tokens.findIndex(row=>row.id===token.id);if(index<0)tokens.push(token);else tokens[index]=token;
@@ -207,8 +208,8 @@ export function initTokens(ctx) {
     move(token,token.x+(event.key==='ArrowLeft'?-step:event.key==='ArrowRight'?step:0),token.y+(event.key==='ArrowUp'?-step:event.key==='ArrowDown'?step:0));
   });
   find('[data-token-delete]').addEventListener('click',()=>{
-    if(!canChange()||!confirm(t('Delete this token? Its source will remain.')))return;
-    runChange(async()=>{const token=selectedToken();await api(`/api/tabletop/tokens/${token.id}`,'DELETE',{revision:token.revision,scene_revision:getScene().revision});tokens=tokens.filter(row=>row.id!==token.id);selected=null;fillEditor();render();message('Token deleted');});
+    if(!canChange()||ctx.workspaceData&&!ctx.workspaceData.beforeSelect(null)||!confirm(t('Delete this token? Its source will remain.')))return;
+    runChange(async()=>{const token=selectedToken();await api(`/api/tabletop/tokens/${token.id}`,'DELETE',{revision:token.revision,scene_revision:getScene().revision});tokens=tokens.filter(row=>row.id!==token.id);selected=null;ctx.workspaceData?.select(null);fillEditor();render();message('Token deleted');});
   });
 
   const dialog=find('[data-token-crop]'),canvas=find('[data-token-crop-canvas]');let portrait=null,portraitUrl=null;
@@ -243,7 +244,7 @@ export function initTokens(ctx) {
     runChange(async()=>{const token=selectedToken();const result=await api(`/api/tabletop/tokens/${token.id}/image`,'DELETE',{revision:token.revision,scene_revision:getScene().revision});replaceToken(result.token);message('Token saved');});
   });
   artUi=initArtPicker({...ctx,selectedToken,onChoose(){previewIcon();updateDirty();}});
-  transferUi=initTransferTool({...ctx,runChange,getTokens:()=>tokens,isDirty,canChange,selectedToken,acceptTokens(next){tokens=next;if(!tokens.some(token=>token.id===selected)){selected=null;fillEditor();}render();}});
+  transferUi=initTransferTool({...ctx,runChange,getTokens:()=>tokens,isDirty,canChange,selectedToken,acceptTokens(next){tokens=next;ctx.workspaceData?.syncTokens(next);if(!tokens.some(token=>token.id===selected)){selected=null;fillEditor();}render();}});
   render();search();
-  return {isDirty,updateDirty,render,replaceList(next){tokens=next;if(selected&&!tokens.some(row=>row.id===selected)){selected=null;fillEditor();}else if(selected&&!isDirty())fillEditor();render();}};
+  return {isDirty,updateDirty,render,replaceList(next){tokens=next;ctx.workspaceData?.syncTokens(next);if(selected&&!tokens.some(row=>row.id===selected)){selected=null;fillEditor();}else if(selected&&!isDirty())fillEditor();render();}};
 }

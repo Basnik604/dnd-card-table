@@ -1,10 +1,10 @@
 // Personal presentation only; no game data belongs in this schema.
 export const WORKSPACE_VERSION=2;
-export const WORKSPACE_PANELS=['locations','inspector','help'];
+export const WORKSPACE_PANELS=['locations','inspector','help','inventory','spells','abilities','library'];
 export const WORKSPACE_DOCKS=['left','right','bottom'];
 export const DOCK_LIMITS={left:[180,440],right:[240,480],bottom:[120,420]};
-const home={locations:'left',inspector:'right',help:'bottom'};
-export function defaultWorkspace(){return {version:2,panels:{locations:true,inspector:true,help:false},mapOnly:false,inspectorTab:'map',sizes:{left:190,right:260,bottom:180},docks:{left:['locations'],right:['inspector'],bottom:['help']},active:{left:'locations',right:'inspector',bottom:'help'}};}
+const home={locations:'left',inspector:'right',help:'bottom',inventory:'right',spells:'right',abilities:'bottom',library:'left'};
+export function defaultWorkspace(){return {version:2,panels:{locations:true,inspector:true,help:false,inventory:false,spells:false,abilities:false,library:false},mapOnly:false,inspectorTab:'map',sizes:{left:190,right:260,bottom:180},docks:{left:['locations','library'],right:['inspector','inventory','spells'],bottom:['help','abilities']},active:{left:'locations',right:'inspector',bottom:'help'}};}
 export function clampDockSize(dock,value){const [min,max]=DOCK_LIMITS[dock];return Math.min(max,Math.max(min,value));}
 export function normalizeWorkspace(value){
   const state=defaultWorkspace();
@@ -44,6 +44,13 @@ export function moveWorkspacePanel(state,panel,dock){
   for(const zone of WORKSPACE_DOCKS)state.docks[zone]=state.docks[zone].filter(id=>id!==panel);
   state.docks[dock].push(panel);state.active[dock]=panel;state.panels[panel]=true;state.mapOnly=false;
   Object.assign(state,normalizeWorkspace(state));
+}
+export function applyWorkspacePreset(state,preset){
+  const next=defaultWorkspace();
+  if(preset==='prepare'){next.panels.library=true;next.active.left='library';}
+  else if(preset==='play'){next.panels.abilities=true;next.panels.inventory=true;next.panels.spells=true;next.active.right='inventory';next.active.bottom='abilities';}
+  else if(preset!=='default')return;
+  next.inspectorTab=state.inspectorTab;Object.assign(state,next);
 }
 // Clamp the rendered desktop layout without overwriting the user's saved sizes.
 export function fitWorkspaceSizes(sizes,width){

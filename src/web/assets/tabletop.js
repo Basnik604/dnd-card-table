@@ -1,4 +1,5 @@
 import {initWorkspace} from './workspace.js';
+import {initWorkspaceData} from './workspace-data.js';
 import {initTokens} from './tabletop-tokens.js';
 import {tabletopText} from './tabletop-i18n.mjs';
 
@@ -9,6 +10,7 @@ function initTabletop(root) {
   const cfg=JSON.parse(root.querySelector('[data-vtt-config]').textContent);
   const t=text=>tabletopText(text,cfg.lang),find=selector=>root.querySelector(selector);
   const workspace=initWorkspace(root,{sessionId:cfg.session?.id,t});
+  const workspaceData=cfg.scene?initWorkspaceData(root,{sessionId:cfg.session.id,sceneId:cfg.scene.id,t}):null;
   const floorName=value=>value==='Ground floor'?t('Ground floor'):value;
   let scene=cfg.scene,busy=false,dirty=false,tokenUi=null;
   const status=find('[data-vtt-status]'),reload=find('[data-vtt-reload]'),form=find('[data-vtt-settings]');
@@ -274,7 +276,7 @@ function initTabletop(root) {
     button.title=label;button.setAttribute('aria-label',label);
   });
   mapImage();gridPreview();
-  tokenUi=initTokens({root,workspace,api,run,t,message,viewport,map,navigate,tokens:cfg.tokens,getScene:()=>scene,getCamera:()=>camera,getGrid:()=>data().grid,isBusy:()=>busy,mapDirty:()=>dirty,validateMapSettings,saveMapSettings});
+  tokenUi=initTokens({root,workspace,workspaceData,api,run,t,message,viewport,map,navigate,tokens:cfg.tokens,getScene:()=>scene,getCamera:()=>camera,getGrid:()=>data().grid,isBusy:()=>busy,mapDirty:()=>dirty,validateMapSettings,saveMapSettings});
   let previousWidth=0,previousHeight=0;
   const observer=new ResizeObserver(()=>{
     if(!cameraReady) {
