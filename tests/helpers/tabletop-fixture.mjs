@@ -26,7 +26,8 @@ export async function tabletopFixture({server=false,artLibrary}={}) {
   let listener;
   if(server) {
     const displayContext=new AsyncLocalStorage();
-    const {layout,html,json,requestLanguage}=serverFunctions(['esc','layout','html','json','requestLanguage'],{displayContext,TABS:[],localizeHtml,translateText,normalizeLanguage});
+    const {layout:baseLayout,html,json,requestLanguage}=serverFunctions(['esc','layout','html','json','requestLanguage'],{displayContext,TABS:[],localizeHtml,translateText,normalizeLanguage});
+    const layout=args=>baseLayout({...args,content:args.content+'<script>try{const cfg=JSON.parse(document.querySelector("[data-vtt-config]")?.textContent||"{}");if(cfg.session)localStorage.setItem("dnd-workspace-windows:v1:local-master:"+encodeURIComponent(cfg.session.id),JSON.stringify({version:1,mode:"docks",windows:{}}));}catch{}</script>'});
     const {serveThemeAsset}=serverFunctions(['THEME_ASSETS','serveThemeAsset'],{TOKEN_ICONS,readFileSync,path,WEB_DIR:fileURLToPath(new URL('../../src/web/',import.meta.url))});
     const handle=createTabletopHandler({sql,layout,html,json,language:requestLanguage,artLibrary});
     listener=http.createServer((req,res)=>displayContext.run({language:requestLanguage(req)},async()=>{

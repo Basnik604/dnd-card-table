@@ -1,6 +1,15 @@
 // Shared by the renderer, client and API. User-entered names never pass through
 // the general game-content translator.
 export const TABLETOP_RU = {
+  "Panels":"Окна",
+  "Layout":"Раскладка",
+  "Text scale":"Масштаб текста",
+  "Fill background":"Развернуть локацию на фоне",
+  "Preparation opens the creature library. Play opens inventory, spells and abilities. These presets only arrange panels.":"Подготовка открывает библиотеку существ. Игра открывает инвентарь, заклинания и способности. Пресеты меняют только расположение окон.",
+  "Dock panels":"Закрепить панели",
+  "Floating windows":"Свободные окна",
+  "Move window":"Переместить окно",
+  "Resize window":"Изменить размер окна",
   "Workspace":"Рабочее пространство",
   "Workspace panels":"Панели рабочего пространства",
   "Inspector":"Инспектор",
