@@ -79,8 +79,8 @@ export function initWorkspace(root,{sessionId,t}){
     moveWorkspacePanel(state,name,dock);save();panel?.querySelector('[data-workspace-location]')?.focus({preventScroll:true});
   }
   function showInspector(tab){if(signal.aborted||!panels.get('inspector')||!['map','tokens'].includes(tab))return;state.inspectorTab=tab;state.panels.inspector=true;state.mapOnly=false;state.active[zoneOf('inspector')]='inspector';save();}
-  function preset(name){
-    const next=defaultWorkspace();next.inspectorTab=state.inspectorTab;applyWorkspacePreset(next,name);
+  function preset(name,reset=false){
+    const next=defaultWorkspace();next.inspectorTab=reset?'map':state.inspectorTab;applyWorkspacePreset(next,name);
     if([...panels].some(([id,panel])=>panel?.querySelector('iframe[src]')&&!shell.moveBefore&&next.docks[zoneOf(id)]?.includes(id)===false)){
       message.textContent=t('Moving loaded character panels requires a browser with state-preserving DOM moves.');return;
     }
@@ -90,7 +90,7 @@ export function initWorkspace(root,{sessionId,t}){
   root.querySelectorAll('[data-workspace-close]').forEach(button=>button.addEventListener('click',()=>{state.panels[button.dataset.workspaceClose]=false;save();},{signal}));
   root.querySelector('[data-workspace-map-only]').addEventListener('click',()=>{state.mapOnly=!state.mapOnly;save();},{signal});
   root.querySelector('[data-workspace-preset]').addEventListener('change',event=>preset(event.target.value),{signal});
-  root.querySelector('[data-workspace-reset]').addEventListener('click',()=>{preset('default');if(!message.textContent)message.textContent=t('Layout reset. Map and token data are unchanged.');},{signal});
+  root.querySelector('[data-workspace-reset]').addEventListener('click',()=>{preset('default',true);if(!message.textContent)message.textContent=t('Layout reset. Map and token data are unchanged.');},{signal});
   root.querySelectorAll('[data-inspector-tab]').forEach(button=>button.addEventListener('click',()=>showInspector(button.dataset.inspectorTab),{signal}));
   const observer=new ResizeObserver(applySizes);observer.observe(shell);render();
   const instance={showInspector,destroy(){
