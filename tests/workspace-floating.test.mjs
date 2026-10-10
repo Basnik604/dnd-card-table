@@ -10,7 +10,7 @@ test('window edges keep their opposite edge fixed and remain reachable in a smal
  for(const edge of ['n','s','e','w','nw','ne','sw','se']){const r=changeWindow(rect,edge,5000,-5000,1000,800);assert.ok(r.x>=0&&r.y>=0&&r.x+r.w<=1000&&r.y+r.h<=800);}
 });
 test('corrupt geometry and blocked storage recover to floating windows without importing game data',()=>{
- assert.deepEqual(readWindows({getItem:()=>'{bad'},'key',['inspector']),{version:1,mode:'floating',windows:{}});
- assert.deepEqual(readWindows({getItem:()=>JSON.stringify({version:1,mode:'docks',windows:{inspector:{x:1,y:2,w:'invalid',h:3}},tokens:[1]})},'key',['inspector']),{version:1,mode:'docks',windows:{}});
+ assert.deepEqual(readWindows({getItem:()=>'{bad'},'key',['inspector']),{version:1,mode:'floating',windows:{},scales:{}});
+ assert.deepEqual(readWindows({getItem:()=>JSON.stringify({version:1,mode:'docks',windows:{inspector:{x:1,y:2,w:'invalid',h:3}},tokens:[1]})},'key',['inspector']),{version:1,mode:'docks',windows:{},scales:{}});
  const r=defaultWindow('inspector',390,600);assert.ok(r.x+r.w<=390&&r.y+r.h<=600);
 });

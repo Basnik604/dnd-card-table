@@ -8,18 +8,23 @@ try{
  const url=f.origin+`/tabletop/${f.session.id}?scene=${f.location.scene_id}`;
  await page.goto(url);const shell=page.locator('[data-workspace]'),panel=page.locator('[data-workspace-panel=inspector]');
  assert.ok(await shell.evaluate(el=>el.classList.contains('workspace-floating')));
+ assert.ok((await page.locator('.workspace-toolbar').boundingBox()).height<=40);
+ const cameraBox=await page.locator('.vtt-camera-tools').boundingBox(),toolBox=await page.locator('.vtt-token-tools').boundingBox();assert.ok(cameraBox.y+cameraBox.height<=toolBox.y);
+ await page.locator('[data-vtt-fill]').click();assert.match(await page.locator('[data-vtt-map]').getAttribute('style'),/scale\(0\.72\)/);
  const viewport=await page.locator('[data-vtt-viewport]').boundingBox();assert.deepEqual(viewport,{x:0,y:0,width:1440,height:1000});
  const scene=await f.store.scene(f.location.scene_id,LOCAL_GM),tokens=await f.store.tokens.list(f.location.scene_id,LOCAL_GM);
  const draft=page.locator('[data-vtt-settings] [name=name]');await draft.fill('Черновик окна');
  const handle=panel.locator('[data-workspace-drag]');let before=await panel.boundingBox(),box=await handle.boundingBox();
  await page.mouse.move(box.x+10,box.y+10);await page.mouse.down();await page.mouse.move(box.x-120,box.y+90,{steps:5});await page.mouse.up();let after=await panel.boundingBox();assert.ok(after.x<before.x&&after.y>before.y);assert.equal(await draft.inputValue(),'Черновик окна');
  for(const edge of ['n','s','e','w','ne','nw','se','sw']){const grip=panel.locator(`[data-window-resize=${edge}]`);before=await panel.boundingBox();await grip.focus();await page.keyboard.press(edge.includes('w')?'ArrowLeft':edge.includes('e')?'ArrowRight':edge==='n'?'ArrowUp':'ArrowDown');after=await panel.boundingBox();assert.ok(after.width!==before.width||after.height!==before.height);}
- const size=await panel.boundingBox();await page.reload();assert.deepEqual(await panel.boundingBox(),size);
+ await panel.locator('[data-window-scale]').selectOption('85');assert.equal(await panel.locator('.workspace-panel-body').evaluate(el=>el.style.zoom),'0.85');
+ const size=await panel.boundingBox();await page.reload();assert.deepEqual(await panel.boundingBox(),size);assert.equal(await panel.locator('[data-window-scale]').inputValue(),'85');
  console.log('PASS fullscreen map, pointer movement, eight resize directions and persistent geometry');
- await page.locator('[data-inspector-tab=tokens]').click();await page.locator(`[data-select-token="${f.token.id}"]`).click();await page.locator('[data-workspace-toggle=abilities]').click();
+ await page.locator('[data-inspector-tab=tokens]').click();await page.locator(`[data-select-token="${f.token.id}"]`).click();await page.locator('[data-workspace-menu=panels] summary').click();await page.locator('[data-workspace-toggle=abilities]').click();
  const abilities=page.locator('[data-workspace-panel=abilities]'),frame=page.frameLocator('[data-workspace-panel=abilities] iframe');await frame.locator('[name=draft]').fill('Сохранить черновик');
+ await abilities.locator('[data-window-scale]').selectOption('115');assert.equal(await frame.locator('[name=draft]').inputValue(),'Сохранить черновик');
  await abilities.locator('[data-workspace-drag]').focus();await page.keyboard.press('ArrowLeft');await abilities.locator('[data-window-resize=se]').focus();await page.keyboard.press('ArrowDown');
- await page.locator('[data-workspace-mode]').click();await page.locator('[data-workspace-mode]').click();await page.locator('[data-workspace-map-only]').click();await page.locator('[data-workspace-map-only]').click();assert.equal(await frame.locator('[name=draft]').inputValue(),'Сохранить черновик');
+ await page.locator('[data-workspace-menu=layout] summary').click();await page.locator('[data-workspace-mode]').click();await page.locator('[data-workspace-mode]').click();await page.locator('[data-workspace-map-only]').click();await page.locator('[data-workspace-map-only]').click();assert.equal(await frame.locator('[name=draft]').inputValue(),'Сохранить черновик');
  assert.ok(await panel.isVisible()&&await abilities.isVisible());
  console.log('PASS independent windows and iframe drafts survive resizing, mode switches and map-only');
  await page.setViewportSize({width:390,height:700});await page.waitForTimeout(100);

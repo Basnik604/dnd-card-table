@@ -17,7 +17,8 @@ export function changeWindow(rect,edge,dx,dy,width,height){
 export function readWindows(storage,key,names){
   let saved;try{saved=JSON.parse(storage.getItem(floatingKey(key)));}catch{}
   const windows={};for(const name of names){const r=saved?.version===1?saved.windows?.[name]:null;if(r&&['x','y','w','h'].every(k=>Number.isFinite(r[k])))windows[name]={x:r.x,y:r.y,w:r.w,h:r.h};}
-  return {version:1,mode:saved?.mode==='docks'?'docks':'floating',windows};
+  const scales={};for(const name of names){const v=saved?.scales?.[name];if(Number.isFinite(v))scales[name]=Math.min(130,Math.max(70,v));}
+  return {version:1,mode:saved?.mode==='docks'?'docks':'floating',windows,scales};
 }
 export function defaultWindow(name,width,height){
  const presets={locations:[12,12,240,420],inspector:[width-332,12,320,500],help:[32,height-240,340,220],inventory:[width-370,80,350,440],spells:[width-420,120,380,440],abilities:[width-460,160,400,440],library:[280,40,300,380]};

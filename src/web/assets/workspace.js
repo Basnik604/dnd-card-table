@@ -9,7 +9,7 @@ export function initWorkspace(root,{sessionId,t}){
   const lifecycle=new AbortController(),signal=lifecycle.signal;let storage;
   try{storage=window.localStorage;}catch{}
   const key=workspaceKey(sessionId);let state=readWorkspace(storage,key);
-  const windows=readWindows(storage,key,WORKSPACE_PANELS);let windowGesture=null,z=10;
+  const windows=readWindows(storage,key,WORKSPACE_PANELS);let windowGesture=null,z=10,lastMode=null;
   const isFloating=()=>windows.mode==='floating';
   const panels=new Map(WORKSPACE_PANELS.map(name=>[name,shell.querySelector(`[data-workspace-panel="${name}"]`)]));
   const message=root.querySelector('[data-workspace-status]');
@@ -47,6 +47,10 @@ export function initWorkspace(root,{sessionId,t}){
     const select=element('select',{'data-workspace-control':'','data-workspace-location':name,'aria-label':t('Panel location')+' · '+t(labels[name])});
     for(const dock of WORKSPACE_DOCKS)select.append(element('option',{'value':dock},t(labels[dock])));
     select.addEventListener('change',()=>move(name,select.value),{signal});header.append(handle,select);
+    const scale=element('select',{'data-workspace-control':'','data-window-scale':name,'aria-label':t('Text scale')+' · '+t(labels[name]),'title':t('Text scale')});
+    for(const value of [70,85,100,115,130])scale.append(element('option',{value:String(value)},value+'%'));scale.value=String(windows.scales[name]||100);header.append(scale);
+    function applyScale(){body.style.zoom=String((windows.scales[name]||100)/100);}
+    scale.addEventListener('change',()=>{windows.scales[name]=Number(scale.value);applyScale();save();},{signal});applyScale();
     const close=panel.querySelector('[data-workspace-close]');if(close)header.append(close);panel.prepend(header);panel.setAttribute('role','tabpanel');
     const tab=element('button',{'type':'button','data-workspace-control':'','data-workspace-tab':name,'role':'tab','id':`workspace-tab-${name}`,'aria-controls':panel.id},t(labels[name]));panel.setAttribute('aria-labelledby',tab.id);tabs.set(name,tab);
     handle.tabIndex=0;handle.setAttribute('aria-label',t('Move window')+' · '+t(labels[name]));
@@ -71,6 +75,7 @@ export function initWorkspace(root,{sessionId,t}){
   }
   function render(){
     shell.classList.toggle('workspace-floating',isFloating());
+    if(lastMode!==windows.mode){root.querySelectorAll('[data-workspace-menu]').forEach(menu=>menu.open=!isFloating());lastMode=windows.mode;}
     root.querySelector('[data-workspace-mode]').textContent=t(isFloating()?'Dock panels':'Floating windows');
     for(const dock of WORKSPACE_DOCKS){
       const zone=docks.get(dock),bar=zone.querySelector('[role=tablist]'),list=state.docks[dock].filter(visible);
@@ -104,12 +109,13 @@ export function initWorkspace(root,{sessionId,t}){
     if([...panels].some(([id,panel])=>panel?.querySelector('iframe[src]')&&!shell.moveBefore&&next.docks[zoneOf(id)]?.includes(id)===false)){
       message.textContent=t('Moving loaded character panels requires a browser with state-preserving DOM moves.');return;
     }
-    state=next;windows.windows={};save();
+    state=next;windows.windows={};if(reset){windows.scales={};for(const [name,panel] of panels)if(panel){panel.querySelector('.workspace-panel-body').style.zoom='1';panel.querySelector('[data-window-scale]').value='100';}}save();
   }
-  root.querySelectorAll('[data-workspace-toggle]').forEach(button=>button.addEventListener('click',()=>{const name=button.dataset.workspaceToggle;if(!panels.get(name))return;state.panels[name]=!visible(name);state.mapOnly=false;if(state.panels[name])state.active[zoneOf(name)]=name;save();},{signal}));
+  root.querySelectorAll('[data-workspace-toggle]').forEach(button=>button.addEventListener('click',()=>{const name=button.dataset.workspaceToggle;if(!panels.get(name))return;state.panels[name]=!visible(name);state.mapOnly=false;if(state.panels[name])state.active[zoneOf(name)]=name;if(isFloating())button.closest('details')?.removeAttribute('open');save();},{signal}));
   root.querySelectorAll('[data-workspace-close]').forEach(button=>button.addEventListener('click',()=>{state.panels[button.dataset.workspaceClose]=false;save();},{signal}));
   root.querySelector('[data-workspace-mode]').addEventListener('click',()=>{windows.mode=isFloating()?'docks':'floating';save();},{signal});
   window.addEventListener('resize',applySizes,{signal});
+  root.querySelectorAll('[data-workspace-menu]').forEach(menu=>menu.addEventListener('toggle',()=>{if(isFloating()&&menu.open)root.querySelectorAll('[data-workspace-menu]').forEach(other=>{if(other!==menu)other.open=false;});},{signal}));
   root.querySelector('[data-workspace-map-only]').addEventListener('click',()=>{state.mapOnly=!state.mapOnly;save();},{signal});
   root.querySelector('[data-workspace-preset]').addEventListener('change',event=>preset(event.target.value),{signal});
   root.querySelector('[data-workspace-reset]').addEventListener('click',()=>{preset('default',true);if(!message.textContent)message.textContent=t('Layout reset. Map and token data are unchanged.');},{signal});

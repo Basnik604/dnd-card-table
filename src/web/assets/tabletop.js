@@ -75,6 +75,7 @@ function initTabletop(root) {
   if(!scene) return;
 
   const viewport=find('[data-vtt-viewport]'),map=find('[data-vtt-map]'),img=find('[data-vtt-map-image]');
+  find('.vtt-stage-toolbar').append(find('.vtt-token-tools')); 
   const topbar=document.querySelector('.topbar');
   function headerSpace() {
     if(!topbar)return;
@@ -237,6 +238,7 @@ function initTabletop(root) {
   });
 
   find('[data-vtt-fit]').addEventListener('click',fit);
+  find('[data-vtt-fill]')?.addEventListener('click',()=>{camera.scale=Math.max(viewport.clientWidth/width,viewport.clientHeight/height);camera.x=(viewport.clientWidth-width*camera.scale)/2;camera.y=(viewport.clientHeight-height*camera.scale)/2;drawCamera();});
   root.querySelectorAll('[data-vtt-zoom]').forEach(button=>button.addEventListener('click',()=>zoom(button.dataset.vttZoom==='in'?1.25:0.8)));
   viewport.addEventListener('wheel',event=>{event.preventDefault();const rect=viewport.getBoundingClientRect();zoom(Math.exp(-Math.max(-300,Math.min(300,event.deltaY))*0.002),event.clientX-rect.left,event.clientY-rect.top);},{passive:false});
   const pointers=new Map();
