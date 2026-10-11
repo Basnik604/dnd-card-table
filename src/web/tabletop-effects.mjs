@@ -12,9 +12,9 @@ async function clearEffect(db,row){
  await db`DELETE FROM vtt_effects WHERE id=${row.id}`;
 }
 export async function syncEffects(db,sceneId){
- const concentrating=await db`SELECT c.id,c.feature_choices,c.hp_current,u.state AS tactics FROM characters c JOIN vtt_tokens t ON t.character_id=c.id LEFT JOIN vtt_unit_tactics u ON u.token_id=t.id WHERE t.scene_id=${sceneId} ORDER BY c.id FOR UPDATE OF c`;
+ const concentrating=await db`SELECT c.id,to_jsonb(c)->'feature_choices' AS feature_choices,(to_jsonb(c)->>'hp_current')::integer AS hp_current,u.state AS tactics FROM characters c JOIN vtt_tokens t ON t.character_id=c.id LEFT JOIN vtt_unit_tactics u ON u.token_id=t.id WHERE t.scene_id=${sceneId} ORDER BY c.id FOR UPDATE OF c`;
  for(const row of concentrating)if(row.feature_choices?.concentration&&(row.hp_current===0||row.tactics?.conditions?.some(c=>['incapacitated','paralyzed','petrified','stunned','unconscious'].includes(c.key)))){const choices={...row.feature_choices};delete choices.concentration;await db`UPDATE characters SET feature_choices=${db.json(choices)},updated_at=NOW() WHERE id=${row.id}`;}
- const rows=await db`SELECT e.*,t.scene_id AS owner_scene,t.character_id,c.feature_choices,c.hp_current,u.state AS tactics FROM vtt_effects e LEFT JOIN vtt_tokens t ON t.id=e.owner_token_id LEFT JOIN characters c ON c.id=t.character_id LEFT JOIN vtt_unit_tactics u ON u.token_id=t.id WHERE e.scene_id=${sceneId} ORDER BY e.id`;
+ const rows=await db`SELECT e.*,t.scene_id AS owner_scene,t.character_id,to_jsonb(c)->'feature_choices' AS feature_choices,(to_jsonb(c)->>'hp_current')::integer AS hp_current,u.state AS tactics FROM vtt_effects e LEFT JOIN vtt_tokens t ON t.id=e.owner_token_id LEFT JOIN characters c ON c.id=t.character_id LEFT JOIN vtt_unit_tactics u ON u.token_id=t.id WHERE e.scene_id=${sceneId} ORDER BY e.id`;
  for(const row of rows)if(row.owner_scene!==sceneId)await clearEffect(db,row);
  for(const row of rows)if(row.state.concentration_key&&(concentrationKey(row.feature_choices?.concentration)!==row.state.concentration_key||row.hp_current===0||row.tactics?.conditions?.some(c=>['incapacitated','paralyzed','petrified','stunned','unconscious'].includes(c.key))))await clearEffect(db,row);
  // Deleting or transferring an owner removes its effect by FK or moves it out
