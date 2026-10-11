@@ -37,6 +37,7 @@ export const TABLETOP_RU = {
 "Manual ruling":"Решение мастера",
 "Normal roll":"Обычный бросок",
 "Resource cost":"Расход ресурса",
+"Spell slot":"Ячейка заклинания",
 "Save ability":"Характеристика спасброска",
 "Half damage on successful save":"Половина урона при успешном спасброске",
 "Rules text":"Текст правил",
