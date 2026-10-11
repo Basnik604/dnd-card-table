@@ -77,3 +77,5 @@ html .workspace-floating .vtt-inspector-tabs{gap:4px;padding:0;margin-bottom:7px
 .vtt-session:has(.workspace-floating) .workspace-layout-buttons .workspace-preset-help{position:static;width:auto;max-width:none;padding:6px 0 0;margin:0;border:0;border-radius:0;box-shadow:none;background:transparent}
 
 .combat-actions{display:flex;flex-wrap:wrap;gap:4px}.combat-participant{display:grid!important;grid-template-columns:18px minmax(0,1fr) 60px;gap:5px;align-items:center}.combat-participant input[type=checkbox]{width:14px!important;min-height:0!important}.combat-participant span{overflow-wrap:anywhere}html .vtt [data-combat-active]{outline:3px solid #f0d077;outline-offset:4px}[data-combat-view] li[aria-current=step]{color:var(--vt-gold);font-weight:bold}
+
+.workspace-preset-help{display:none}.vtt-session:has(.workspace-floating) .workspace-layout-buttons .workspace-preset-help{display:block}
