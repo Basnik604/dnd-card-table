@@ -1,3 +1,4 @@
+import {advanceEffects} from './tabletop-effects.mjs';
 import {advanceTactics} from './tabletop-tactics.mjs';
 export function createCombatStore(sql,{scene,ErrorType}){
  const fail=(message,status=400)=>{throw new ErrorType(message,status);};
@@ -32,6 +33,7 @@ export function createCombatStore(sql,{scene,ErrorType}){
    else fail('Invalid combat action.');
    await tx`UPDATE vtt_combat SET fight_id=CASE WHEN ${input.action==='start'} THEN gen_random_uuid() ELSE fight_id END,entries=${tx.json(entries)},active_token_id=${active},round=${round},revision=revision+1,updated_at=NOW() WHERE scene_id=${id}`;
    await advanceTactics(tx,id,current.active_token_id,active,input.action);
+   await advanceEffects(tx,id,current.active_token_id,active,input.action);
    return snapshot(tx,id,principal);
   });}
  };

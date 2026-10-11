@@ -1,3 +1,4 @@
+import {syncEffects} from './tabletop-effects.mjs';
 export const CONDITIONS=['blinded','charmed','deafened','frightened','grappled','incapacitated','invisible','paralyzed','petrified','poisoned','prone','restrained','stunned','unconscious','exhaustion','custom'];
 export const freshBudget=()=>({action:0,bonus:0,reaction:0,movement:0,attacks:0,dash:0});
 export function tacticalState(value={}){value ||= {};return {speed:30,attacks_per_action:1,conditions:[],...value,budget:{...freshBudget(),...value.budget}};}
@@ -29,7 +30,7 @@ export function createTacticsStore(sql,{scene,ErrorType}){
   else if(input.action==='condition'){
    if(!CONDITIONS.includes(input.key)||!int(input.remaining,0,100)||!['start','end'].includes(input.phase)||!int(input.level||1,1,6))fail('Invalid condition.');
    const condition={key:input.key,remaining:input.remaining,phase:input.phase,level:input.level||1,note:String(input.note||'').slice(0,500),source:String(input.source||'').slice(0,100)};
-   state.conditions=state.conditions.filter(c=>c.key!==input.key||(input.key!=='exhaustion'&&(c.source||'')!==condition.source));if(!input.remove)state.conditions.push(condition);
+   state.conditions=state.conditions.filter(c=>c.effect_id||c.key!==input.key||(input.key!=='exhaustion'&&(c.source||'')!==condition.source));if(!input.remove)state.conditions.push(condition);
    if(!input.remove&&token.character_id&&['incapacitated','paralyzed','petrified','stunned','unconscious'].includes(input.key)){const [c]=await db`SELECT feature_choices FROM characters WHERE id=${token.character_id} FOR UPDATE`;const choices={...c.feature_choices};delete choices.concentration;await db`UPDATE characters SET feature_choices=${db.json(choices)},updated_at=NOW() WHERE id=${token.character_id}`;}
   }else if(input.action==='reset'){state.budget=freshBudget();}
   else if(input.action==='spend'||input.action==='movement'){
@@ -38,6 +39,6 @@ export function createTacticsStore(sql,{scene,ErrorType}){
    if(input.action==='movement'){if(!int(input.distance,0,1000))fail('Invalid movement distance.');if(state.budget.movement+input.distance>effectiveSpeed(state)+state.budget.dash)fail('Not enough movement remains.');state.budget.movement+=input.distance;}
    else{try{Object.assign(state,spendTiming(state,input.timing));}catch(error){fail(error.message);}}
   }else fail('Invalid turn tool action.');
-  await writeTactics(db,token.id,state);return readTactics(db,token.id);
+  await writeTactics(db,token.id,state);await syncEffects(db,id);return readTactics(db,token.id);
  });}};
 }
