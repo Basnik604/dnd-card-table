@@ -1,3 +1,4 @@
+import {advanceTactics} from './tabletop-tactics.mjs';
 export function createCombatStore(sql,{scene,ErrorType}){
  const fail=(message,status=400)=>{throw new ErrorType(message,status);};
  const sort=entries=>entries.sort((a,b)=>b.initiative-a.initiative||a.token_id.localeCompare(b.token_id));
@@ -30,6 +31,7 @@ export function createCombatStore(sql,{scene,ErrorType}){
    }else if(input.action==='stop'){active=null;round=0;}
    else fail('Invalid combat action.');
    await tx`UPDATE vtt_combat SET entries=${tx.json(entries)},active_token_id=${active},round=${round},revision=revision+1,updated_at=NOW() WHERE scene_id=${id}`;
+   await advanceTactics(tx,id,current.active_token_id,active,input.action);
    return snapshot(tx,id,principal);
   });}
  };

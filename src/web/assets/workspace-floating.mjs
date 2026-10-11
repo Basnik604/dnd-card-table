@@ -21,6 +21,6 @@ export function readWindows(storage,key,names){
   return {version:1,mode:saved?.mode==='docks'?'docks':'floating',windows,scales};
 }
 export function defaultWindow(name,width,height){
- const presets={locations:[12,12,240,420],inspector:[width-332,12,320,500],help:[32,height-240,340,220],inventory:[width-370,80,350,440],spells:[width-420,120,380,440],abilities:[width-460,160,400,440],library:[280,40,300,380]};
+ const presets={combat:[width-430,14,410,Math.min(620,height-28)],locations:[12,12,240,420],inspector:[width-332,12,320,500],help:[32,height-240,340,220],inventory:[width-370,80,350,440],spells:[width-420,120,380,440],abilities:[width-460,160,400,440],library:[280,40,300,380]};
  const [x,y,w,h]=presets[name]||[20,20,300,400];return fitWindow({x,y,w,h},width,height);
 }
