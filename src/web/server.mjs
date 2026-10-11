@@ -46,6 +46,8 @@ const THEME_ASSETS = new Map([
   ["/assets/workspace-character-frame.js", ["text/javascript; charset=utf-8", "workspace-character-frame.js"]],
   ["/assets/workspace-character.css", ["text/css; charset=utf-8", "workspace-character.css"]],
   ["/assets/workspace-character-sync.js", ["text/javascript; charset=utf-8", "workspace-character-sync.js"]],
+  ["/assets/tabletop-battle.js", ["text/javascript; charset=utf-8", "tabletop-battle.js"]],
+  ["/assets/combat-area.mjs", ["text/javascript; charset=utf-8", "combat-area.mjs"]],
   ["/assets/tabletop-combat.js", ["text/javascript; charset=utf-8", "tabletop-combat.js"]],
   ["/assets/workspace.js", ["text/javascript; charset=utf-8", "workspace.js"]],
   ["/assets/workspace-floating.mjs", ["text/javascript; charset=utf-8", "workspace-floating.mjs"]],
@@ -1741,7 +1743,7 @@ html[data-theme="tavern"] .builder-variant-badges .chip{
 .localized-original-name{margin-top:-2px;margin-bottom:7px;font-size:10px;line-height:1.2;color:var(--muted);font-style:italic;opacity:.86}
 </style>
 <link rel="stylesheet" href="/assets/table-ui.css?v=0.32.2">
-<script src="/assets/table-ui.js?v=0.35.0" defer></script>
+<script src="/assets/table-ui.js?v=0.35.1" defer></script>
 <script type="module" src="/assets/workspace-character-sync.js?v=0.32.2"></script>
 <script type="module" src="/assets/i18n.js?v=0.32.2"></script>
 </head>
@@ -1834,7 +1836,7 @@ html[data-theme="tavern"] .builder-variant-badges .chip{
   <div class="status"><b>●</b><span>Local database connected</span></div>
 </div></header>
 ${content}
-<footer class="footer"><a href="/localization">Translation</a> · D&D Card Table v0.35.0</footer>
+<footer class="footer"><a href="/localization">Translation</a> · D&D Card Table v0.35.1</footer>
 </main>
 <script>
 (()=>{
@@ -9086,7 +9088,17 @@ async function builderDataEntityPage(id,lang="ru") {
   return {status:200,body:layout({title:entityDisplayName(e,lang,e.content_kind),content})};
 }
 
-const handleTabletop = createTabletopHandler({sql,layout,html,json,language:requestLanguage,characterPanel:characterPage});
+async function mapCombatProfile(unit){
+ const common=['Dodge','Dash','Disengage','Help','Hide','Ready','Search','Study','Utilize'].map(name=>({id:'common:'+name,name,kind:'utility',damage_formula:'0',source:'action',manual_resources:true}));
+ if(unit.character_id){const data=await getCharacter(unit.character_id);if(!data)return [];const c=data.character,spellProfile=characterSpellProfile(c),actions=[];
+ for(const item of data.inventory.filter(item=>stateBool(item.state,'equipped')&&isWeaponCard(item))){const rolls=characterWeaponRolls(c,item);if(rolls)actions.push({id:'weapon:'+item.instance_id,name:translateText(item.name_en,displayContext.getStore()?.language||'ru'),kind:'attack',attack_formula:rolls.attack,damage_formula:rolls.damage,damage_type:item.data?.damageType||'',description:item.description_en||'',source:'weapon'});}
+ for(const spell of data.spells||[]){if(!spell.prepared&&!spell.always_prepared&&Number(spell.spell_level)>0)continue;actions.push({id:'spell:'+spell.character_spell_id,name:translateText(spell.name_en,displayContext.getStore()?.language||'ru'),kind:spell.attack_type?'attack':spell.saving_throw_ability?'save':/(?:restore|regain)[^.]*hit points/i.test(spell.description_en||'')?'heal':spellDamageFormula(spell)?'damage':'utility',attack_formula:'1d20'+((spellProfile.attack||0)>=0?'+':'')+(spellProfile.attack||0),damage_formula:spellDamageFormula(spell)||'0',half_on_save:/half (?:as much )?damage/i.test(spell.description_en||''),damage_type:String(spell.description_en||'').match(/\b(acid|bludgeoning|cold|fire|force|lightning|necrotic|piercing|poison|psychic|radiant|slashing|thunder) damage/i)?.[1]?.toLowerCase()||'',save_dc:spellProfile.saveDc||10,save_ability:({str:'strength',dex:'dexterity',con:'constitution',int:'intelligence',wis:'wisdom',cha:'charisma'})[String(spell.saving_throw_ability||'').toLowerCase().slice(0,3)]||'dexterity',description:spell.description_en||'',source:'spell',manual_resources:true,available:Number(spell.spell_level)===0||spell.source_key==='invocation:pact-chain:find-familiar'||data.slots.some(slot=>Number(slot.slot_level)>=Number(spell.spell_level)&&Number(slot.current_slots||0)+Number(slot.bonus_slots||0)>0),cost:Number(spell.spell_level)>0&&spell.source_key!=='invocation:pact-chain:find-familiar'?{character_id:c.id,character_spell_id:spell.character_spell_id,slot_level:Number(data.slots.find(slot=>Number(slot.slot_level)>=Number(spell.spell_level)&&Number(slot.current_slots||0)+Number(slot.bonus_slots||0)>0)?.slot_level)||Number(spell.spell_level),concentration:spell.concentration,entity_id:spell.entity_id,name:spell.name_en}:spell.concentration?{character_id:c.id,slot_level:0,concentration:true,entity_id:spell.entity_id,name:spell.name_en}:null});}
+ for(const resource of data.resources||[])actions.push({id:'resource:'+resource.id,name:translateText(resource.name,displayContext.getStore()?.language||'ru'),kind:'utility',damage_formula:'0',description:resource.notes||'',source:'resource',manual_resources:true,available:Number(resource.current_value)>0,cost:{kind:'resource',character_id:c.id,resource_id:resource.id}});
+ return [...actions,...common];
+ }
+ if(unit.entity_id){const actions=await sql`SELECT id,name_en,description_en,action_type,sort_order FROM entity_actions WHERE entity_id=${unit.entity_id} ORDER BY sort_order,name_en`;return [...common,...actions.map((a,index)=>({id:'creature:'+a.id,name:translateText(a.name_en,displayContext.getStore()?.language||'ru'),description:a.description_en||'',kind:/(?:[+-]\d+\s+to hit|Attack Roll:\s*[+-]\d+)/i.test(a.description_en||'')?'attack':firstDiceFormula(a.description_en)?'damage':'utility',attack_formula:'1d20'+(a.description_en?.match(/([+-]\d+)\s+to hit/i)?.[1]||a.description_en?.match(/Attack Roll:\s*([+-]\d+)/i)?.[1]||'+0'),damage_formula:firstDiceFormula(a.description_en)||'0',source:a.action_type||'creature',manual_resources:true}))];}return common;
+}
+const handleTabletop = createTabletopHandler({sql,layout,html,json,language:requestLanguage,characterPanel:characterPage,combatProfile:mapCombatProfile});
 
 const server = http.createServer((req, res) => displayContext.run({language:requestLanguage(req)}, async () => {
   try {

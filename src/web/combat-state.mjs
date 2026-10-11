@@ -50,7 +50,7 @@ export function applyHitPointDelta(character, rawDelta) {
   return { ...character, hp_current: hp, temp_hp: temporary - absorbed, feature_choices: choices };
 }
 
-async function updateCharacterHp(tx, characterId, delta) {
+export async function updateCharacterHp(tx, characterId, delta) {
   const rows = await tx`
     SELECT id::text, hp_current, hp_max, temp_hp, feature_choices
     FROM characters WHERE id=${characterId} FOR UPDATE
