@@ -1,3 +1,4 @@
+import {createBattleStore} from './tabletop-battle.mjs';
 import {createCombatStore} from './tabletop-combat.mjs';
 import {createTokenStore} from './tabletop-tokens.mjs';
 import {createFloorStore} from './tabletop-floors.mjs';
@@ -8,7 +9,7 @@ import {renderTabletopHome, renderTabletopSession} from './tabletop-view.mjs';
 
 export const LOCAL_GM = 'local-master';
 export const DEFAULT_GRID = Object.freeze({cellSize:70,offsetX:0,offsetY:0,opacity:0.45,color:'#ffffff',visible:true,distance:5,unit:'ft'});
-const schema = ['018_tabletop.sql','019_tabletop_tokens.sql','021_tabletop_icon_colors.sql','022_tabletop_floors.sql','023_tabletop_token_art.sql','024_tabletop_combat.sql'].map(file=>readFileSync(new URL('../../db/migrations/'+file,import.meta.url),'utf8')).join('\n');
+const schema = ['018_tabletop.sql','019_tabletop_tokens.sql','021_tabletop_icon_colors.sql','022_tabletop_floors.sql','023_tabletop_token_art.sql','024_tabletop_combat.sql','025_tabletop_battle.sql'].map(file=>readFileSync(new URL('../../db/migrations/'+file,import.meta.url),'utf8')).join('\n');
 const missing = 'Session or location not found.';
 const stale = 'This location changed in another tab. Reload the page before saving again.';
 export class TabletopError extends Error {
@@ -128,7 +129,7 @@ export function createTabletopStore(sql,{artLibrary}={}) {
     });
   }
   return {
-    ensureSchema,tokens,floors,combat,
+    ensureSchema,tokens,floors,combat,battleScene:scene,
     session:(id,p)=>requireGM(sql,id,p),
     scene:(id,p)=>scene(sql,id,p),
     async sessions(principal) {
@@ -208,8 +209,9 @@ async function readRequest(req,maxBytes=64_000) {
   } catch(error) { if(error instanceof TabletopError) throw error; fail('Invalid request.'); }
 }
 
-export function createTabletopHandler({sql,layout,html,json,language=()=> 'ru',artLibrary,characterPanel}) {
+export function createTabletopHandler({sql,layout,html,json,language=()=> 'ru',artLibrary,characterPanel,combatProfile}) {
   const store=createTabletopStore(sql,{artLibrary});
+  const battle=createBattleStore(sql,{scene:store.battleScene,combat:store.combat,ErrorType:TabletopError,profile:combatProfile});
   // The existing application listens on loopback and has no accounts. In 0.29
   // the server assigns one installation-local GM. This is NOT internet auth.
   // Later authentication must supply a verified principal here; never accept
@@ -230,6 +232,11 @@ export function createTabletopHandler({sql,layout,html,json,language=()=> 'ru',a
       }
       try { await store.ensureSchema(); } catch(error) { console.error({tabletopSchema:error}); fail('The tabletop tables could not be initialized. Check the database connection and permissions, then reload.',503); }
       let match;
+      if((match=url.pathname.match(/^\/api\/tabletop\/scenes\/([^/]+)\/battle(?:\/(preview|confirm|vitals))?$/))){
+        await store.ensureSchema();
+        if(req.method==='GET'&&!match[2]){json(res,200,await battle.read(match[1],principal));return true;}
+        if(req.method==='POST'&&match[2]){const input=await readRequest(req);if(!input||typeof input!=='object'||Array.isArray(input))fail('Invalid battle action.');const method={preview:'preview',confirm:'confirm',vitals:'configure'}[match[2]];json(res,200,await battle[method](match[1],principal,input));return true;}
+      }
       if((match=url.pathname.match(/^\/api\/tabletop\/scenes\/([^/]+)\/combat$/))){
         if(req.method==='GET'){json(res,200,await store.combat.read(match[1],principal));return true;}
         if(req.method==='POST'){json(res,200,await store.combat.change(match[1],principal,await readRequest(req)));return true;}

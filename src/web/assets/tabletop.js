@@ -1,3 +1,4 @@
+import {initBattle} from './tabletop-battle.js';
 import {initCombat} from './tabletop-combat.js';
 import {initWorkspace} from './workspace.js';
 import {initWorkspaceData} from './workspace-data.js';
@@ -75,6 +76,7 @@ function initTabletop(root) {
   });
   if(!scene) return;
   initCombat(root,{sceneId:scene.id,t});
+  initBattle(root,{scene,t});
 
   const viewport=find('[data-vtt-viewport]'),map=find('[data-vtt-map]'),img=find('[data-vtt-map-image]');
   find('.vtt-stage-toolbar').append(find('.vtt-token-tools')); 
