@@ -1,0 +1,23 @@
+export function initCombat(root,{sceneId,t}){
+ const panel=root.querySelector('[data-workspace-panel=combat]');if(!panel)return;
+ const view=panel.querySelector('[data-combat-view]'),status=panel.querySelector('[data-combat-status]');let state=null,busy=false,dirty=false;
+ const el=(tag,text='',attrs={})=>{const node=document.createElement(tag);node.textContent=text;for(const [k,v]of Object.entries(attrs))node.setAttribute(k,v);return node;};
+ function mark(){root.querySelectorAll('[data-token-id]').forEach(token=>token.toggleAttribute('data-combat-active',token.dataset.tokenId===state?.active_token_id));}
+ async function request(action,entries){if(busy)return;busy=true;panel.setAttribute('aria-busy','true');const controls=[...panel.querySelectorAll('button,input')].map(n=>[n,n.disabled]);controls.forEach(([n])=>n.disabled=true);
+  try{const response=await fetch(`/api/tabletop/scenes/${sceneId}/combat`,action?{method:'POST',headers:{'Content-Type':'application/json','X-Tabletop-Request':'1'},body:JSON.stringify({action,entries,revision:state.revision})}:{});const data=await response.json();if(!response.ok)throw Error(data.error||t('Could not update combat.'));state=data;dirty=false;status.textContent='';render();mark();}
+  catch(error){status.textContent=error.message;controls.forEach(([n,disabled])=>n.disabled=disabled);}
+  finally{busy=false;controls.forEach(([n,disabled])=>n.disabled=disabled);panel.removeAttribute('aria-busy');}
+ }
+ function render(){view.replaceChildren();const active=state.entries.find(e=>e.token_id===state.active_token_id);
+  view.append(el('p',active?`${t('Round')} ${state.round} · ${active.name}`:t('Combat is not running.'),{'data-combat-turn':'','role':'status'}));
+  const order=el('ol');for(const entry of state.entries){const row=el('li',`${entry.initiative} · ${entry.name}`);if(entry.token_id===state.active_token_id)row.setAttribute('aria-current','step');order.append(row);}view.append(order);
+  const buttons=el('div','',{'class':'combat-actions'});for(const [action,label] of [['start','Start combat'],['previous','Previous turn'],['next','Next turn'],['stop','Stop combat']]){const button=el('button',t(label),{'type':'button','data-combat-action':action});button.disabled=!state.entries.length||(action==='previous'||action==='next'||action==='stop')&&!active||action==='previous'&&state.round===1&&state.entries[0]?.token_id===active?.token_id;button.addEventListener('click',()=>{if(dirty&&!confirm(t('Discard unsaved initiative changes?')))return;if(action==='start'&&active&&!confirm(t('Restart combat from round one?')))return;request(action);});buttons.append(button);}view.append(buttons);
+  const details=el('details');details.open=!state.entries.length;details.append(el('summary',t('Participants and initiative')));const form=el('form');
+  for(const token of state.tokens){const entry=state.entries.find(e=>e.token_id===token.id),row=el('label','',{'class':'combat-participant'}),include=el('input','',{'type':'checkbox','data-combat-include':token.id}),initiative=el('input','',{'type':'number','min':'-100','max':'100','step':'1','data-combat-initiative':token.id,'aria-label':t('Initiative')+' · '+token.name});include.checked=!!entry;initiative.value=String(entry?.initiative||0);row.append(include,el('span',token.name),initiative);form.append(row);}
+  form.append(el('button',t('Save initiative'),{'type':'submit'}));form.addEventListener('input',()=>dirty=true);form.addEventListener('change',()=>dirty=true);form.addEventListener('submit',event=>{event.preventDefault();const entries=state.tokens.filter(token=>form.querySelector(`[data-combat-include="${token.id}"]`).checked).map(token=>({token_id:token.id,initiative:Number(form.querySelector(`[data-combat-initiative="${token.id}"]`).value)}));request('set',entries);});details.append(form);view.append(details);
+ }
+ panel.querySelector('[data-combat-refresh]').addEventListener('click',()=>{if(!dirty||confirm(t('Discard unsaved initiative changes?')))request();});
+ new MutationObserver(()=>{if(!panel.hidden&&!state&&!busy)request();}).observe(panel,{attributes:true,attributeFilter:['hidden']});
+ new MutationObserver(mark).observe(root.querySelector('[data-token-layer]'),{childList:true});
+ if(!panel.hidden)request();
+}

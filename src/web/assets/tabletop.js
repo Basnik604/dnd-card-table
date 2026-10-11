@@ -1,3 +1,4 @@
+import {initCombat} from './tabletop-combat.js';
 import {initWorkspace} from './workspace.js';
 import {initWorkspaceData} from './workspace-data.js';
 import {initTokens} from './tabletop-tokens.js';
@@ -73,6 +74,7 @@ function initTabletop(root) {
     run(async()=>{const result=await api(`/api/tabletop/sessions/${cfg.session.id}`,'DELETE',{});dirty=false;busy=false;navigate(result.url);});
   });
   if(!scene) return;
+  initCombat(root,{sceneId:scene.id,t});
 
   const viewport=find('[data-vtt-viewport]'),map=find('[data-vtt-map]'),img=find('[data-vtt-map-image]');
   find('.vtt-stage-toolbar').append(find('.vtt-token-tools')); 

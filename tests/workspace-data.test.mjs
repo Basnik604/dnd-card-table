@@ -14,7 +14,7 @@ test('server projection keeps existing forms and handlers but omits unrelated sh
 test('existing v2 layouts gain hidden panels once and presets never introduce game state',()=>{
  const old={version:2,panels:{locations:false,inspector:true,help:true},docks:{left:['help'],right:['inspector'],bottom:['locations']},sizes:{left:220,right:330,bottom:140},active:{left:'help',right:'inspector',bottom:'locations'},inspectorTab:'tokens'};
  const state=normalizeWorkspace(old);assert.equal(state.panels.inventory,false);assert.equal(state.docks.bottom.includes('locations'),true);assert.equal(state.inspectorTab,'tokens');
- const ids=Object.values(state.docks).flat();assert.equal(new Set(ids).size,7);assert.equal(ids.length,7);
+ const ids=Object.values(state.docks).flat();assert.equal(new Set(ids).size,8);assert.equal(ids.length,8);
  applyWorkspacePreset(state,'play');assert.equal(state.panels.inventory,true);assert.equal(state.active.bottom,'abilities');assert.equal(state.inspectorTab,'tokens');
  applyWorkspacePreset(state,'prepare');assert.equal(state.active.left,'library');assert.equal('character' in state,false);assert.deepEqual(state.panels,{...defaultWorkspace().panels,library:true});
 });

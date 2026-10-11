@@ -10,7 +10,7 @@ test('v1 migration preserves hidden panels, inspector tab and map-only; legacy s
 });
 test('invalid docks, duplicate IDs and dimensions normalize without importing game state',()=>{
  const state=normalizeWorkspace({version:2,docks:{left:['help','help','unknown'],right:['help','locations'],bottom:[]},active:{left:'unknown'},sizes:{left:Infinity,right:-20,bottom:9999},tokens:[{}]});
- assert.deepEqual(Object.values(state.docks).flat().sort(),['abilities','help','inspector','inventory','library','locations','spells']);assert.equal(state.sizes.left,190);assert.equal(state.sizes.right,240);assert.equal(state.sizes.bottom,420);assert.equal('tokens' in state,false);
+ assert.deepEqual(Object.values(state.docks).flat().sort(),['abilities','combat','help','inspector','inventory','library','locations','spells']);assert.equal(state.sizes.left,190);assert.equal(state.sizes.right,240);assert.equal(state.sizes.bottom,420);assert.equal('tokens' in state,false);
 });
 test('every panel moves to every zone exactly once; active close finds another visible panel',()=>{
  const state=defaultWorkspace();state.panels.help=true;

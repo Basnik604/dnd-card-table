@@ -41,3 +41,6 @@ npm run test:tabletop:browser
 [GitHub](https://github.com/Basnik604/dnd-card-table) — источник кода; [Linear](https://linear.app/basnik/project/dnd-card-table-e31cb830fbea) — план и зависимости. Работаем в `feature/*`/`fix/*` и открываем PR с проверками. `main` остаётся стабильной версией. Подробнее: [CONTRIBUTING.md](CONTRIBUTING.md).
 
 Актуальная локализация: [docs/LOCALIZATION_RU.md](docs/LOCALIZATION_RU.md). Файлы `UPDATE_*` описывают исторические версии, а не текущий roadmap.
+
+
+В 0.35.0 добавлено окно «Бой»: участники текущей сцены, ручная инициатива, раунды и ходы. Протокол [QA_v0.35.0_RU.md](QA_v0.35.0_RU.md). Схема добавляет таблицу через миграцию 024, пользовательская база сохраняется.

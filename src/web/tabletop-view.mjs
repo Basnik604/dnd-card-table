@@ -4,7 +4,7 @@ import {renderFloorNavigation,floorLabel} from './tabletop-floor-view.mjs';
 import {tabletopText} from './assets/tabletop-i18n.mjs';
 const e=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const compass='<svg viewBox="0 0 80 80" fill="none" aria-hidden="true"><circle cx="40" cy="40" r="29"/><circle cx="40" cy="40" r="21"/><path d="M40 4v12m0 48v12M4 40h12m48 0h12M25 55l9-21 21-9-9 21Z"/><path d="m34 34 12 12"/></svg>';
-const assets='<link rel="stylesheet" href="/assets/tabletop.css?v=0.32.3"><link rel="stylesheet" href="/assets/tabletop-tokens.css?v=0.32.3"><link rel="stylesheet" href="/assets/workspace.css?v=0.32.3"><script type="module" src="/assets/tabletop.js?v=0.32.3"></script>';
+const assets='<link rel="stylesheet" href="/assets/tabletop.css?v=0.35.0"><link rel="stylesheet" href="/assets/tabletop-tokens.css?v=0.35.0"><link rel="stylesheet" href="/assets/workspace.css?v=0.35.0"><script type="module" src="/assets/tabletop.js?v=0.35.0"></script>';
 function config(data) { return `<script type="application/json" data-vtt-config>${JSON.stringify(data).replaceAll('<','\\u003c')}</script>`; }
 function status(t) { return `<div class="vtt-message" data-vtt-status role="status" aria-live="polite"></div><button type="button" class="vtt-reload" data-vtt-reload hidden>${t('Reload page')}</button>`; }
 function createForm(endpoint,label,placeholder,button,t) {

@@ -23,6 +23,7 @@ try {
     const before=await current();
     const node=page.locator(`[data-token-id="${token.id}"]`);
     const scale=await page.locator('[data-vtt-map]').evaluate(el=>new DOMMatrix(getComputedStyle(el).transform).a);
+    await node.scrollIntoViewIfNeeded();
     const box=await node.boundingBox();assert.ok(Math.abs(box.width-size*scale)<.1,`width ${box.width} versus ${size*scale}`);
     await page.mouse.move(box.x+box.width/2,box.y+box.height/2);await page.mouse.down();
     await page.mouse.move(box.x+box.width/2+Math.max(8,size*scale),box.y+box.height/2,{steps:5});await page.mouse.up();await idle();
