@@ -18,3 +18,14 @@ test('conditions count affected turns, reactions reset on owner turn and movemen
 test('incapacitating conditions atomically end existing character concentration',async()=>{const f=await fixture();try{await f.sql`UPDATE characters SET feature_choices=${f.sql.json({concentration:{name:'Bless'}})} WHERE id=${f.character}`;await f.tools.change(f.location.scene_id,LOCAL_GM,{token_id:f.token.id,revision:(await readTactics(f.sql,f.token.id)).revision,action:'condition',key:'stunned',remaining:1,phase:'end'});assert.equal((await f.sql`SELECT feature_choices FROM characters WHERE id=${f.character}`)[0].feature_choices.concentration,undefined);}finally{await f.close();}});
 
 test('empty tactical state is readable before combat and Stunned retains 2024 movement',()=>{assert.equal(tacticalState(null).speed,30);assert.equal(effectiveSpeed(tacticalState({conditions:[{key:'stunned'}]})),30);});
+
+test('battle calculation applies condition rules and GM switch bypasses them without changing HP',async()=>{const f=await fixture();try{
+ const battle=createBattleStore(f.sql,{scene:f.store.battleScene,combat:f.store.combat,ErrorType:TabletopError,random:()=>.49});
+ const condition=async(token,key,level=1)=>f.tools.change(f.location.scene_id,LOCAL_GM,{token_id:token,revision:(await readTactics(f.sql,token)).revision,action:'condition',key,level,remaining:0,phase:'end'});
+ await condition(f.token.id,'poisoned');await condition(f.token.id,'exhaustion',2);await condition(f.npc.id,'paralyzed');
+ const base={revision:f.combat.revision,action_id:'manual',kind:'attack',attack_formula:'1d20+4',damage_formula:'5',targets:[f.npc.id],timing:'free'};
+ let p=await battle.preview(f.location.scene_id,LOCAL_GM,{...base,condition_rules:true});assert.equal(p.results[0].roll.total,10);assert.equal(p.results[0].condition_effects.mode,'');assert.equal(p.results[0].condition_effects.modifier,-4);
+ p=await battle.preview(f.location.scene_id,LOCAL_GM,{...base,condition_rules:false});assert.equal(p.results[0].roll.total,14);
+ p=await battle.preview(f.location.scene_id,LOCAL_GM,{...base,kind:'save',save_ability:'dexterity',save_dc:10,condition_rules:true});assert.equal(p.results[0].condition_effects.autoFail,true);assert.equal(p.results[0].delta,-5);
+ assert.equal((await battle.read(f.location.scene_id,LOCAL_GM)).units.find(u=>u.id===f.npc.id).hp_current,1);
+}finally{await f.close();}});

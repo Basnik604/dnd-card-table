@@ -1,6 +1,7 @@
 // Shared by the renderer, client and API. User-entered names never pass through
 // the general game-content translator.
 export const TABLETOP_RU = {
+"More conditions":"Другие состояния",
 "Speed (feet)":"Скорость, футы","Movement distance (feet)":"Движение, футы","feet":"футов",
 "Apply basic condition modifiers":"Учитывать базовые эффекты состояний","Applies basic attack advantage/disadvantage, Exhaustion and selected automatic saving throw failures. Visibility, range and exceptions require GM review.":"Учитывает базовое преимущество/помеху атак, истощение и некоторые автоматические провалы спасбросков. Видимость, дальность и исключения проверяет мастер.","Condition modifiers applied; verify exceptions in the rules text.":"Учтены эффекты состояний; проверьте исключения в тексте правил.","Automatic saving throw failure":"Автоматический провал спасброска",
 
