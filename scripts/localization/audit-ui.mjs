@@ -7,7 +7,7 @@ import {translateText} from '../../src/web/assets/i18n-core.mjs';
 import {TABLETOP_RU} from '../../src/web/assets/tabletop-i18n.mjs';
 const root=fileURLToPath(new URL('../../',import.meta.url));
 const catalog=new Map();
-const allowed=/^(?:D&D Card Table(?: v[\d.]+)?|SRD [\d.]+|Tal'Dorei Campaign Setting|RU|EN|A5E|NFKD|Aldric|Rustem|Content-Type|Content-Disposition|Cache-Control|Html|GET|POST|DELETE|SIGINT|SIGTERM|battle-state|battle-refresh|change|Escape|ArrowUp|ArrowDown|Enter|viewBox|en-US|en-CA|tab active|[\d ,+/−.d%-]+)$/;
+const allowed=/^(?:D&D Card Table(?: v[\d.]+)?|SRD [\d.]+|Tal'Dorei Campaign Setting|RU|EN|A5E|NFKD|Aldric|Rustem|Content-Type|Content-Disposition|Cache-Control|Html|GET|POST|DELETE|SIGINT|SIGTERM|battle-state|battle-refresh|recovery-open|change|Escape|ArrowUp|ArrowDown|Enter|viewBox|en-US|en-CA|tab active|[\d ,+/−.d%-]+)$/;
 function add(text,file){
  const value=text.trim().replace(/\s+/g,' ');
  // Raster format signatures and CSS transforms are protocol/style values.
