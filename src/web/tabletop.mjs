@@ -1,3 +1,4 @@
+import {createCombatStore} from './tabletop-combat.mjs';
 import {createTokenStore} from './tabletop-tokens.mjs';
 import {createFloorStore} from './tabletop-floors.mjs';
 import {randomUUID} from 'node:crypto';
@@ -7,7 +8,7 @@ import {renderTabletopHome, renderTabletopSession} from './tabletop-view.mjs';
 
 export const LOCAL_GM = 'local-master';
 export const DEFAULT_GRID = Object.freeze({cellSize:70,offsetX:0,offsetY:0,opacity:0.45,color:'#ffffff',visible:true,distance:5,unit:'ft'});
-const schema = ['018_tabletop.sql','019_tabletop_tokens.sql','021_tabletop_icon_colors.sql','022_tabletop_floors.sql','023_tabletop_token_art.sql'].map(file=>readFileSync(new URL('../../db/migrations/'+file,import.meta.url),'utf8')).join('\n');
+const schema = ['018_tabletop.sql','019_tabletop_tokens.sql','021_tabletop_icon_colors.sql','022_tabletop_floors.sql','023_tabletop_token_art.sql','024_tabletop_combat.sql'].map(file=>readFileSync(new URL('../../db/migrations/'+file,import.meta.url),'utf8')).join('\n');
 const missing = 'Session or location not found.';
 const stale = 'This location changed in another tab. Reload the page before saving again.';
 export class TabletopError extends Error {
@@ -98,6 +99,7 @@ export function createTabletopStore(sql,{artLibrary}={}) {
     await requireGM(db,rows[0].session_id,principal);
     return rows[0];
   }
+  const combat=createCombatStore(sql,{scene,ErrorType:TabletopError});
   const tokens=createTokenStore(sql,{scene,ErrorType:TabletopError,decodeImage:decodeMap,artLibrary});
   const floors=createFloorStore(sql,{scene,requireGM,ErrorType:TabletopError,defaultGrid:DEFAULT_GRID});
   async function updateScene(sceneId,principal,payload,mapMode=null) {
@@ -126,7 +128,7 @@ export function createTabletopStore(sql,{artLibrary}={}) {
     });
   }
   return {
-    ensureSchema,tokens,floors,
+    ensureSchema,tokens,floors,combat,
     session:(id,p)=>requireGM(sql,id,p),
     scene:(id,p)=>scene(sql,id,p),
     async sessions(principal) {
@@ -228,6 +230,10 @@ export function createTabletopHandler({sql,layout,html,json,language=()=> 'ru',a
       }
       try { await store.ensureSchema(); } catch(error) { console.error({tabletopSchema:error}); fail('The tabletop tables could not be initialized. Check the database connection and permissions, then reload.',503); }
       let match;
+      if((match=url.pathname.match(/^\/api\/tabletop\/scenes\/([^/]+)\/combat$/))){
+        if(req.method==='GET'){json(res,200,await store.combat.read(match[1],principal));return true;}
+        if(req.method==='POST'){json(res,200,await store.combat.change(match[1],principal,await readRequest(req)));return true;}
+      }
       if(req.method==='GET'&&(match=url.pathname.match(/^\/tabletop\/([^/]+)\/scenes\/([^/]+)\/tokens\/([^/]+)\/panels\/(inventory|spells|abilities)$/))){
         const session=await store.session(match[1],principal),current=await store.scene(match[2],principal);
         if(current.session_id!==session.id)fail(missing,404);

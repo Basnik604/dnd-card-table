@@ -46,6 +46,7 @@ const THEME_ASSETS = new Map([
   ["/assets/workspace-character-frame.js", ["text/javascript; charset=utf-8", "workspace-character-frame.js"]],
   ["/assets/workspace-character.css", ["text/css; charset=utf-8", "workspace-character.css"]],
   ["/assets/workspace-character-sync.js", ["text/javascript; charset=utf-8", "workspace-character-sync.js"]],
+  ["/assets/tabletop-combat.js", ["text/javascript; charset=utf-8", "tabletop-combat.js"]],
   ["/assets/workspace.js", ["text/javascript; charset=utf-8", "workspace.js"]],
   ["/assets/workspace-floating.mjs", ["text/javascript; charset=utf-8", "workspace-floating.mjs"]],
   ["/assets/workspace-state.mjs", ["text/javascript; charset=utf-8", "workspace-state.mjs"]],
@@ -1740,7 +1741,7 @@ html[data-theme="tavern"] .builder-variant-badges .chip{
 .localized-original-name{margin-top:-2px;margin-bottom:7px;font-size:10px;line-height:1.2;color:var(--muted);font-style:italic;opacity:.86}
 </style>
 <link rel="stylesheet" href="/assets/table-ui.css?v=0.32.2">
-<script src="/assets/table-ui.js?v=0.32.3" defer></script>
+<script src="/assets/table-ui.js?v=0.35.0" defer></script>
 <script type="module" src="/assets/workspace-character-sync.js?v=0.32.2"></script>
 <script type="module" src="/assets/i18n.js?v=0.32.2"></script>
 </head>
@@ -1833,7 +1834,7 @@ html[data-theme="tavern"] .builder-variant-badges .chip{
   <div class="status"><b>●</b><span>Local database connected</span></div>
 </div></header>
 ${content}
-<footer class="footer"><a href="/localization">Translation</a> · D&D Card Table v0.32.3</footer>
+<footer class="footer"><a href="/localization">Translation</a> · D&D Card Table v0.35.0</footer>
 </main>
 <script>
 (()=>{

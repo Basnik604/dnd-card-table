@@ -14,7 +14,7 @@ export function initWorkspace(root,{sessionId,t}){
   const panels=new Map(WORKSPACE_PANELS.map(name=>[name,shell.querySelector(`[data-workspace-panel="${name}"]`)]));
   const message=root.querySelector('[data-workspace-status]');
   const toggle=name=>root.querySelector(`[data-workspace-toggle="${name}"]`);
-  const labels={locations:'Locations',inspector:'Inspector',help:'Table help',inventory:'Inventory',spells:'Spells',abilities:'Abilities and resources',library:'Creature library',left:'Left dock',right:'Right dock',bottom:'Bottom dock'};
+  const labels={locations:'Locations',inspector:'Inspector',help:'Table help',inventory:'Inventory',spells:'Spells',abilities:'Abilities and resources',library:'Creature library',combat:'Combat',left:'Left dock',right:'Right dock',bottom:'Bottom dock'};
   const docks=new Map(),tabs=new Map();let drag=null,resize=null;
   const visible=name=>!!panels.get(name)&&state.panels[name]&&!state.mapOnly;
   const zoneOf=name=>WORKSPACE_DOCKS.find(dock=>state.docks[dock].includes(name));
