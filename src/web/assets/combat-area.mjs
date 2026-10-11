@@ -20,7 +20,7 @@ export function areaTargets(tokens,area,grid){
  const polygon=spec.tag==='polygon'?spec.attrs.points.split(' ').map(pair=>pair.split(',').map(Number)):null;
  return tokens.filter(token=>{
   const x=Number(token.x),y=Number(token.y),size=Number(token.size_cells)*grid.cellSize;
-  if(g.shape==='circle'){const dx=g.x-Math.max(x,Math.min(x+size,g.x)),dy=g.y-Math.max(y,Math.min(y+size,g.y));return dx*dx+dy*dy<=g.length*g.length+1e-7;}
+  if(['circle','sphere','cylinder'].includes(g.shape)){const dx=g.x-Math.max(x,Math.min(x+size,g.x)),dy=g.y-Math.max(y,Math.min(y+size,g.y));return dx*dx+dy*dy<=g.length*g.length+1e-7;}
   if(g.shape==='emanation'){const half=g.pixelWidth/2,dx=Math.max(g.x-half-x-size,x-g.x-half,0),dy=Math.max(g.y-half-y-size,y-g.y-half,0);return dx*dx+dy*dy<=g.length*g.length+1e-7;}
   const box=[[x,y],[x+size,y],[x+size,y+size],[x,y+size]];
   for(const points of [box,polygon])for(let i=0;i<points.length;i++){const a=points[i],b=points[(i+1)%points.length],axis=[a[1]-b[1],b[0]-a[0]],project=list=>list.map(p=>p[0]*axis[0]+p[1]*axis[1]),p=project(box),q=project(polygon);if(Math.max(...p)<Math.min(...q)-1e-7||Math.max(...q)<Math.min(...p)-1e-7)return false;}
@@ -29,7 +29,7 @@ export function areaTargets(tokens,area,grid){
 }
 export function areaSvg(area,grid){
  const g=areaGeometry(area,grid),turn=point=>`${g.x+point[0]*g.cos-point[1]*g.sin},${g.y+point[0]*g.sin+point[1]*g.cos}`;
- if(g.shape==='circle')return {tag:'circle',attrs:{cx:g.x,cy:g.y,r:g.length}};
+ if(['circle','sphere','cylinder'].includes(g.shape))return {tag:'circle',attrs:{cx:g.x,cy:g.y,r:g.length}};
  if(g.shape==='emanation')return {tag:'rect',attrs:{x:g.x-g.pixelWidth/2-g.length,y:g.y-g.pixelWidth/2-g.length,width:g.pixelWidth+2*g.length,height:g.pixelWidth+2*g.length,rx:g.length}};
  const points=g.shape==='cone'?[[0,0],[g.length,-g.length/2],[g.length,g.length/2]]:g.shape==='square'?[[-g.length/2,-g.length/2],[g.length/2,-g.length/2],[g.length/2,g.length/2],[-g.length/2,g.length/2]]:[[0,-(g.shape==='cube'?g.length:g.pixelWidth)/2],[g.length,-(g.shape==='cube'?g.length:g.pixelWidth)/2],[g.length,(g.shape==='cube'?g.length:g.pixelWidth)/2],[0,(g.shape==='cube'?g.length:g.pixelWidth)/2]];
  return {tag:'polygon',attrs:{points:points.map(turn).join(' ')}};

@@ -17,3 +17,7 @@ test('cube begins at its face and emanation includes the caster footprint',()=>{
  assert.equal(insideArea({x:220,y:100},{...area,shape:'emanation',width:10},grid),true);assert.equal(insideArea({x:251,y:100},{...area,shape:'emanation',width:10},grid),false);
  for(const shape of ['sphere','cylinder'])assert.equal(insideArea({x:200,y:100},{...area,shape},grid),true);
 });
+
+test('sphere and cylinder render and select as circles in the map projection',()=>{
+ for(const shape of ['sphere','cylinder']){const zone={...area,shape};assert.equal(areaSvg(zone,grid).tag,'circle');assert.deepEqual(areaTargets([{id:'inside',x:190,y:90,size_cells:1},{id:'outside',x:400,y:400,size_cells:1}],zone,grid),['inside']);}
+});

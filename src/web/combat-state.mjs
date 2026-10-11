@@ -50,13 +50,14 @@ export function applyHitPointDelta(character, rawDelta) {
   return { ...character, hp_current: hp, temp_hp: temporary - absorbed, feature_choices: choices };
 }
 
-export async function updateCharacterHp(tx, characterId, delta) {
+export async function updateCharacterHp(tx, characterId, delta, {preserveTemporaryHp = false} = {}) {
   const rows = await tx`
     SELECT id::text, hp_current, hp_max, temp_hp, feature_choices
     FROM characters WHERE id=${characterId} FOR UPDATE
   `;
   if (!rows.length) throw new Error('Character not found');
-  const next = applyHitPointDelta(rows[0], delta);
+  const next = applyHitPointDelta(preserveTemporaryHp ? {...rows[0],temp_hp:0} : rows[0], delta);
+  if(preserveTemporaryHp) next.temp_hp = rows[0].temp_hp;
   await tx`
     UPDATE characters SET hp_current=${next.hp_current}, temp_hp=${next.temp_hp},
       feature_choices=${tx.json(next.feature_choices)}, updated_at=NOW()
