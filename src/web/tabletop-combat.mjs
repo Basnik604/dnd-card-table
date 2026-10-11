@@ -7,7 +7,7 @@ export function createCombatStore(sql,{scene,ErrorType}){
   const [row]=await db`SELECT * FROM vtt_combat WHERE scene_id=${sceneId}`;
   const tokens=await db`SELECT id,name FROM vtt_tokens WHERE scene_id=${sceneId} ORDER BY created_at,id`;
   const entries=sort((row?.entries||[]).filter(e=>tokens.some(t=>t.id===e.token_id)).map(e=>({...e,name:tokens.find(t=>t.id===e.token_id).name})));
-  return {revision:row?.revision||1,entries,active_token_id:entries.some(e=>e.token_id===row?.active_token_id)?row.active_token_id:null,round:entries.some(e=>e.token_id===row?.active_token_id)?row.round:0,tokens};
+  return {revision:row?.revision||1,fight_id:row?.fight_id||null,entries,active_token_id:entries.some(e=>e.token_id===row?.active_token_id)?row.active_token_id:null,round:entries.some(e=>e.token_id===row?.active_token_id)?row.round:0,tokens};
  }
  return {
   read:(id,p)=>snapshot(sql,id,p),
@@ -30,7 +30,7 @@ export function createCombatStore(sql,{scene,ErrorType}){
     const next=(index+delta+entries.length)%entries.length;if(delta>0&&next===0)round++;if(delta<0&&index===0)round--;active=entries[next].token_id;
    }else if(input.action==='stop'){active=null;round=0;}
    else fail('Invalid combat action.');
-   await tx`UPDATE vtt_combat SET entries=${tx.json(entries)},active_token_id=${active},round=${round},revision=revision+1,updated_at=NOW() WHERE scene_id=${id}`;
+   await tx`UPDATE vtt_combat SET fight_id=CASE WHEN ${input.action==='start'} THEN gen_random_uuid() ELSE fight_id END,entries=${tx.json(entries)},active_token_id=${active},round=${round},revision=revision+1,updated_at=NOW() WHERE scene_id=${id}`;
    await advanceTactics(tx,id,current.active_token_id,active,input.action);
    return snapshot(tx,id,principal);
   });}
