@@ -38,7 +38,8 @@ try {
 
   const map=await page.evaluate(()=>{const c=document.createElement('canvas');c.width=900;c.height=700;const x=c.getContext('2d');x.fillStyle='#263332';x.fillRect(0,0,900,700);x.strokeStyle='#a3936f';x.lineWidth=24;x.strokeRect(60,60,780,580);return c.toDataURL();});
   await settings.locator('[name=floor_name]').fill('Винный погреб');await settings.locator('[name=cellSize]').fill('80');
-  await page.locator('[data-vtt-file]').setInputFiles({name:'cellar.png',mimeType:'image/png',buffer:Buffer.from(map.split(',')[1],'base64')});await idle();
+  const uploaded=page.waitForResponse(r=>r.url().endsWith('/api/tabletop/scenes/'+second+'/map')&&r.request().method()==='POST');
+  await page.locator('[data-vtt-file]').setInputFiles({name:'cellar.png',mimeType:'image/png',buffer:Buffer.from(map.split(',')[1],'base64')});assert.equal((await uploaded).ok(),true);await idle();
   assert.equal((await dbScene(second)).floor_name,'Винный погреб');assert.equal((await dbScene(first)).has_map,false);
   assert.equal(await page.locator('[data-vtt-floor-title]').textContent(),'Винный погреб');
   const third=await newFloor('Крыша');await page.locator('[data-floor-order=up]').click();await page.waitForEvent('load');
