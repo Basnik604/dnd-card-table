@@ -1,6 +1,19 @@
 // Shared by the renderer, client and API. User-entered names never pass through
 // the general game-content translator.
 export const TABLETOP_RU = {
+"Resource available":"Доступно",
+"Resource spent":"Потрачено",
+"Turn order":"Очередь ходов",
+"Combat management":"Управление боем",
+"GM tools":"Инструменты мастера",
+"Choose an action, select targets, then review the result.":"Выберите действие → отметьте цели → проверьте результат.",
+"Movement remaining":"Осталось движения",
+"This unit is at zero HP. Resolve recovery before acting.":"У участника 0 HP. Сначала разрешите восстановление.",
+"Resolve the special effect as GM.":"Результат особого эффекта определяет мастер.",
+"Failed save":"Спасбросок провален",
+"Successful save":"Спасбросок успешен",
+"No HP change":"HP без изменений",
+"I reviewed the result.":"Результат проверен",
 "Invalid ongoing effect.":"Некорректный длительный эффект.",
 "Choose a conscious character for concentration.":"Выберите дееспособного персонажа для концентрации.",
 "Ongoing effect changed. Refresh and calculate again.":"Эффекты изменились. Обновите данные и пересчитайте.",
