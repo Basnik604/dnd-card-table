@@ -2,6 +2,7 @@ import { UI_RU_EXTRA, UI_RU_TEMPLATES } from "./ui-ru-extra.mjs";
 import { RU_GAME_EXACT, RU_GAME_GENERATED, RU_GAME_PATTERNS, translateGameEntity } from "./game-ru.mjs";
 
 export const RU_EXACT = Object.freeze({
+"Dead creatures require GM revival.":"Погибшему требуется явное оживление мастером.",
   ...UI_RU_EXTRA,
   ...RU_GAME_EXACT,
   ...RU_GAME_GENERATED,

@@ -13,6 +13,7 @@ function add(text,file){
  // Raster format signatures and CSS transforms are protocol/style values.
  if(/^\((?:max|min)-width:/.test(value))return;
  if(value==='dnd-character-runtime-changed')return;
+ if(/^(?:\{\d+\}|HP|[ ·/():→0-9])+$/.test(value))return;
  if(value==='VP8'||/^translate\(.*\) scale\(/.test(value))return;
  if(/^(?:data-i18n-skip|feature-\{\d+\}-\{\d+\}|[·\s]*D&D Card Table(?: v[\d.]+)?|\{\d+\} · D&D Card Table|D&D Card Table Library running at http:|Health check: http:|\(prefers-reduced-motion:|\" data-legacy-species-choice)/.test(value))return;
  if(value.length<2||!/[A-Za-z]{2}/.test(value)||/[А-Яа-я]/.test(value)||allowed.test(value)||/^(?:https?:|\/|\.|#|\[|INSERT |SELECT |UPDATE |DELETE |ALTER |CREATE |RETURNING )/.test(value))return;
@@ -46,7 +47,7 @@ function sourceText(source,file,allowScripts=true){
   ts.forEachChild(n,walk);
  }walk(ast);
 }
-for(const file of ['src/web/server.mjs','src/web/assets/table-ui.js','src/web/class-progression.mjs','src/web/combat-state.mjs','src/web/subclass-actions.mjs','src/web/subclass-controls.mjs','src/web/tabletop.mjs','src/web/tabletop-view.mjs','src/web/workspace-view.mjs','src/web/assets/workspace.js','src/web/assets/tabletop-combat.js','src/web/assets/tabletop-battle.js','src/web/assets/tabletop-tactics.js','src/web/assets/tactics-info.mjs','src/web/tabletop-tactics.mjs','src/web/tabletop-battle.mjs','src/web/tabletop-combat.mjs','src/web/assets/workspace-data.js','src/web/assets/workspace-character-frame.js','src/web/workspace-character.mjs','src/web/assets/tabletop.js','src/web/tabletop-tokens.mjs','src/web/tabletop-token-view.mjs','src/web/tabletop-art-view.mjs','src/web/assets/tabletop-art.js','src/web/assets/tabletop-tokens.js'])sourceText(fs.readFileSync(path.join(root,file),'utf8'),file);
+for(const file of ['src/web/server.mjs','src/web/assets/table-ui.js','src/web/class-progression.mjs','src/web/combat-state.mjs','src/web/subclass-actions.mjs','src/web/subclass-controls.mjs','src/web/tabletop.mjs','src/web/tabletop-view.mjs','src/web/workspace-view.mjs','src/web/assets/workspace.js','src/web/assets/tabletop-combat.js','src/web/assets/tabletop-battle.js','src/web/assets/tabletop-tactics.js','src/web/assets/tactics-info.mjs','src/web/tabletop-tactics.mjs','src/web/tabletop-recovery.mjs','src/web/death-state.mjs','src/web/assets/tabletop-recovery.js','src/web/tabletop-battle.mjs','src/web/tabletop-combat.mjs','src/web/assets/workspace-data.js','src/web/assets/workspace-character-frame.js','src/web/workspace-character.mjs','src/web/assets/tabletop.js','src/web/tabletop-tokens.mjs','src/web/tabletop-token-view.mjs','src/web/tabletop-art-view.mjs','src/web/assets/tabletop-art.js','src/web/assets/tabletop-tokens.js'])sourceText(fs.readFileSync(path.join(root,file),'utf8'),file);
 for(const text of Object.keys(TABLETOP_RU))add(text,'src/web/assets/tabletop-i18n.mjs');
 const pending=[...catalog.values()].filter(x=>translateText(x.text,'ru')===x.text);
 const report={scope:'Extracted interface strings and built-in summaries; imported database coverage is a separate audit.',total:catalog.size,translated:catalog.size-pending.length,pending:pending.length,missing:pending};
