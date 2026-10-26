@@ -24,19 +24,15 @@ test('automatic translator targets prose but ignores formulas and URLs',()=>{
   assert.equal(looksEnglishForTranslation('https://dnd.su/'),false);
 });
 
-test('browser localization has asynchronous machine-translation fallback',()=>{
-  assert.match(browser,/\/api\/i18n\/translate/);
-  assert.match(browser,/queueRemote/);
-  assert.match(browser,/data-i18n-entity/);
+test('browser consumes the prepared dictionary without requesting model translation',()=>{
+  assert.match(browser,/\/api\/localization\/dictionary/);
+  assert.doesNotMatch(browser,/\/api\/i18n\/translate|queueRemote/);
 });
-
-test('server exposes translation endpoint and cache status',()=>{
-  assert.match(server,/\/api\/i18n\/translate/);
-  assert.match(server,/\/api\/i18n\/status/);
-  assert.match(server,/translateBatchRussian/);
+test('server uses the prepared dictionary without importing the legacy engine',()=>{
+  assert.match(server,/\/api\/localization\/dictionary/);
+  assert.doesNotMatch(server,/from ["'].*translation-engine|translateBatchRussian/);
 });
-
-test('full localization command and local Transformers dependency are packaged',()=>{
-  assert.equal(pkg.scripts['i18n:full'],'node src/localization/full-sync.mjs');
-  assert.ok(pkg.dependencies['@huggingface/transformers']);
+test('translation generation has an explicit separate command',()=>{
+  assert.equal(pkg.scripts['i18n:translate'],'node scripts/localization/cli.mjs translate');
+  assert.equal(pkg.dependencies['@huggingface/transformers'],undefined);
 });

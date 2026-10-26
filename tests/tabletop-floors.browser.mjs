@@ -38,7 +38,8 @@ try {
 
   const map=await page.evaluate(()=>{const c=document.createElement('canvas');c.width=900;c.height=700;const x=c.getContext('2d');x.fillStyle='#263332';x.fillRect(0,0,900,700);x.strokeStyle='#a3936f';x.lineWidth=24;x.strokeRect(60,60,780,580);return c.toDataURL();});
   await settings.locator('[name=floor_name]').fill('Винный погреб');await settings.locator('[name=cellSize]').fill('80');
-  await page.locator('[data-vtt-file]').setInputFiles({name:'cellar.png',mimeType:'image/png',buffer:Buffer.from(map.split(',')[1],'base64')});await idle();
+  const uploaded=page.waitForResponse(r=>r.url().endsWith('/api/tabletop/scenes/'+second+'/map')&&r.request().method()==='POST');
+  await page.locator('[data-vtt-file]').setInputFiles({name:'cellar.png',mimeType:'image/png',buffer:Buffer.from(map.split(',')[1],'base64')});assert.equal((await uploaded).ok(),true);await idle();
   assert.equal((await dbScene(second)).floor_name,'Винный погреб');assert.equal((await dbScene(first)).has_map,false);
   assert.equal(await page.locator('[data-vtt-floor-title]').textContent(),'Винный погреб');
   const third=await newFloor('Крыша');await page.locator('[data-floor-order=up]').click();await page.waitForEvent('load');
@@ -60,7 +61,7 @@ try {
   let moved=(await rows(second)).find(t=>t.id===pc.id);assert.equal(moved.icon_color,'#44cc99');assert.equal(moved.border_color,'#aa55cc');assert.equal(moved.has_image,true);
   console.log('PASS party transfer, automatic grid save, network failure/retry, following the destination and retained portraits/colors');
 
-  await page.locator('[data-vtt-delete-floor]').click();await idle();assert.match(await page.locator('[data-vtt-status]').textContent(),/Сначала перенесите/);
+  await page.locator('[data-inspector-tab=map]').click();await page.locator('[data-vtt-delete-floor]').click();await idle();assert.match(await page.locator('[data-vtt-status]').textContent(),/Сначала перенесите/);
   await pick(pc.id);await page.locator(`[data-token-id="${pc.id}"]`).press('ArrowRight');await idle();
   const away=(await rows(second)).find(t=>t.id===pc.id);
   await openTransfer();assert.equal(await modal.locator('input:checked[data-transfer-kind]').count(),1);
@@ -81,6 +82,8 @@ try {
   console.log('PASS unsaved token settings and a changed destination grid prevent transfer without data loss');
 
   await page.locator('[data-vtt-zoom=in]').click();const zoom=await page.locator('[data-vtt-zoom-label]').textContent();await gotoFloor(first);await gotoFloor(second);
+  // Navigation can finish before ResizeObserver restores the saved camera.
+  await page.waitForFunction(expected=>document.querySelector('[data-vtt-zoom-label]')?.textContent===expected,zoom);
   assert.equal(await page.locator('[data-vtt-zoom-label]').textContent(),zoom);
   if(qa)await page.screenshot({path:qa+'/floors-desktop.png',fullPage:true});
   await page.setViewportSize({width:390,height:844});await openTransfer();

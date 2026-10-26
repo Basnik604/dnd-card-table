@@ -1,3 +1,4 @@
+import {deathAfterDamage} from './death-state.mjs';
 import { randomUUID } from 'node:crypto';
 
 // D&D 2024: damage is the amount after resistance/vulnerability, before
@@ -30,15 +31,18 @@ function withChecks(state, checks) {
   return { ...state, pending_checks: checks, check_dc: checks[0]?.dc ?? null, last_damage: checks[0]?.damage ?? null };
 }
 
-export function applyHitPointDelta(character, rawDelta) {
+export function applyHitPointDelta(character, rawDelta, {critical=false,revive=false} = {}) {
   const delta = integerInput(rawDelta, { min: -9999 });
   const current = Math.max(0, Number(character.hp_current) || 0);
   const maximum = Math.max(1, Number(character.hp_max) || 1);
   const temporary = Math.max(0, Number(character.temp_hp) || 0);
   const choices = { ...(character.feature_choices || {}) };
+  if(delta>0&&choices.death_saves?.dead&&!revive)throw new Error('Dead creatures require GM revival.');
   const damage = Math.max(0, -delta);
   const absorbed = Math.min(temporary, damage);
   const hp = Math.max(0, Math.min(maximum, current + (delta < 0 ? -(damage - absorbed) : delta)));
+  if(revive)choices.death_saves={successes:0,failures:0,stable:false,dead:false,...(choices.death_saves?.last_turn?{last_turn:choices.death_saves.last_turn}:{})};
+  if((hp===0&&damage>0)||choices.death_saves)choices.death_saves=deathAfterDamage(choices.death_saves,{current,hp,maximum,temporary,damage,critical,enabled:character.death_tracking!==false});
   const state = choices.concentration;
   if (damage && state?.name) {
     if (hp === 0) delete choices.concentration;
@@ -50,13 +54,14 @@ export function applyHitPointDelta(character, rawDelta) {
   return { ...character, hp_current: hp, temp_hp: temporary - absorbed, feature_choices: choices };
 }
 
-async function updateCharacterHp(tx, characterId, delta) {
+export async function updateCharacterHp(tx, characterId, delta, {preserveTemporaryHp = false,critical=false,revive=false} = {}) {
   const rows = await tx`
     SELECT id::text, hp_current, hp_max, temp_hp, feature_choices
     FROM characters WHERE id=${characterId} FOR UPDATE
   `;
   if (!rows.length) throw new Error('Character not found');
-  const next = applyHitPointDelta(rows[0], delta);
+  const next = applyHitPointDelta(preserveTemporaryHp ? {...rows[0],temp_hp:0} : rows[0], delta,{critical,revive});
+  if(preserveTemporaryHp) next.temp_hp = rows[0].temp_hp;
   await tx`
     UPDATE characters SET hp_current=${next.hp_current}, temp_hp=${next.temp_hp},
       feature_choices=${tx.json(next.feature_choices)}, updated_at=NOW()

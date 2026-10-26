@@ -23,6 +23,7 @@ try {
     const before=await current();
     const node=page.locator(`[data-token-id="${token.id}"]`);
     const scale=await page.locator('[data-vtt-map]').evaluate(el=>new DOMMatrix(getComputedStyle(el).transform).a);
+    await node.scrollIntoViewIfNeeded();
     const box=await node.boundingBox();assert.ok(Math.abs(box.width-size*scale)<.1,`width ${box.width} versus ${size*scale}`);
     await page.mouse.move(box.x+box.width/2,box.y+box.height/2);await page.mouse.down();
     await page.mouse.move(box.x+box.width/2+Math.max(8,size*scale),box.y+box.height/2,{steps:5});await page.mouse.up();await idle();
@@ -71,7 +72,7 @@ try {
   console.log('PASS adding a token saves the new grid and both survive reload');
   const edge=await current(),scene=await f.store.scene(location.scene_id,LOCAL_GM);
   await f.store.tokens.change(edge.id,LOCAL_GM,{x:1925,y:0,snap:false,revision:edge.revision,scene_revision:scene.revision},'move');
-  await page.reload();await page.locator('[name=cellSize]').fill('500');
+  await page.reload();await page.locator('[data-inspector-tab=map]').click();await page.locator('[name=cellSize]').fill('500');
   await page.locator(`[data-token-id="${edge.id}"]`).press('ArrowLeft');await idle();
   const clamped=await current();assert.equal(clamped.x,1500);assert.equal(clamped.revision,edge.revision+3);
   console.log('PASS grid enlargement clamps at the map edge and uses the refreshed token revision');

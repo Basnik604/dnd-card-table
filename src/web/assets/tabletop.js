@@ -1,3 +1,7 @@
+import {initBattle} from './tabletop-battle.js';
+import {initCombat} from './tabletop-combat.js';
+import {initWorkspace} from './workspace.js';
+import {initWorkspaceData} from './workspace-data.js';
 import {initTokens} from './tabletop-tokens.js';
 import {tabletopText} from './tabletop-i18n.mjs';
 
@@ -7,6 +11,8 @@ if(root) initTabletop(root);
 function initTabletop(root) {
   const cfg=JSON.parse(root.querySelector('[data-vtt-config]').textContent);
   const t=text=>tabletopText(text,cfg.lang),find=selector=>root.querySelector(selector);
+  const workspace=initWorkspace(root,{sessionId:cfg.session?.id,t});
+  const workspaceData=cfg.scene?initWorkspaceData(root,{sessionId:cfg.session.id,sceneId:cfg.scene.id,t}):null;
   const floorName=value=>value==='Ground floor'?t('Ground floor'):value;
   let scene=cfg.scene,busy=false,dirty=false,tokenUi=null;
   const status=find('[data-vtt-status]'),reload=find('[data-vtt-reload]'),form=find('[data-vtt-settings]');
@@ -47,7 +53,7 @@ function initTabletop(root) {
   async function run(task) {
     if(busy) return;
     busy=true; root.setAttribute('aria-busy','true');
-    const controls=[...root.querySelectorAll('button,input,select')].map(el=>[el,el.disabled]);
+    const controls=[...root.querySelectorAll('button:not([data-workspace-control]),input:not([data-workspace-control]),select:not([data-workspace-control])')].map(el=>[el,el.disabled]);
     controls.forEach(([el])=>el.disabled=true); updateDirty();
     try { return await task(); }
     catch(error) { message(error.message,true,error.status===409); return null; }
@@ -69,8 +75,11 @@ function initTabletop(root) {
     run(async()=>{const result=await api(`/api/tabletop/sessions/${cfg.session.id}`,'DELETE',{});dirty=false;busy=false;navigate(result.url);});
   });
   if(!scene) return;
+  initCombat(root,{sceneId:scene.id,t});
+  initBattle(root,{scene,t});
 
   const viewport=find('[data-vtt-viewport]'),map=find('[data-vtt-map]'),img=find('[data-vtt-map-image]');
+  find('.vtt-stage-toolbar').append(find('.vtt-token-tools')); 
   const topbar=document.querySelector('.topbar');
   function headerSpace() {
     if(!topbar)return;
@@ -191,7 +200,7 @@ function initTabletop(root) {
   }
   async function upload(file) {
     if(!file||busy) return;
-    if(!form.reportValidity()) return;
+    if(!validateMapSettings()) return;
     if(scene.has_map && !confirm(t('Replace this map? Its current grid settings will be kept.'))) return;
     const body={...data(),revision:scene.revision,file_name:file.name};
     await run(async()=>{
@@ -233,6 +242,7 @@ function initTabletop(root) {
   });
 
   find('[data-vtt-fit]').addEventListener('click',fit);
+  find('[data-vtt-fill]')?.addEventListener('click',()=>{camera.scale=Math.max(viewport.clientWidth/width,viewport.clientHeight/height);camera.x=(viewport.clientWidth-width*camera.scale)/2;camera.y=(viewport.clientHeight-height*camera.scale)/2;drawCamera();});
   root.querySelectorAll('[data-vtt-zoom]').forEach(button=>button.addEventListener('click',()=>zoom(button.dataset.vttZoom==='in'?1.25:0.8)));
   viewport.addEventListener('wheel',event=>{event.preventDefault();const rect=viewport.getBoundingClientRect();zoom(Math.exp(-Math.max(-300,Math.min(300,event.deltaY))*0.002),event.clientX-rect.left,event.clientY-rect.top);},{passive:false});
   const pointers=new Map();
@@ -272,7 +282,7 @@ function initTabletop(root) {
     button.title=label;button.setAttribute('aria-label',label);
   });
   mapImage();gridPreview();
-  tokenUi=initTokens({root,api,run,t,message,viewport,map,navigate,tokens:cfg.tokens,getScene:()=>scene,getCamera:()=>camera,getGrid:()=>data().grid,isBusy:()=>busy,mapDirty:()=>dirty,validateMapSettings,saveMapSettings});
+  tokenUi=initTokens({root,workspace,workspaceData,api,run,t,message,viewport,map,navigate,tokens:cfg.tokens,getScene:()=>scene,getCamera:()=>camera,getGrid:()=>data().grid,isBusy:()=>busy,mapDirty:()=>dirty,validateMapSettings,saveMapSettings});
   let previousWidth=0,previousHeight=0;
   const observer=new ResizeObserver(()=>{
     if(!cameraReady) {

@@ -146,6 +146,7 @@
       const result=await response.json();
       if(!response.ok) throw new Error(result.error || 'Could not complete the roll');
       applyEffects(result.effects);
+      document.dispatchEvent(new CustomEvent('dnd-character-runtime-changed',{detail:{characterId:result.effects?.characterId||url.pathname.match(/^\/character\/([^/]+)/)?.[1]}}));
       if(form.hasAttribute('data-subclass-action')) form.querySelectorAll('input[name="confirmed"]').forEach(el=>el.checked=false);
       if(state) await finishRoll(result,state);
       if(form.isConnected) {

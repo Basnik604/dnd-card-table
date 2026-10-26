@@ -1,10 +1,4 @@
-import { readFile } from "node:fs/promises";
-import { resolve } from "node:path";
-import { sql } from "./client.js";
-
-const file = process.argv[2];
-if (!file) throw new Error("Usage: tsx src/db/migrate-file.ts <migration.sql>");
-const migration = await readFile(resolve(file), "utf8");
-await sql.unsafe(migration);
-console.log(`Migration ${file} applied.`);
+import {sql} from './client.js';
+console.error('Individual migration replay is disabled in v0.36. Use npm.cmd run db:migrate; for an existing untracked database back it up and use db:adopt first.');
+process.exitCode=1;
 await sql.end();

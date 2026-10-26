@@ -1,6 +1,6 @@
 {
   "name": "dnd-card-table-content",
-  "version": "0.31.2",
+  "version": "0.36.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -9,7 +9,7 @@
     "test:builder": "node --test tests/builder-content.test.mjs",
     "test:import": "node --test tests/builder-import.integration.mjs",
     "test:spell-lists": "node --test tests/spell-lists.test.mjs",
-    "db:migrate": "tsx src/db/migrate.ts",
+    "db:migrate": "node scripts/migrate.mjs",
     "import:creatures": "tsx src/importers/open5e/creatures.ts",
     "import:spells": "tsx src/importers/open5e/spells.ts",
     "import:items": "tsx src/importers/open5e/items.ts",
@@ -43,7 +43,14 @@
     "i18n:import": "node scripts/localization/cli.mjs import",
     "i18n:audit:names": "tsx src/audit/localization.ts",
     "i18n:audit:ui": "node scripts/localization/audit-ui.mjs",
-    "i18n:audit:request": "node scripts/localization/audit-request.mjs"
+    "i18n:audit:request": "node scripts/localization/audit-request.mjs",
+    "test:tabletop:browser": "node scripts/test-tabletop-browser.mjs",
+    "db:adopt": "node scripts/migrate.mjs",
+    "db:plan": "node scripts/migrate.mjs --dry-run",
+    "db:backup": "node scripts/backup.mjs create",
+    "db:backup:verify": "node scripts/backup.mjs verify",
+    "db:restore": "node scripts/backup.mjs restore",
+    "test:data-safety": "node tests/data-safety.postgres.mjs"
   },
   "dependencies": {
     "dotenv": "^16.4.7",
@@ -53,6 +60,7 @@
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.0",
     "@types/node": "^22.10.2",
+    "playwright": "1.62.1",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3"
   }

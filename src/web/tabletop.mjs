@@ -1,3 +1,8 @@
+import {createEffectsStore} from './tabletop-effects.mjs';
+import {createRecoveryStore} from './tabletop-recovery.mjs';
+import {createTacticsStore} from './tabletop-tactics.mjs';
+import {createBattleStore} from './tabletop-battle.mjs';
+import {createCombatStore} from './tabletop-combat.mjs';
 import {createTokenStore} from './tabletop-tokens.mjs';
 import {createFloorStore} from './tabletop-floors.mjs';
 import {randomUUID} from 'node:crypto';
@@ -7,7 +12,7 @@ import {renderTabletopHome, renderTabletopSession} from './tabletop-view.mjs';
 
 export const LOCAL_GM = 'local-master';
 export const DEFAULT_GRID = Object.freeze({cellSize:70,offsetX:0,offsetY:0,opacity:0.45,color:'#ffffff',visible:true,distance:5,unit:'ft'});
-const schema = ['018_tabletop.sql','019_tabletop_tokens.sql','021_tabletop_icon_colors.sql','022_tabletop_floors.sql','023_tabletop_token_art.sql'].map(file=>readFileSync(new URL('../../db/migrations/'+file,import.meta.url),'utf8')).join('\n');
+const schema = ['018_tabletop.sql','019_tabletop_tokens.sql','021_tabletop_icon_colors.sql','022_tabletop_floors.sql','023_tabletop_token_art.sql','024_tabletop_combat.sql','025_tabletop_battle.sql','026_tabletop_tactics.sql','027_tabletop_recovery.sql','028_tabletop_effects.sql'].map(file=>readFileSync(new URL('../../db/migrations/'+file,import.meta.url),'utf8')).join('\n');
 const missing = 'Session or location not found.';
 const stale = 'This location changed in another tab. Reload the page before saving again.';
 export class TabletopError extends Error {
@@ -98,6 +103,7 @@ export function createTabletopStore(sql,{artLibrary}={}) {
     await requireGM(db,rows[0].session_id,principal);
     return rows[0];
   }
+  const combat=createCombatStore(sql,{scene,ErrorType:TabletopError});
   const tokens=createTokenStore(sql,{scene,ErrorType:TabletopError,decodeImage:decodeMap,artLibrary});
   const floors=createFloorStore(sql,{scene,requireGM,ErrorType:TabletopError,defaultGrid:DEFAULT_GRID});
   async function updateScene(sceneId,principal,payload,mapMode=null) {
@@ -126,7 +132,7 @@ export function createTabletopStore(sql,{artLibrary}={}) {
     });
   }
   return {
-    ensureSchema,tokens,floors,
+    ensureSchema,tokens,floors,combat,battleScene:scene,
     session:(id,p)=>requireGM(sql,id,p),
     scene:(id,p)=>scene(sql,id,p),
     async sessions(principal) {
@@ -206,8 +212,12 @@ async function readRequest(req,maxBytes=64_000) {
   } catch(error) { if(error instanceof TabletopError) throw error; fail('Invalid request.'); }
 }
 
-export function createTabletopHandler({sql,layout,html,json,language=()=> 'ru',artLibrary}) {
+export function createTabletopHandler({sql,layout,html,json,language=()=> 'ru',artLibrary,characterPanel,combatProfile}) {
   const store=createTabletopStore(sql,{artLibrary});
+  const effects=createEffectsStore(sql,{scene:store.battleScene,ErrorType:TabletopError});
+  const recovery=createRecoveryStore(sql,{scene:store.battleScene,ErrorType:TabletopError});
+  const tactics=createTacticsStore(sql,{scene:store.battleScene,ErrorType:TabletopError});
+  const battle=createBattleStore(sql,{scene:store.battleScene,combat:store.combat,ErrorType:TabletopError,profile:combatProfile});
   // The existing application listens on loopback and has no accounts. In 0.29
   // the server assigns one installation-local GM. This is NOT internet auth.
   // Later authentication must supply a verified principal here; never accept
@@ -228,6 +238,28 @@ export function createTabletopHandler({sql,layout,html,json,language=()=> 'ru',a
       }
       try { await store.ensureSchema(); } catch(error) { console.error({tabletopSchema:error}); fail('The tabletop tables could not be initialized. Check the database connection and permissions, then reload.',503); }
       let match;
+      if((match=url.pathname.match(/^\/api\/tabletop\/scenes\/([^/]+)\/effects\/(preview|confirm)$/))&&req.method==='POST'){json(res,200,await effects[match[2]](match[1],principal,await readRequest(req)));return true;}
+      if((match=url.pathname.match(/^\/api\/tabletop\/scenes\/([^/]+)\/recovery\/(preview|confirm)$/))&&req.method==='POST'){json(res,200,await recovery[match[2]](match[1],principal,await readRequest(req)));return true;}
+      if((match=url.pathname.match(/^\/api\/tabletop\/scenes\/([^/]+)\/tactics$/))&&req.method==='POST'){json(res,200,await tactics.change(match[1],principal,await readRequest(req)));return true;}
+      if((match=url.pathname.match(/^\/api\/tabletop\/scenes\/([^/]+)\/battle(?:\/(preview|confirm|vitals))?$/))){
+        await store.ensureSchema();
+        if(req.method==='GET'&&!match[2]){json(res,200,await battle.read(match[1],principal));return true;}
+        if(req.method==='POST'&&match[2]){const input=await readRequest(req);if(!input||typeof input!=='object'||Array.isArray(input))fail('Invalid battle action.');const method={preview:'preview',confirm:'confirm',vitals:'configure'}[match[2]];json(res,200,await battle[method](match[1],principal,input));return true;}
+      }
+      if((match=url.pathname.match(/^\/api\/tabletop\/scenes\/([^/]+)\/combat$/))){
+        if(req.method==='GET'){json(res,200,await store.combat.read(match[1],principal));return true;}
+        if(req.method==='POST'){json(res,200,await store.combat.change(match[1],principal,await readRequest(req)));return true;}
+      }
+      if(req.method==='GET'&&(match=url.pathname.match(/^\/tabletop\/([^/]+)\/scenes\/([^/]+)\/tokens\/([^/]+)\/panels\/(inventory|spells|abilities)$/))){
+        const session=await store.session(match[1],principal),current=await store.scene(match[2],principal);
+        if(current.session_id!==session.id)fail(missing,404);
+        const token=(await store.tokens.list(current.id,principal)).find(token=>token.id===match[3]);
+        if(!token?.character_id||!characterPanel)fail(missing,404);
+        // Only the installation-local master is currently supported. Online must
+        // replace this verified server principal and authorize before rendering.
+        const result=await characterPanel(token.character_id,match[4]);
+        res.setHeader('Cache-Control','no-store');html(res,result.status,result.body);return true;
+      }
       if(req.method==='GET' && url.pathname==='/tabletop') {
         html(res,200,layout({title:t('Game Table'),content:renderTabletopHome(await store.sessions(principal),lang)})); return true;
       }
