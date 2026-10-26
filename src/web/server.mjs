@@ -1748,7 +1748,7 @@ html[data-theme="tavern"] .builder-variant-badges .chip{
 .localized-original-name{margin-top:-2px;margin-bottom:7px;font-size:10px;line-height:1.2;color:var(--muted);font-style:italic;opacity:.86}
 </style>
 <link rel="stylesheet" href="/assets/table-ui.css?v=0.32.2">
-<script src="/assets/table-ui.js?v=0.35.5" defer></script>
+<script src="/assets/table-ui.js?v=0.36.0" defer></script>
 <script type="module" src="/assets/workspace-character-sync.js?v=0.32.2"></script>
 <script type="module" src="/assets/i18n.js?v=0.32.2"></script>
 </head>
@@ -1841,7 +1841,7 @@ html[data-theme="tavern"] .builder-variant-badges .chip{
   <div class="status"><b>●</b><span>Local database connected</span></div>
 </div></header>
 ${content}
-<footer class="footer"><a href="/localization">Translation</a> · D&D Card Table v0.35.5</footer>
+<footer class="footer"><a href="/localization">Translation</a> · D&D Card Table v0.36.0</footer>
 </main>
 <script>
 (()=>{

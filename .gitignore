@@ -169,3 +169,9 @@ Thumbs.db
 playwright-report/
 test-results/
 qa-artifacts/
+
+
+# Campaign backups contain private game data; never publish.
+backups/
+*.dump
+codex-backups/

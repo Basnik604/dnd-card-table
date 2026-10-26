@@ -1,6 +1,6 @@
 {
   "name": "dnd-card-table-content",
-  "version": "0.35.5",
+  "version": "0.36.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -44,7 +44,13 @@
     "i18n:audit:names": "tsx src/audit/localization.ts",
     "i18n:audit:ui": "node scripts/localization/audit-ui.mjs",
     "i18n:audit:request": "node scripts/localization/audit-request.mjs",
-    "test:tabletop:browser": "node scripts/test-tabletop-browser.mjs"
+    "test:tabletop:browser": "node scripts/test-tabletop-browser.mjs",
+    "db:adopt": "tsx src/db/migrate.ts",
+    "db:plan": "tsx src/db/migrate.ts --dry-run",
+    "db:backup": "node scripts/backup.mjs create",
+    "db:backup:verify": "node scripts/backup.mjs verify",
+    "db:restore": "node scripts/backup.mjs restore",
+    "test:data-safety": "node tests/data-safety.postgres.mjs"
   },
   "dependencies": {
     "dotenv": "^16.4.7",
